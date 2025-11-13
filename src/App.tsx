@@ -15,6 +15,7 @@ import Search from "./pages/Search";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Publications from "./pages/admin/Publications";
+import PublicationEditor from "./pages/admin/PublicationEditor";
 import Authors from "./pages/admin/Authors";
 import Users from "./pages/admin/Users";
 import NotFound from "./pages/NotFound";
@@ -46,6 +47,8 @@ const App = () => (
               >
                 <Route index element={<Dashboard />} />
                 <Route path="publications" element={<Publications />} />
+                <Route path="publications/new" element={<PublicationEditor />} />
+                <Route path="publications/edit/:id" element={<PublicationEditor />} />
                 <Route path="authors" element={<Authors />} />
                 <Route path="categories" element={<div>Categories Management (Coming Soon)</div>} />
                 <Route path="analytics" element={<div>Analytics (Coming Soon)</div>} />

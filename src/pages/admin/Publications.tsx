@@ -115,8 +115,10 @@ export default function Publications() {
                         </Link>
                       </Button>
                     )}
-                    <Button variant="ghost" size="icon">
-                      <Pencil className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link to={`/admin/publications/edit/${pub.id}`}>
+                        <Pencil className="h-4 w-4" />
+                      </Link>
                     </Button>
                     <Button
                       variant="ghost"
