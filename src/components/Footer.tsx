@@ -42,7 +42,7 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">{isArabic ? 'تابعنا' : 'Follow Us'}</h4>
             <div className="flex gap-3">
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="https://www.facebook.com/share/1BZv4RgGkw/" className="hover:text-primary transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>
               <a href="#" className="hover:text-primary transition-colors">
