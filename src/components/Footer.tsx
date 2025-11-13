@@ -48,7 +48,7 @@ export function Footer() {
               <a href="#" className="hover:text-primary transition-colors">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="https://www.instagram.com/sultansoftheword?igsh=OTV6NDl3d29sYmRw" className="hover:text-primary transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
             </div>
