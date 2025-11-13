@@ -42,13 +42,13 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">{isArabic ? 'تابعنا' : 'Follow Us'}</h4>
             <div className="flex gap-3">
-              <a href="https://www.facebook.com/share/1BZv4RgGkw/" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-primary transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>
               <a href="#" className="hover:text-primary transition-colors">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="https://www.instagram.com/sultansoftheword?igsh=OTV6NDl3d29sYmRw" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-primary transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
             </div>
