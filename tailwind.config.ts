@@ -114,6 +114,14 @@ export default {
             transform: "scale(1)",
           },
         },
+        "float": {
+          "0%, 100%": {
+            transform: "translateY(0px)",
+          },
+          "50%": {
+            transform: "translateY(-20px)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -121,6 +129,12 @@ export default {
         "fade-in": "fade-in 0.5s ease-out",
         "slide-up": "slide-up 0.5s ease-out",
         "scale-in": "scale-in 0.3s ease-out",
+        "float": "float 6s ease-in-out infinite",
+        "float-delayed-1": "float 7s ease-in-out infinite 1s",
+        "float-delayed-2": "float 8s ease-in-out infinite 2s",
+        "float-delayed-3": "float 6.5s ease-in-out infinite 1.5s",
+        "float-delayed-4": "float 7.5s ease-in-out infinite 0.5s",
+        "float-delayed-5": "float 8.5s ease-in-out infinite 2.5s",
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
