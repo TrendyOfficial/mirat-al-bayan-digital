@@ -76,7 +76,7 @@ export default function Index() {
         <section className="relative bg-gradient-hero text-white py-20 overflow-hidden">
           {/* Arabic Calligraphy Background */}
           <div 
-            className="absolute inset-0 opacity-20 bg-cover bg-center pointer-events-none"
+            className="absolute inset-0 opacity-20 bg-cover bg-left pointer-events-none"
             style={{ 
               backgroundImage: `url(${heroCalligraphy})`,
               backgroundSize: 'contain',
