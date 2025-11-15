@@ -72,8 +72,18 @@ export default function Index() {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-gradient-hero text-white py-20">
-          <div className="container">
+        <section className="relative bg-gradient-hero text-white py-20 overflow-hidden">
+          {/* Floating Arabic Letters Background */}
+          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div className="font-arabic text-[200px] absolute top-10 left-10 opacity-10 blur-sm animate-float">م</div>
+            <div className="font-arabic text-[180px] absolute top-20 right-20 opacity-15 blur-sm animate-float-delayed-1 rotate-12">ر</div>
+            <div className="font-arabic text-[220px] absolute bottom-10 left-1/4 opacity-10 blur-sm animate-float-delayed-2 -rotate-6">ب</div>
+            <div className="font-arabic text-[190px] absolute top-1/3 right-1/3 opacity-12 blur-sm animate-float-delayed-3 rotate-6">ن</div>
+            <div className="font-arabic text-[210px] absolute bottom-20 right-10 opacity-15 blur-sm animate-float-delayed-4 -rotate-12">ا</div>
+            <div className="font-arabic text-[175px] absolute top-1/2 left-10 opacity-10 blur-sm animate-float-delayed-5 rotate-3">ل</div>
+          </div>
+          
+          <div className="container relative z-10">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="font-arabic text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
                 {isArabic ? 'مرحباً بكم في مرآة البيان' : 'Welcome to Miratl Bayan'}
