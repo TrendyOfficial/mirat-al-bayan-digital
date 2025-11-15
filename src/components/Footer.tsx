@@ -43,16 +43,43 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">{isArabic ? 'تابعنا' : 'Follow Us'}</h4>
             <div className="flex gap-3">
-              <a href="https://www.facebook.com/share/1BZv4RgGkw/" className="hover:text-primary transition-colors" aria-label="Facebook">
+              <a
+                href="https://www.facebook.com/share/1BZv4RgGkw/"
+                className="hover:text-primary transition-colors"
+                aria-label="Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="https://www.instagram.com/sultansoftheword?igsh=OTV6NDl3d29sYmRw/" className="hover:text-primary transition-colors" aria-label="Instagram">
+
+              <a
+                href="https://www.instagram.com/sultansoftheword?igsh=OTV6NDl3d29sYmRw/"
+                className="hover:text-primary transition-colors"
+                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="https://www.tiktok.com/@sultansoftheword/" className="hover:text-primary transition-colors" aria-label="TikTok">
+
+              <a
+                href="https://www.tiktok.com/@sultansoftheword/"
+                className="hover:text-primary transition-colors"
+                aria-label="TikTok"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <FaTiktok className="h-5 w-5" />
               </a>
-              <a href="https://t.me/sultansoftheword/" className="hover:text-primary transition-colors" aria-label="Telegram">
+
+              <a
+                href="https://t.me/sultansoftheword/"
+                className="hover:text-primary transition-colors"
+                aria-label="Telegram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Send className="h-5 w-5" />
               </a>
             </div>
