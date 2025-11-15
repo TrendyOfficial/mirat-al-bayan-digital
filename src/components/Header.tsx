@@ -4,6 +4,7 @@ import { Search, User, LogOut } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,8 +14,21 @@ import {
 
 export function Header() {
   const { language } = useLanguage();
-  const { user, signOut } = useAuth();
+  const { user, signOut, hasAnyRole } = useAuth();
   const isArabic = language === 'ar';
+  const [showDashboard, setShowDashboard] = useState(false);
+
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (user) {
+        const hasAccess = await hasAnyRole();
+        setShowDashboard(hasAccess);
+      } else {
+        setShowDashboard(false);
+      }
+    };
+    checkAccess();
+  }, [user, hasAnyRole]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -72,11 +86,13 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link to="/admin">
-                    {isArabic ? 'لوحة التحكم' : 'Dashboard'}
-                  </Link>
-                </DropdownMenuItem>
+                {showDashboard && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin">
+                      {isArabic ? 'لوحة التحكم' : 'Dashboard'}
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => signOut()}>
                   <LogOut className="h-4 w-4 mr-2" />
                   {isArabic ? 'تسجيل الخروج' : 'Logout'}
