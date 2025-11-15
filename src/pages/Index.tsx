@@ -8,7 +8,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroCalligraphy from "@/assets/hero-calligraphy.png";
 
 export default function Index() {
   const { language } = useLanguage();
@@ -74,17 +73,6 @@ export default function Index() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative bg-gradient-hero text-white py-20 overflow-hidden">
-          {/* Arabic Calligraphy Background */}
-          <div 
-            className="absolute inset-0 opacity-20 bg-cover bg-left pointer-events-none"
-            style={{ 
-              backgroundImage: `url(${heroCalligraphy})`,
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'left'
-            }}
-          />
-
           <div className="container relative z-10">
             <div className="max-w-3xl mx-auto text-center">
               <h1 className="font-arabic text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
