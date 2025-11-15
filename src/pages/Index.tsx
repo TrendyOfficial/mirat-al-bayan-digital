@@ -81,7 +81,7 @@ export default function Index() {
               backgroundImage: `url(${heroCalligraphy})`,
               backgroundSize: 'contain',
               backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center'
+              backgroundPosition: 'left'
             }}
           />
 
