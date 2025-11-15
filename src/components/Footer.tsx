@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Facebook, Twitter, Instagram } from "lucide-react";
+import { Facebook, Instagram, Send } from "lucide-react";
+import { FaTiktok } from "react-icons/fa";
 
 export function Footer() {
   const { language } = useLanguage();
@@ -42,21 +43,24 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">{isArabic ? 'تابعنا' : 'Follow Us'}</h4>
             <div className="flex gap-3">
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-primary transition-colors" aria-label="Facebook">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              <a href="#" className="hover:text-primary transition-colors" aria-label="Instagram">
                 <Instagram className="h-5 w-5" />
+              </a>
+              <a href="#" className="hover:text-primary transition-colors" aria-label="TikTok">
+                <FaTiktok className="h-5 w-5" />
+              </a>
+              <a href="#" className="hover:text-primary transition-colors" aria-label="Telegram">
+                <Send className="h-5 w-5" />
               </a>
             </div>
           </div>
         </div>
 
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; 2024 {isArabic ? 'مرآة البيان. جميع الحقوق محفوظة.' : 'Miratl Bayan. All rights reserved.'}</p>
+          <p>&copy; 2025 {isArabic ? 'مرآة البيان. جميع الحقوق محفوظة.' : 'Miratl Bayan. All rights reserved.'}</p>
         </div>
       </div>
     </footer>

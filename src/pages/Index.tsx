@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import heroCalligraphy from "@/assets/hero-calligraphy.png";
 
 export default function Index() {
   const { language } = useLanguage();
@@ -73,15 +74,16 @@ export default function Index() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative bg-gradient-hero text-white py-20 overflow-hidden">
-          {/* Arabic Decorative Letters */}
-          <div className="absolute inset-0 pointer-events-none">
-            <span className="absolute top-12 left-12 font-arabic text-[70px] opacity-10 animate-float" style={{ animationDelay: '0s' }}>ش</span>
-            <span className="absolute top-16 right-16 font-arabic text-[80px] opacity-10 animate-drift" style={{ animationDelay: '1s' }}>ع</span>
-            <span className="absolute bottom-20 left-20 font-arabic text-[60px] opacity-10 animate-softWave" style={{ animationDelay: '2s' }}>ر</span>
-            <span className="absolute bottom-24 right-24 font-arabic text-[75px] opacity-10 animate-float" style={{ animationDelay: '3s' }}>ق</span>
-            <span className="absolute top-1/2 left-8 font-arabic text-[65px] opacity-10 animate-drift" style={{ animationDelay: '1.5s' }}>ل</span>
-            <span className="absolute top-1/2 right-12 font-arabic text-[70px] opacity-10 animate-softWave" style={{ animationDelay: '2.5s' }}>م</span>
-          </div>
+          {/* Arabic Calligraphy Background */}
+          <div 
+            className="absolute inset-0 opacity-20 bg-cover bg-center pointer-events-none"
+            style={{ 
+              backgroundImage: `url(${heroCalligraphy})`,
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center'
+            }}
+          />
 
           <div className="container relative z-10">
             <div className="max-w-3xl mx-auto text-center">
