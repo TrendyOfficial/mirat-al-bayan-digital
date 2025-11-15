@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Eye, Calendar, Share2, Facebook, Twitter, Mail } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import DOMPurify from "dompurify";
 
 export default function Publication() {
   const { slug } = useParams();
@@ -55,9 +56,24 @@ export default function Publication() {
       .single();
 
     if (pub) {
-      await supabase.from('publication_views').insert({
+      // Generate a session ID from browser fingerprint
+      const sessionId = sessionStorage.getItem('view_session') || 
+        `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      if (!sessionStorage.getItem('view_session')) {
+        sessionStorage.setItem('view_session', sessionId);
+      }
+
+      // Try to insert view, will fail silently if already viewed in this session
+      const { error } = await supabase.from('publication_views').insert({
         publication_id: pub.id,
+        session_id: sessionId,
       });
+      
+      // Refresh view count if insert was successful
+      if (!error) {
+        fetchPublication();
+      }
     }
   };
 
@@ -155,7 +171,7 @@ export default function Publication() {
             </div>
 
             <div className="prose prose-lg max-w-none mb-12 font-arabic leading-relaxed">
-              <div dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br />') }} />
+              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.replace(/\n/g, '<br />')) }} />
             </div>
 
             {authorBio && (
