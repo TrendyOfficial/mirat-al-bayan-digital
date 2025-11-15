@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Rich Arabic Literature Theme */
+    /* Deep Literary Red Theme */
     --background: 40 30% 97%;
     --foreground: 30 10% 15%;
 
@@ -18,8 +18,8 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 30 10% 15%;
 
-    /* Gold accent for elegance */
-    --primary: 38 70% 45%;
+    /* Deep Literary Red - Primary */
+    --primary: 0 56% 52%;
     --primary-foreground: 0 0% 100%;
 
     /* Forest green for secondary */
@@ -30,29 +30,32 @@ All colors MUST be HSL.
     --muted: 40 20% 92%;
     --muted-foreground: 30 8% 45%;
 
-    /* Accent gold */
-    --accent: 38 90% 55%;
-    --accent-foreground: 30 10% 15%;
+    /* Accent red */
+    --accent: 0 59% 43%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 40 15% 88%;
     --input: 40 15% 88%;
-    --ring: 38 70% 45%;
+    --ring: 0 56% 52%;
 
     --radius: 0.5rem;
 
-    /* Gradients for visual richness */
-    --gradient-hero: linear-gradient(135deg, hsl(38 70% 45%) 0%, hsl(38 80% 35%) 100%);
+    /* Deep Red Literary Gradient */
+    --gradient-hero: linear-gradient(135deg, #C74343 0%, #A93232 50%, #7A1C1C 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(40 30% 98%) 100%);
 
     /* Shadows with warmth */
-    --shadow-elegant: 0 10px 30px -10px hsl(38 70% 45% / 0.15);
+    --shadow-elegant: 0 10px 30px -10px hsl(0 56% 52% / 0.15);
     --shadow-card: 0 4px 20px -2px hsl(30 10% 15% / 0.08);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Arabic Letter Decorations */
+    --letter-opacity: 0.10;
 
     --sidebar-background: 40 30% 97%;
     --sidebar-foreground: 30 10% 15%;
@@ -111,5 +114,44 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  
+  @keyframes drift {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+  
+  @keyframes softWave {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  .animate-float {
+    animation: float 8s ease-in-out infinite;
+  }
+  
+  .animate-drift {
+    animation: drift 7s ease-in-out infinite;
+  }
+  
+  .animate-softWave {
+    animation: softWave 9s ease-in-out infinite;
   }
 }
