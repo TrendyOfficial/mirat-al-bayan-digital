@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useEffect, useState } from "react";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -17,18 +18,35 @@ import {
 export default function AdminLayout() {
   const location = useLocation();
   const { language } = useLanguage();
-  const { signOut } = useAuth();
+  const { signOut, hasRole } = useAuth();
   const isArabic = language === 'ar';
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const navItems = [
-    { icon: LayoutDashboard, label: isArabic ? 'الرئيسية' : 'Dashboard', path: '/admin' },
-    { icon: FileText, label: isArabic ? 'المقالات' : 'Publications', path: '/admin/publications' },
-    { icon: Users, label: isArabic ? 'الكتّاب' : 'Authors', path: '/admin/authors' },
-    { icon: FolderOpen, label: isArabic ? 'الفئات' : 'Categories', path: '/admin/categories' },
-    { icon: BarChart3, label: isArabic ? 'التحليلات' : 'Analytics', path: '/admin/analytics' },
-    { icon: UserCog, label: isArabic ? 'المستخدمون' : 'Users', path: '/admin/users' },
-    { icon: Settings, label: isArabic ? 'الإعدادات' : 'Settings', path: '/admin/settings' },
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const adminStatus = await hasRole('admin');
+      setIsAdmin(adminStatus);
+    };
+    checkAdmin();
+  }, [hasRole]);
+
+  const allNavItems = [
+    { icon: LayoutDashboard, label: isArabic ? 'الرئيسية' : 'Dashboard', path: '/admin', allowedRoles: ['admin', 'editor', 'author'] },
+    { icon: FileText, label: isArabic ? 'المقالات' : 'Publications', path: '/admin/publications', allowedRoles: ['admin', 'editor', 'author'] },
+    { icon: Users, label: isArabic ? 'الكتّاب' : 'Authors', path: '/admin/authors', allowedRoles: ['admin', 'editor', 'author'] },
+    { icon: FolderOpen, label: isArabic ? 'الفئات' : 'Categories', path: '/admin/categories', allowedRoles: ['admin', 'editor'] },
+    { icon: BarChart3, label: isArabic ? 'التحليلات' : 'Analytics', path: '/admin/analytics', allowedRoles: ['admin', 'editor'] },
+    { icon: UserCog, label: isArabic ? 'المستخدمون' : 'Users', path: '/admin/users', allowedRoles: ['admin'] },
+    { icon: Settings, label: isArabic ? 'الإعدادات' : 'Settings', path: '/admin/settings', allowedRoles: ['admin'] },
   ];
+
+  // Filter navigation items - only show Users to admins
+  const navItems = allNavItems.filter(item => {
+    if (item.path === '/admin/users') {
+      return isAdmin;
+    }
+    return true;
+  });
 
   return (
     <div className="flex min-h-screen">

@@ -40,7 +40,7 @@ const App = () => (
               <Route
                 path="/admin"
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute>
                     <AdminLayout />
                   </ProtectedRoute>
                 }
@@ -52,7 +52,14 @@ const App = () => (
                 <Route path="authors" element={<Authors />} />
                 <Route path="categories" element={<div>Categories Management (Coming Soon)</div>} />
                 <Route path="analytics" element={<div>Analytics (Coming Soon)</div>} />
-                <Route path="users" element={<Users />} />
+                <Route 
+                  path="users" 
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <Users />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route path="settings" element={<div>Settings (Coming Soon)</div>} />
               </Route>
 

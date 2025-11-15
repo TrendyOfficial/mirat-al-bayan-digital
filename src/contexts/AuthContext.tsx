@@ -10,6 +10,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   hasRole: (role: 'admin' | 'editor' | 'author') => Promise<boolean>;
+  hasAnyRole: () => Promise<boolean>;
+  isOwner: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -79,8 +81,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return !!data;
   };
 
+  const hasAnyRole = async (): Promise<boolean> => {
+    if (!user) return false;
+    
+    const { data } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .limit(1);
+    
+    return !!data && data.length > 0;
+  };
+
+  const isOwner = (): boolean => {
+    return user?.email === 'alaa2001218@gmail.com';
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, isLoading, signIn, signUp, signOut, hasRole }}>
+    <AuthContext.Provider value={{ user, session, isLoading, signIn, signUp, signOut, hasRole, hasAnyRole, isOwner }}>
       {children}
     </AuthContext.Provider>
   );

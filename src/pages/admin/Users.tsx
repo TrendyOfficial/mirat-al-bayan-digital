@@ -31,6 +31,8 @@ export default function Users() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  
+  const OWNER_EMAIL = 'alaa2001218@gmail.com';
 
   useEffect(() => {
     fetchUsers();
@@ -46,7 +48,13 @@ export default function Users() {
       `);
 
     if (profiles) {
-      setUsers(profiles);
+      // Get all auth users to find owner
+      const { data: { users: authUsers } } = await supabase.auth.admin.listUsers();
+      const ownerUser = authUsers?.find((u: any) => u.email === OWNER_EMAIL);
+      
+      // Filter out the owner from the list
+      const filteredProfiles = profiles.filter(p => p.id !== ownerUser?.id);
+      setUsers(filteredProfiles);
     }
   };
 
@@ -58,21 +66,24 @@ export default function Users() {
       return;
     }
 
-    // Find user by email in profiles
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('id', email)
-      .single();
+    // Prevent adding roles to owner
+    if (email.toLowerCase() === OWNER_EMAIL.toLowerCase()) {
+      toast.error(isArabic ? 'لا يمكن تعديل أدوار المالك' : 'Cannot modify owner roles');
+      return;
+    }
 
-    if (!profile) {
+    // Find user by email from auth
+    const { data: { users: authUsers } } = await supabase.auth.admin.listUsers();
+    const targetUser = authUsers?.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
+
+    if (!targetUser) {
       toast.error(isArabic ? 'المستخدم غير موجود. تأكد من تسجيل المستخدم أولاً.' : 'User not found. Make sure the user has signed up first.');
       return;
     }
 
     // Add roles
     const roleInserts = selectedRoles.map(role => ({
-      user_id: profile.id,
+      user_id: targetUser.id,
       role: role as any,
     }));
 
