@@ -35,9 +35,9 @@ export default function AdminLayout() {
     { icon: FileText, label: isArabic ? 'المقالات' : 'Publications', path: '/admin/publications', allowedRoles: ['admin', 'editor', 'author'] },
     { icon: Users, label: isArabic ? 'الكتّاب' : 'Authors', path: '/admin/authors', allowedRoles: ['admin', 'editor', 'author'] },
     { icon: FolderOpen, label: isArabic ? 'الفئات' : 'Categories', path: '/admin/categories', allowedRoles: ['admin', 'editor'] },
-    { icon: BarChart3, label: isArabic ? 'التحليلات' : 'Analytics', path: '/admin/analytics', allowedRoles: ['admin', 'editor'] },
+    { icon: BarChart3, label: isArabic ? 'سجل النشاطات' : 'Activity Logs', path: '/admin/logs', allowedRoles: ['admin'] },
     { icon: UserCog, label: isArabic ? 'المستخدمون' : 'Users', path: '/admin/users', allowedRoles: ['admin'] },
-    { icon: Settings, label: isArabic ? 'الإعدادات' : 'Settings', path: '/admin/settings', allowedRoles: ['admin'] },
+    { icon: Settings, label: isArabic ? 'الإعدادات' : 'Settings', path: '/admin/settings', allowedRoles: ['admin', 'editor', 'author'] },
   ];
 
   // Filter navigation items - only show Users to admins
