@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          user_email: string
+          user_id: string | null
+          user_name: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          user_email: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          user_email?: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
       authors: {
         Row: {
           bio_ar: string | null
@@ -80,6 +110,39 @@ export type Database = {
           name_en?: string
           slug?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      deletion_reviews: {
+        Row: {
+          id: string
+          item_data: Json
+          item_id: string
+          item_type: string
+          requested_at: string | null
+          requested_by: string | null
+          requested_by_email: string
+          status: string | null
+        }
+        Insert: {
+          id?: string
+          item_data: Json
+          item_id: string
+          item_type: string
+          requested_at?: string | null
+          requested_by?: string | null
+          requested_by_email: string
+          status?: string | null
+        }
+        Update: {
+          id?: string
+          item_data?: Json
+          item_id?: string
+          item_type?: string
+          requested_at?: string | null
+          requested_by?: string | null
+          requested_by_email?: string
+          status?: string | null
         }
         Relationships: []
       }
@@ -318,6 +381,11 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      is_owner: { Args: { _user_id: string }; Returns: boolean }
+      log_activity: {
+        Args: { p_action: string; p_details?: Json; p_user_id: string }
+        Returns: undefined
       }
     }
     Enums: {
