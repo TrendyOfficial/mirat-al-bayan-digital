@@ -97,9 +97,46 @@ export default function Users() {
       });
     } else {
       toast.success(isArabic ? 'تمت الإضافة بنجاح' : 'Roles added successfully');
+      
+      // Log activity
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.rpc('log_activity', {
+          p_user_id: user.id,
+          p_action: 'Roles assigned to user',
+          p_details: { target_email: email, roles: selectedRoles }
+        });
+      }
+      
       setIsDialogOpen(false);
       setEmail("");
       setSelectedRoles([]);
+      fetchUsers();
+    }
+  };
+
+  const handleRemoveRole = async (userId: string, role: 'admin' | 'editor' | 'author', userEmail: string) => {
+    const { error } = await supabase
+      .from('user_roles')
+      .delete()
+      .eq('user_id', userId)
+      .eq('role', role);
+
+    if (error) {
+      toast.error(isArabic ? 'فشل الحذف' : 'Failed to remove role');
+    } else {
+      toast.success(isArabic ? 'تم حذف الدور بنجاح' : 'Role removed successfully');
+      
+      // Log activity
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.rpc('log_activity', {
+          p_user_id: user.id,
+          p_action: 'Role removed from user',
+          p_details: { target_email: userEmail, role }
+        });
+      }
+      
       fetchUsers();
     }
   };
@@ -187,11 +224,21 @@ export default function Users() {
                   {user.full_name || 'N/A'}
                 </TableCell>
                 <TableCell>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     {user.user_roles?.map((ur: any, idx: number) => (
-                      <Badge key={idx} variant="secondary">
-                        {ur.role}
-                      </Badge>
+                      <div key={idx} className="flex items-center gap-1">
+                        <Badge variant="secondary">
+                          {ur.role}
+                        </Badge>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 w-6 p-0"
+                          onClick={() => handleRemoveRole(user.id, ur.role, user.email)}
+                        >
+                          ×
+                        </Button>
+                      </div>
                     ))}
                     {(!user.user_roles || user.user_roles.length === 0) && (
                       <span className="text-muted-foreground text-sm">

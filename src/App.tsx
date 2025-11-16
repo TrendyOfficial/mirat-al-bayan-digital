@@ -18,6 +18,9 @@ import Publications from "./pages/admin/Publications";
 import PublicationEditor from "./pages/admin/PublicationEditor";
 import Authors from "./pages/admin/Authors";
 import Users from "./pages/admin/Users";
+import Categories from "./pages/admin/Categories";
+import ActivityLogs from "./pages/admin/ActivityLogs";
+import Settings from "./pages/admin/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,8 +53,22 @@ const App = () => (
                 <Route path="publications/new" element={<PublicationEditor />} />
                 <Route path="publications/edit/:id" element={<PublicationEditor />} />
                 <Route path="authors" element={<Authors />} />
-                <Route path="categories" element={<div>Categories Management (Coming Soon)</div>} />
-                <Route path="analytics" element={<div>Analytics (Coming Soon)</div>} />
+                <Route 
+                  path="categories" 
+                  element={
+                    <ProtectedRoute requiredRole="editor">
+                      <Categories />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="logs" 
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <ActivityLogs />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route 
                   path="users" 
                   element={
@@ -60,7 +77,7 @@ const App = () => (
                     </ProtectedRoute>
                   } 
                 />
-                <Route path="settings" element={<div>Settings (Coming Soon)</div>} />
+                <Route path="settings" element={<Settings />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
