@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search, User, LogOut } from "lucide-react";
+import { Search, User, LogOut, Settings as SettingsIcon } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -85,7 +85,10 @@ export function Header() {
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent align="end">
+
+                {/* Dashboard (admins only) */}
                 {showDashboard && (
                   <DropdownMenuItem asChild>
                     <Link to="/admin">
@@ -93,10 +96,21 @@ export function Header() {
                     </Link>
                   </DropdownMenuItem>
                 )}
+
+                {/* ⭐ Settings with icon */}
+                <DropdownMenuItem asChild>
+                  <Link to="/settings" className="flex items-center">
+                    <SettingsIcon className="h-4 w-4 mr-2" />
+                    {isArabic ? 'الإعدادات' : 'Settings'}
+                  </Link>
+                </DropdownMenuItem>
+
+                {/* Logout */}
                 <DropdownMenuItem onClick={() => signOut()}>
                   <LogOut className="h-4 w-4 mr-2" />
                   {isArabic ? 'تسجيل الخروج' : 'Logout'}
                 </DropdownMenuItem>
+
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
