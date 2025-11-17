@@ -20,42 +20,79 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+
+interface UserWithRoles {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  created_at: string;
+  user_roles: { role: 'admin' | 'editor' | 'author' }[];
+}
 
 export default function Users() {
   const { language } = useLanguage();
+  const { user: currentUser, isOwner } = useAuth();
   const isArabic = language === 'ar';
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserWithRoles[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   
   const OWNER_EMAIL = 'alaa2001218@gmail.com';
+  const ownerCheck = isOwner();
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
   const fetchUsers = async () => {
-    // Get all users with their roles
+    // Get all profiles
     const { data: profiles } = await supabase
       .from('profiles')
-      .select(`
-        *,
-        user_roles (role)
-      `);
+      .select('id, full_name, created_at')
+      .order('created_at', { ascending: false });
 
-    if (profiles) {
-      // Get all auth users to find owner
-      const { data: { users: authUsers } } = await supabase.auth.admin.listUsers();
-      const ownerUser = authUsers?.find((u: any) => u.email === OWNER_EMAIL);
-      
-      // Filter out the owner from the list
-      const filteredProfiles = profiles.filter(p => p.id !== ownerUser?.id);
-      setUsers(filteredProfiles);
+    if (!profiles) {
+      setUsers([]);
+      return;
     }
+
+    // For each profile, get email and roles
+    const usersWithDetails = await Promise.all(
+      profiles.map(async (profile) => {
+        // Get email using database function
+        const { data: emailData } = await supabase.rpc('get_user_email_by_id', {
+          user_id_param: profile.id
+        });
+
+        // Skip owner
+        if (emailData?.toLowerCase() === OWNER_EMAIL.toLowerCase()) {
+          return null;
+        }
+
+        // Get roles
+        const { data: roles } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', profile.id);
+
+        return {
+          ...profile,
+          email: emailData || null,
+          user_roles: (roles || []) as { role: 'admin' | 'editor' | 'author' }[],
+        };
+      })
+    );
+
+    // Filter out nulls (owner) and users without emails
+    const filtered = usersWithDetails.filter((u): u is UserWithRoles => 
+      u !== null && u.email !== null
+    );
+    setUsers(filtered);
   };
 
   const handleAddUser = async (e: React.FormEvent) => {
@@ -72,18 +109,25 @@ export default function Users() {
       return;
     }
 
-    // Find user by email from auth
-    const { data: { users: authUsers } } = await supabase.auth.admin.listUsers();
-    const targetUser = authUsers?.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
+    // Find user ID by email using database function
+    const { data: userId, error: lookupError } = await supabase.rpc('get_user_id_by_email', {
+      email_param: email
+    });
 
-    if (!targetUser) {
+    if (lookupError || !userId) {
       toast.error(isArabic ? 'المستخدم غير موجود. تأكد من تسجيل المستخدم أولاً.' : 'User not found. Make sure the user has signed up first.');
+      return;
+    }
+
+    // Check if user is trying to assign admin role when they're not owner
+    if (selectedRoles.includes('admin') && !ownerCheck) {
+      toast.error(isArabic ? 'فقط المالك يمكنه إضافة مسؤولين' : 'Only owner can assign admin role');
       return;
     }
 
     // Add roles
     const roleInserts = selectedRoles.map(role => ({
-      user_id: targetUser.id,
+      user_id: userId,
       role: role as any,
     }));
 
@@ -99,14 +143,11 @@ export default function Users() {
       toast.success(isArabic ? 'تمت الإضافة بنجاح' : 'Roles added successfully');
       
       // Log activity
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.rpc('log_activity', {
-          p_user_id: user.id,
-          p_action: 'Roles assigned to user',
-          p_details: { target_email: email, roles: selectedRoles }
-        });
-      }
+      await supabase.rpc('log_activity', {
+        p_user_id: currentUser?.id,
+        p_action: 'Roles assigned to user',
+        p_details: { target_email: email, roles: selectedRoles }
+      });
       
       setIsDialogOpen(false);
       setEmail("");
@@ -116,6 +157,12 @@ export default function Users() {
   };
 
   const handleRemoveRole = async (userId: string, role: 'admin' | 'editor' | 'author', userEmail: string) => {
+    // Only owner can remove admin roles
+    if (role === 'admin' && !ownerCheck) {
+      toast.error(isArabic ? 'فقط المالك يمكنه إزالة المسؤولين' : 'Only owner can remove admin role');
+      return;
+    }
+
     const { error } = await supabase
       .from('user_roles')
       .delete()
@@ -123,25 +170,22 @@ export default function Users() {
       .eq('role', role);
 
     if (error) {
-      toast.error(isArabic ? 'فشل الحذف' : 'Failed to remove role');
+      toast.error(isArabic ? 'فشل الإزالة' : 'Failed to remove role');
     } else {
-      toast.success(isArabic ? 'تم حذف الدور بنجاح' : 'Role removed successfully');
+      toast.success(isArabic ? 'تم إزالة الدور بنجاح' : 'Role removed successfully');
       
       // Log activity
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.rpc('log_activity', {
-          p_user_id: user.id,
-          p_action: 'Role removed from user',
-          p_details: { target_email: userEmail, role }
-        });
-      }
+      await supabase.rpc('log_activity', {
+        p_user_id: currentUser?.id,
+        p_action: 'Role removed from user',
+        p_details: { target_email: userEmail, removed_role: role }
+      });
       
       fetchUsers();
     }
   };
 
-  const handleRoleToggle = (role: string) => {
+  const toggleRole = (role: string) => {
     setSelectedRoles(prev =>
       prev.includes(role)
         ? prev.filter(r => r !== role)
@@ -149,59 +193,92 @@ export default function Users() {
     );
   };
 
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return 'bg-red-500 hover:bg-red-600';
+      case 'editor':
+        return 'bg-blue-500 hover:bg-blue-600';
+      case 'author':
+        return 'bg-green-500 hover:bg-green-600';
+      default:
+        return '';
+    }
+  };
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <h1 className="font-arabic text-3xl font-bold">
-          {isArabic ? 'إدارة المستخدمين' : 'User Management'}
+          {isArabic ? 'إدارة المستخدمين' : 'Users Management'}
         </h1>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <UserPlus className="h-4 w-4 mr-2" />
-              {isArabic ? 'إضافة أدوار' : 'Add Roles'}
+              {isArabic ? 'إضافة دور' : 'Add Role'}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {isArabic ? 'إضافة أدوار لمستخدم' : 'Add Roles to User'}
+                {isArabic ? 'إضافة دور لمستخدم' : 'Add Role to User'}
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleAddUser} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">
-                  {isArabic ? 'البريد الإلكتروني' : 'Email'}
-                </Label>
+                <Label htmlFor="email">{isArabic ? 'البريد الإلكتروني' : 'Email'}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder={isArabic ? 'أدخل البريد الإلكتروني' : 'Enter email'}
                   required
-                  placeholder={isArabic ? 'أدخل البريد الإلكتروني' : 'Enter user email'}
                 />
               </div>
 
-              <div className="space-y-3">
-                <Label>{isArabic ? 'اختر الأدوار' : 'Select Roles'}</Label>
-                {['admin', 'editor', 'author'].map((role) => (
-                  <div key={role} className="flex items-center space-x-2">
+              <div className="space-y-2">
+                <Label>{isArabic ? 'الأدوار' : 'Roles'}</Label>
+                <div className="space-y-2">
+                  {ownerCheck && (
+                    <div className="flex items-center space-x-2 space-x-reverse">
+                      <Checkbox
+                        id="admin"
+                        checked={selectedRoles.includes('admin')}
+                        onCheckedChange={() => toggleRole('admin')}
+                      />
+                      <Label htmlFor="admin" className="cursor-pointer">
+                        {isArabic ? 'مسؤول' : 'Admin'}
+                      </Label>
+                    </div>
+                  )}
+                  <div className="flex items-center space-x-2 space-x-reverse">
                     <Checkbox
-                      id={role}
-                      checked={selectedRoles.includes(role)}
-                      onCheckedChange={() => handleRoleToggle(role)}
+                      id="editor"
+                      checked={selectedRoles.includes('editor')}
+                      onCheckedChange={() => toggleRole('editor')}
                     />
-                    <label htmlFor={role} className="text-sm cursor-pointer">
-                      {role.charAt(0).toUpperCase() + role.slice(1)}
-                    </label>
+                    <Label htmlFor="editor" className="cursor-pointer">
+                      {isArabic ? 'محرر' : 'Editor'}
+                    </Label>
                   </div>
-                ))}
+                  <div className="flex items-center space-x-2 space-x-reverse">
+                    <Checkbox
+                      id="author"
+                      checked={selectedRoles.includes('author')}
+                      onCheckedChange={() => toggleRole('author')}
+                    />
+                    <Label htmlFor="author" className="cursor-pointer">
+                      {isArabic ? 'كاتب' : 'Author'}
+                    </Label>
+                  </div>
+                </div>
               </div>
 
               <Button type="submit" className="w-full">
-                {isArabic ? 'إضافة الأدوار' : 'Add Roles'}
+                {isArabic ? 'إضافة' : 'Add'}
               </Button>
             </form>
           </DialogContent>
@@ -213,45 +290,64 @@ export default function Users() {
           <TableHeader>
             <TableRow>
               <TableHead>{isArabic ? 'الاسم' : 'Name'}</TableHead>
+              <TableHead>{isArabic ? 'البريد الإلكتروني' : 'Email'}</TableHead>
               <TableHead>{isArabic ? 'الأدوار' : 'Roles'}</TableHead>
-              <TableHead>{isArabic ? 'تاريخ الانضمام' : 'Joined'}</TableHead>
+              <TableHead>{isArabic ? 'الإجراءات' : 'Actions'}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">
-                  {user.full_name || 'N/A'}
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2 flex-wrap">
-                    {user.user_roles?.map((ur: any, idx: number) => (
-                      <div key={idx} className="flex items-center gap-1">
-                        <Badge variant="secondary">
-                          {ur.role}
-                        </Badge>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 w-6 p-0"
-                          onClick={() => handleRemoveRole(user.id, ur.role, user.email)}
-                        >
-                          ×
-                        </Button>
-                      </div>
-                    ))}
-                    {(!user.user_roles || user.user_roles.length === 0) && (
-                      <span className="text-muted-foreground text-sm">
-                        {isArabic ? 'لا توجد أدوار' : 'No roles'}
-                      </span>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {new Date(user.created_at).toLocaleDateString()}
+            {users.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                  {isArabic ? 'لا يوجد مستخدمون' : 'No users found'}
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium">{user.full_name || '-'}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-2">
+                      {user.user_roles.length === 0 ? (
+                        <Badge variant="outline">{isArabic ? 'لا يوجد دور' : 'No role'}</Badge>
+                      ) : (
+                        user.user_roles.map((ur) => (
+                          <Badge
+                            key={ur.role}
+                            className={getRoleBadgeColor(ur.role)}
+                          >
+                            {isArabic
+                              ? ur.role === 'admin'
+                                ? 'مسؤول'
+                                : ur.role === 'editor'
+                                ? 'محرر'
+                                : 'كاتب'
+                              : ur.role}
+                          </Badge>
+                        ))
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-2">
+                      {user.user_roles.map((ur) => (
+                        <Button
+                          key={ur.role}
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleRemoveRole(user.id, ur.role as any, user.email!)}
+                          disabled={ur.role === 'admin' && !ownerCheck}
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          {isArabic ? 'إزالة' : 'Remove'} {ur.role}
+                        </Button>
+                      ))}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

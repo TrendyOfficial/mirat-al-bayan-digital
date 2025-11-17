@@ -125,8 +125,8 @@ export default function Categories() {
         toast.success(isArabic ? 'تم الحذف بنجاح' : 'Deleted successfully');
         await supabase.rpc('log_activity', {
           p_user_id: user?.id,
-          p_action: 'Category deleted',
-          p_details: { category_id: category.id, category_name: category.name_ar }
+          p_action: 'Category deleted by owner',
+          p_details: { category_id: category.id, category_name_ar: category.name_ar, category_name_en: category.name_en }
         });
         fetchCategories();
       }
@@ -149,7 +149,7 @@ export default function Categories() {
         await supabase.rpc('log_activity', {
           p_user_id: user?.id,
           p_action: 'Category deletion requested',
-          p_details: { category_id: category.id, category_name: category.name_ar }
+          p_details: { category_id: category.id, category_name_ar: category.name_ar, category_name_en: category.name_en }
         });
         fetchDeletionReviews();
       }
