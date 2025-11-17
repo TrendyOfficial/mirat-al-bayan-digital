@@ -30,6 +30,26 @@ export default function ActivityLogs() {
 
   useEffect(() => {
     fetchLogs();
+    
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('activity_logs_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'activity_logs'
+        },
+        () => {
+          fetchLogs();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {

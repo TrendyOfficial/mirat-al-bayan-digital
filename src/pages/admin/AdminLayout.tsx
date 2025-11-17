@@ -53,11 +53,6 @@ export default function AdminLayout() {
     label: isArabic ? 'المستخدمون' : 'Users',
     path: '/admin/users',
     allowedRoles: ['admin']
-  }, {
-    icon: Settings,
-    label: isArabic ? 'الإعدادات' : 'Settings',
-    path: '/admin/settings',
-    allowedRoles: ['admin', 'editor', 'author']
   }];
 
   // Filter navigation items - only show Users to admins
@@ -91,9 +86,15 @@ export default function AdminLayout() {
 
         <div className="absolute bottom-4 left-4 right-4 space-y-2">
           <Button variant="outline" className="w-full" asChild>
-            
+            <Link to="/settings">
+              <Settings className="h-4 w-4 mr-2" />
+              {isArabic ? 'الإعدادات' : 'Settings'}
+            </Link>
           </Button>
-          
+          <Button variant="outline" className="w-full" onClick={signOut}>
+            <Home className="h-4 w-4 mr-2" />
+            {isArabic ? 'تسجيل الخروج' : 'Logout'}
+          </Button>
         </div>
       </aside>
 

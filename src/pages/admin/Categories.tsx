@@ -81,11 +81,13 @@ export default function Categories() {
         toast.error(isArabic ? 'فشل التحديث' : 'Update failed');
       } else {
         toast.success(isArabic ? 'تم التحديث بنجاح' : 'Updated successfully');
-        await supabase.rpc('log_activity', {
-          p_user_id: user?.id,
-          p_action: 'Category updated',
-          p_details: { category_id: currentCategory.id, ...formData }
-        });
+        if (user?.id) {
+          await supabase.rpc('log_activity', {
+            p_user_id: user.id,
+            p_action: 'Category updated',
+            p_details: { category_id: currentCategory.id, ...formData }
+          });
+        }
       }
     } else {
       const { error } = await supabase
@@ -96,11 +98,13 @@ export default function Categories() {
         toast.error(isArabic ? 'فشل الإضافة' : 'Failed to add');
       } else {
         toast.success(isArabic ? 'تمت الإضافة بنجاح' : 'Added successfully');
-        await supabase.rpc('log_activity', {
-          p_user_id: user?.id,
-          p_action: 'Category created',
-          p_details: formData
-        });
+        if (user?.id) {
+          await supabase.rpc('log_activity', {
+            p_user_id: user.id,
+            p_action: 'Category created',
+            p_details: formData
+          });
+        }
       }
     }
 
@@ -123,11 +127,13 @@ export default function Categories() {
         toast.error(isArabic ? 'فشل الحذف' : 'Delete failed');
       } else {
         toast.success(isArabic ? 'تم الحذف بنجاح' : 'Deleted successfully');
-        await supabase.rpc('log_activity', {
-          p_user_id: user?.id,
-          p_action: 'Category deleted by owner',
-          p_details: { category_id: category.id, category_name_ar: category.name_ar, category_name_en: category.name_en }
-        });
+        if (user?.id) {
+          await supabase.rpc('log_activity', {
+            p_user_id: user.id,
+            p_action: 'Category deleted by owner',
+            p_details: { category_id: category.id, category_name_ar: category.name_ar, category_name_en: category.name_en }
+          });
+        }
         fetchCategories();
       }
     } else {
@@ -146,11 +152,13 @@ export default function Categories() {
         toast.error(isArabic ? 'فشل الطلب' : 'Request failed');
       } else {
         toast.success(isArabic ? 'تم إرسال الطلب للمراجعة' : 'Request sent for review');
-        await supabase.rpc('log_activity', {
-          p_user_id: user?.id,
-          p_action: 'Category deletion requested',
-          p_details: { category_id: category.id, category_name_ar: category.name_ar, category_name_en: category.name_en }
-        });
+        if (user?.id) {
+          await supabase.rpc('log_activity', {
+            p_user_id: user.id,
+            p_action: 'Category deletion requested',
+            p_details: { category_id: category.id, category_name_ar: category.name_ar, category_name_en: category.name_en }
+          });
+        }
         fetchDeletionReviews();
       }
     }
@@ -188,11 +196,13 @@ export default function Categories() {
         .eq('id', reviewId);
 
       toast.success(isArabic ? 'تمت الموافقة على الحذف' : 'Deletion approved');
-      await supabase.rpc('log_activity', {
-        p_user_id: user?.id,
-        p_action: 'Category deletion approved',
-        p_details: { category_id: categoryId }
-      });
+      if (user?.id) {
+        await supabase.rpc('log_activity', {
+          p_user_id: user.id,
+          p_action: 'Category deletion approved',
+          p_details: { category_id: categoryId }
+        });
+      }
       fetchCategories();
       fetchDeletionReviews();
     }
@@ -205,6 +215,13 @@ export default function Categories() {
       .eq('id', reviewId);
 
     toast.success(isArabic ? 'تم رفض الحذف' : 'Deletion rejected');
+    if (user?.id) {
+      await supabase.rpc('log_activity', {
+        p_user_id: user.id,
+        p_action: 'Category deletion rejected',
+        p_details: { review_id: reviewId }
+      });
+    }
     fetchDeletionReviews();
   };
 
