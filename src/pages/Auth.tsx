@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { z } from "zod";
@@ -41,11 +42,49 @@ export default function Auth() {
     confirmPassword: "",
   });
 
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
+
+  const resetSchema = z.object({
+    email: z.string().email("Invalid email address").max(255),
+  });
+
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      resetSchema.parse({ email: resetEmail });
+      setIsLoading(true);
+
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+
+      if (error) {
+        toast.error(isArabic ? "خطأ في إرسال رابط الاستعادة" : "Failed to send reset link", {
+          description: error.message,
+        });
+      } else {
+        setEmailSent(true);
+        toast.success(isArabic ? "تم إرسال رابط إعادة التعيين" : "Reset link sent to your email");
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(isArabic ? "خطأ في التحقق" : "Validation error", {
+          description: error.errors[0].message,
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +101,17 @@ export default function Auth() {
         });
       } else {
         toast.success(isArabic ? "تم تسجيل الدخول بنجاح" : "Login successful");
+        
+        // Log activity
+        const { data: { user: loggedUser } } = await supabase.auth.getUser();
+        if (loggedUser) {
+          await supabase.rpc('log_activity', {
+            p_user_id: loggedUser.id,
+            p_action: 'User logged in',
+            p_details: {}
+          });
+        }
+        
         navigate("/");
       }
     } catch (error) {
@@ -93,8 +143,24 @@ export default function Auth() {
           description: error.message,
         });
       } else {
-        toast.success(isArabic ? "تم التسجيل بنجاح" : "Signup successful");
-        navigate("/");
+        // Log activity
+        const { data: { user: newUser } } = await supabase.auth.getUser();
+        if (newUser) {
+          await supabase.rpc('log_activity', {
+            p_user_id: newUser.id,
+            p_action: 'User signed up',
+            p_details: { email: signupData.email }
+          });
+        }
+        
+        // Check if email confirmation is enabled
+        const { data: authConfig } = await supabase.auth.getSession();
+        setEmailSent(true);
+        toast.success(
+          isArabic
+            ? "تم التسجيل! تحقق من بريدك الإلكتروني"
+            : "Signup successful! Check your email for verification"
+        );
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

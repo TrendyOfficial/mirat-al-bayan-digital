@@ -102,13 +102,31 @@ export default function PublicationEditor() {
           .eq('id', id);
 
         if (error) throw error;
+        
+        // Log activity
+        await supabase.rpc('log_activity', {
+          p_user_id: user?.id,
+          p_action: 'Publication edited',
+          p_details: { publication_id: id, title_ar: formData.title_ar, status: formData.status }
+        });
+        
         toast.success(isArabic ? 'تم التحديث بنجاح' : 'Updated successfully');
       } else {
-        const { error } = await supabase
+        const { data: newPub, error } = await supabase
           .from('publications')
-          .insert([publicationData]);
+          .insert([publicationData])
+          .select()
+          .single();
 
         if (error) throw error;
+        
+        // Log activity
+        await supabase.rpc('log_activity', {
+          p_user_id: user?.id,
+          p_action: 'New publication created',
+          p_details: { publication_id: newPub.id, title_ar: formData.title_ar, status: formData.status }
+        });
+        
         toast.success(isArabic ? 'تمت الإضافة بنجاح' : 'Created successfully');
       }
 

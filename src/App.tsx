@@ -20,7 +20,7 @@ import Authors from "./pages/admin/Authors";
 import Users from "./pages/admin/Users";
 import Categories from "./pages/admin/Categories";
 import ActivityLogs from "./pages/admin/ActivityLogs";
-import Settings from "./pages/admin/Settings";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +39,14 @@ const App = () => (
               <Route path="/category/:slug" element={<Category />} />
               <Route path="/publication/:slug" element={<Publication />} />
               <Route path="/search" element={<Search />} />
+              <Route 
+                path="/settings" 
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } 
+              />
               
               <Route
                 path="/admin"
@@ -77,7 +85,6 @@ const App = () => (
                     </ProtectedRoute>
                   } 
                 />
-                <Route path="settings" element={<Settings />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
