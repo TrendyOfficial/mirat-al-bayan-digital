@@ -16,6 +16,7 @@ export default function Index() {
   const [recentPublications, setRecentPublications] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [heroImage, setHeroImage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -35,48 +36,53 @@ export default function Index() {
   };
 
   const fetchData = async () => {
-    // Fetch featured publication
-    const { data: featured } = await supabase
-      .from('publications')
-      .select(`
-        *,
-        author:authors(name_ar, name_en),
-        category:categories(name_ar, name_en, slug)
-      `)
-      .eq('status', 'published')
-      .eq('is_featured', true)
-      .order('published_at', { ascending: false })
-      .limit(1)
-      .single();
+    setLoading(true);
+    try {
+      // Fetch featured publication
+      const { data: featured } = await supabase
+        .from('publications')
+        .select(`
+          *,
+          author:authors(name_ar, name_en),
+          category:categories(name_ar, name_en, slug)
+        `)
+        .eq('status', 'published')
+        .eq('is_featured', true)
+        .order('published_at', { ascending: false })
+        .limit(1)
+        .single();
 
-    if (featured) {
-      setFeaturedPublication(featured);
-    }
+      if (featured) {
+        setFeaturedPublication(featured);
+      }
 
-    // Fetch recent publications
-    const { data: recent } = await supabase
-      .from('publications')
-      .select(`
-        *,
-        author:authors(name_ar, name_en),
-        category:categories(name_ar, name_en, slug)
-      `)
-      .eq('status', 'published')
-      .order('published_at', { ascending: false })
-      .limit(6);
+      // Fetch recent publications
+      const { data: recent } = await supabase
+        .from('publications')
+        .select(`
+          *,
+          author:authors(name_ar, name_en),
+          category:categories(name_ar, name_en, slug)
+        `)
+        .eq('status', 'published')
+        .order('published_at', { ascending: false })
+        .limit(6);
 
-    if (recent) {
-      setRecentPublications(recent);
-    }
+      if (recent) {
+        setRecentPublications(recent);
+      }
 
-    // Fetch categories
-    const { data: cats } = await supabase
-      .from('categories')
-      .select('*')
-      .order('name_ar');
+      // Fetch categories
+      const { data: cats } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name_ar');
 
-    if (cats) {
-      setCategories(cats);
+      if (cats) {
+        setCategories(cats);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,7 +122,7 @@ export default function Index() {
                 <img
                   src={heroImage}
                   alt="Hero Magazine Cover"
-                  className="w-full h-[500px] object-cover rounded-lg shadow-elegant"
+                  className="w-full max-h-[500px] object-contain rounded-lg shadow-elegant"
                 />
               </div>
             </div>
@@ -157,18 +163,28 @@ export default function Index() {
             <h2 className="font-arabic text-3xl font-bold mb-8 text-center">
               {isArabic ? 'الفئات' : 'Categories'}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {categories.map((category) => (
-                <CategoryCard
-                  key={category.id}
-                  name_ar={category.name_ar}
-                  name_en={category.name_en}
-                  slug={category.slug}
-                  description_ar={category.description_ar}
-                  description_en={category.description_en}
-                />
-              ))}
-            </div>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="h-48 bg-muted rounded-lg"></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {categories.map((category) => (
+                  <CategoryCard
+                    key={category.id}
+                    name_ar={category.name_ar}
+                    name_en={category.name_en}
+                    slug={category.slug}
+                    description_ar={category.description_ar}
+                    description_en={category.description_en}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -178,26 +194,36 @@ export default function Index() {
             <h2 className="font-arabic text-3xl font-bold mb-8 text-center">
               {isArabic ? 'أحدث المقالات' : 'Recent Articles'}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recentPublications.map((pub) => (
-                <PublicationCard
-                  key={pub.id}
-                  id={pub.id}
-                  title_ar={pub.title_ar}
-                  title_en={pub.title_en}
-                  excerpt_ar={pub.excerpt_ar}
-                  excerpt_en={pub.excerpt_en}
-                  featured_image_url={pub.featured_image_url}
-                  slug={pub.slug}
-                  category_name_ar={pub.category?.name_ar}
-                  category_name_en={pub.category?.name_en}
-                  category_slug={pub.category?.slug}
-                  author_name_ar={pub.author?.name_ar}
-                  author_name_en={pub.author?.name_en}
-                  published_at={pub.published_at}
-                />
-              ))}
-            </div>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="h-80 bg-muted rounded-lg"></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recentPublications.map((pub) => (
+                  <PublicationCard
+                    key={pub.id}
+                    id={pub.id}
+                    title_ar={pub.title_ar}
+                    title_en={pub.title_en}
+                    excerpt_ar={pub.excerpt_ar}
+                    excerpt_en={pub.excerpt_en}
+                    featured_image_url={pub.featured_image_url}
+                    slug={pub.slug}
+                    category_name_ar={pub.category?.name_ar}
+                    category_name_en={pub.category?.name_en}
+                    category_slug={pub.category?.slug}
+                    author_name_ar={pub.author?.name_ar}
+                    author_name_en={pub.author?.name_en}
+                    published_at={pub.published_at}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>
