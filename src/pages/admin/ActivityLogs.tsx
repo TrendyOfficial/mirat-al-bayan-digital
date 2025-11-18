@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, Activity } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -20,13 +21,20 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import { Navigate } from "react-router-dom";
 
 export default function ActivityLogs() {
   const { language } = useLanguage();
+  const { user, isOwner } = useAuth();
   const isArabic = language === 'ar';
   const [logs, setLogs] = useState<any[]>([]);
   const [filteredLogs, setFilteredLogs] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Only owner can access activity logs
+  if (!isOwner()) {
+    return <Navigate to="/admin" replace />;
+  }
 
   useEffect(() => {
     fetchLogs();
@@ -131,6 +139,7 @@ export default function ActivityLogs() {
             <TableRow>
               <TableHead>{isArabic ? 'الاسم' : 'Name'}</TableHead>
               <TableHead>{isArabic ? 'البريد الإلكتروني' : 'Email'}</TableHead>
+              <TableHead>{isArabic ? 'الدور' : 'Role'}</TableHead>
               <TableHead>{isArabic ? 'النشاط' : 'Action'}</TableHead>
               <TableHead>{isArabic ? 'التاريخ' : 'Date'}</TableHead>
               <TableHead>{isArabic ? 'التفاصيل' : 'Details'}</TableHead>
@@ -152,6 +161,11 @@ export default function ActivityLogs() {
                       {log.user_email}
                     </CollapsibleContent>
                   </Collapsible>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline" className="capitalize">
+                    {log.user_role || 'user'}
+                  </Badge>
                 </TableCell>
                 <TableCell>
                   <Badge variant={getActionColor(log.action)}>

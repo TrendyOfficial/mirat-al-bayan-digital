@@ -151,11 +151,13 @@ export default function Users() {
       toast.success(isArabic ? 'تمت الإضافة بنجاح' : 'Roles added successfully');
       
       // Log activity
-      await supabase.rpc('log_activity', {
-        p_user_id: currentUser?.id,
-        p_action: 'Roles assigned to user',
-        p_details: { target_email: email, roles: selectedRoles }
-      });
+      if (currentUser?.id) {
+        await supabase.rpc('log_activity', {
+          p_user_id: currentUser.id,
+          p_action: `Assigned roles: ${selectedRoles.join(', ')}`,
+          p_details: { target_email: email, roles: selectedRoles }
+        });
+      }
       
       setIsDialogOpen(false);
       setEmail("");
@@ -183,11 +185,13 @@ export default function Users() {
       toast.success(isArabic ? 'تم إزالة الدور بنجاح' : 'Role removed successfully');
       
       // Log activity
-      await supabase.rpc('log_activity', {
-        p_user_id: currentUser?.id,
-        p_action: 'Role removed from user',
-        p_details: { target_email: userEmail, removed_role: role }
-      });
+      if (currentUser?.id) {
+        await supabase.rpc('log_activity', {
+          p_user_id: currentUser.id,
+          p_action: `Removed role: ${role}`,
+          p_details: { target_email: userEmail, removed_role: role }
+        });
+      }
       
       fetchUsers();
     }
