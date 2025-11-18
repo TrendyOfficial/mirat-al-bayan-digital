@@ -237,42 +237,42 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 30 15% 12%;
-    --foreground: 40 30% 95%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 30 15% 15%;
-    --card-foreground: 40 30% 95%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 30 15% 15%;
-    --popover-foreground: 40 30% 95%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 38 70% 50%;
-    --primary-foreground: 30 15% 12%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 222.2 84% 4.9%;
 
-    --secondary: 145 25% 40%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 30 15% 18%;
-    --muted-foreground: 40 20% 65%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 38 80% 45%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 30 15% 20%;
-    --input: 30 15% 20%;
-    --ring: 38 70% 50%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 0 0% 98%;
 
-    --sidebar-background: 30 15% 12%;
-    --sidebar-foreground: 40 30% 95%;
-    --sidebar-primary: 38 70% 50%;
-    --sidebar-primary-foreground: 30 15% 12%;
-    --sidebar-accent: 30 15% 18%;
-    --sidebar-accent-foreground: 40 30% 95%;
-    --sidebar-border: 30 15% 20%;
-    --sidebar-ring: 38 70% 50%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 0 0% 98%;
   }
 }
 
@@ -283,6 +283,11 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+  
+  .dark body {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a0b2e 25%, #2d1b4e 50%, #3a1f5c 75%, #4a2c6d 100%);
+    background-attachment: fixed;
   }
   
   @keyframes float {

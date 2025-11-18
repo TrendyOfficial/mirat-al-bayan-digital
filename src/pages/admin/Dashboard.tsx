@@ -69,15 +69,19 @@ export default function Dashboard() {
       icon: Eye,
       link: '/admin/analytics',
     },
-    {
-      title: isArabic ? 'الفئات' : 'Categories',
-      value: stats.categories,
-      icon: FolderOpen,
-      link: '/admin/categories',
-    },
-  ];
+      {
+        title: isArabic ? 'الفئات' : 'Categories',
+        value: stats.categories,
+        icon: FolderOpen,
+        link: '/admin/categories',
+      },
+    ];
 
-  return (
+    const handleImageUpdate = (url: string) => {
+      setHeroImage(url);
+    };
+
+    return (
     <div>
       <h1 className="font-arabic text-3xl font-bold mb-8">
         {isArabic ? 'لوحة التحكم' : 'Dashboard'}
@@ -103,7 +107,7 @@ export default function Dashboard() {
 
       <HeroImageUpload
         currentImage={heroImage}
-        onImageUpdate={setHeroImage}
+        onImageUpdate={handleImageUpdate}
         language={language}
       />
     </div>

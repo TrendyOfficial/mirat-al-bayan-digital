@@ -31,9 +31,10 @@ export function HeroImageUpload({ currentImage, onImageUpdate, language }: HeroI
       .upsert({
         key: "hero_image",
         value: { url: imageUrl, type: "url" },
-      });
+      }, { onConflict: "key" });
 
     if (error) {
+      console.error("Upload error:", error);
       toast.error(isArabic ? "فشل تحديث الصورة" : "Failed to update image");
     } else {
       toast.success(isArabic ? "تم تحديث الصورة" : "Image updated successfully");
@@ -62,9 +63,10 @@ export function HeroImageUpload({ currentImage, onImageUpdate, language }: HeroI
         .upsert({
           key: "hero_image",
           value: { url: base64, type: "upload" },
-        });
+        }, { onConflict: "key" });
 
       if (error) {
+        console.error("Upload error:", error);
         toast.error(isArabic ? "فشل رفع الصورة" : "Failed to upload image");
       } else {
         toast.success(isArabic ? "تم رفع الصورة" : "Image uploaded successfully");
@@ -73,6 +75,24 @@ export function HeroImageUpload({ currentImage, onImageUpdate, language }: HeroI
       setIsLoading(false);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = async () => {
+    setIsLoading(true);
+    const { error } = await supabase
+      .from("settings")
+      .delete()
+      .eq("key", "hero_image");
+
+    if (error) {
+      console.error("Delete error:", error);
+      toast.error(isArabic ? "فشل حذف الصورة" : "Failed to remove image");
+    } else {
+      toast.success(isArabic ? "تم حذف الصورة" : "Image removed successfully");
+      onImageUpdate("");
+      setImageUrl("");
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -132,13 +152,21 @@ export function HeroImageUpload({ currentImage, onImageUpdate, language }: HeroI
         </Tabs>
 
         {currentImage && (
-          <div className="mt-4">
+          <div className="mt-4 space-y-2">
             <Label>{isArabic ? "الصورة الحالية" : "Current Image"}</Label>
             <img
               src={currentImage}
               alt="Hero"
               className="mt-2 w-full h-48 object-cover rounded-lg"
             />
+            <Button 
+              onClick={handleRemoveImage} 
+              disabled={isLoading}
+              variant="destructive"
+              className="w-full"
+            >
+              {isArabic ? "حذف الصورة" : "Remove Image"}
+            </Button>
           </div>
         )}
       </CardContent>
