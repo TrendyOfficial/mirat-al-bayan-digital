@@ -63,6 +63,27 @@ export default function Categories() {
     if (canAccess) {
       fetchCategories();
       fetchDeletionReviews();
+
+      // Real-time subscription for deletion reviews
+      const channel = supabase
+        .channel("deletion_reviews_categories")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "deletion_reviews",
+            filter: "item_type=eq.category",
+          },
+          () => {
+            fetchDeletionReviews();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
   }, [canAccess]);
 
@@ -228,16 +249,18 @@ export default function Categories() {
 
     await supabase
       .from("deletion_reviews")
-      .update({ status: "approved" })
+      .delete()
       .eq("id", reviewId);
 
     toast.success(isArabic ? "تمت الموافقة" : "Approved");
 
-    await supabase.rpc("log_activity", {
-      p_user_id: user?.id,
-      p_action: "Owner approved category deletion",
-      p_details: { categoryId, reviewId },
-    });
+    if (user?.id) {
+      await supabase.rpc("log_activity", {
+        p_user_id: user.id,
+        p_action: "Owner approved category deletion",
+        p_details: { categoryId, reviewId },
+      });
+    }
 
     fetchCategories();
     fetchDeletionReviews();
@@ -246,16 +269,18 @@ export default function Categories() {
   const handleRejectDelete = async (reviewId: string) => {
     await supabase
       .from("deletion_reviews")
-      .update({ status: "rejected" })
+      .delete()
       .eq("id", reviewId);
 
     toast.success(isArabic ? "تم الرفض" : "Rejected");
 
-    await supabase.rpc("log_activity", {
-      p_user_id: user?.id,
-      p_action: "Owner rejected category deletion",
-      p_details: { reviewId },
-    });
+    if (user?.id) {
+      await supabase.rpc("log_activity", {
+        p_user_id: user.id,
+        p_action: "Owner rejected category deletion",
+        p_details: { reviewId },
+      });
+    }
 
     fetchDeletionReviews();
   };

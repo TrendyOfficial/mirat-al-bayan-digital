@@ -23,6 +23,27 @@ export default function Publications() {
 
   useEffect(() => {
     fetchPublications();
+
+    // Real-time subscription for deletion reviews
+    const channel = supabase
+      .channel("deletion_reviews_publications")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "deletion_reviews",
+          filter: "item_type=eq.publication",
+        },
+        () => {
+          fetchPublications();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchPublications = async () => {

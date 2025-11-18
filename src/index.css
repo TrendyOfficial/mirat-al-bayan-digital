@@ -95,6 +95,19 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
+  /* Ensure text selection works everywhere */
+  * {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+  }
+  
+  /* Except for buttons and interactive elements */
+  button, [role="button"], input[type="button"], input[type="submit"] {
+    user-select: none;
+    -webkit-user-select: none;
+  }
 }
 
 /* Animated gradient background */
