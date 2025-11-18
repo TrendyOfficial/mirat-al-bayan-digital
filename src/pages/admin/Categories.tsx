@@ -30,14 +30,14 @@ export default function Categories() {
   const { language } = useLanguage();
   const { user, isOwner, hasRole } = useAuth();
   const isArabic = language === "ar";
-  
-  // Initialize all hooks first
+
   const [categories, setCategories] = useState<any[]>([]);
   const [deletionReviews, setDeletionReviews] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentCategory, setCurrentCategory] = useState<any>(null);
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
+
   const [formData, setFormData] = useState({
     name_ar: "",
     name_en: "",
@@ -52,8 +52,8 @@ export default function Categories() {
         setCanAccess(true);
         return;
       }
-      const isAdmin = await hasRole('admin');
-      const isEditor = await hasRole('editor');
+      const isAdmin = await hasRole("admin");
+      const isEditor = await hasRole("editor");
       setCanAccess(isAdmin || isEditor);
     };
     checkAccess();
@@ -67,7 +67,11 @@ export default function Categories() {
   }, [canAccess]);
 
   if (canAccess === null) {
-    return <div className="p-6 text-center">{isArabic ? "جاري التحميل..." : "Loading..."}</div>;
+    return (
+      <div className="p-6 text-center">
+        {isArabic ? "جاري التحميل..." : "Loading..."}
+      </div>
+    );
   }
 
   if (!canAccess) {
@@ -100,7 +104,7 @@ export default function Categories() {
     if (data) setDeletionReviews(data);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (isEditMode && currentCategory) {
@@ -113,28 +117,26 @@ export default function Categories() {
         toast.error(isArabic ? "فشل التحديث" : "Update failed");
       } else {
         toast.success(isArabic ? "تم التحديث بنجاح" : "Updated successfully");
-        if (user?.id) {
-          await supabase.rpc("log_activity", {
-            p_user_id: user.id,
-            p_action: "Category updated",
-            p_details: { category_id: currentCategory.id, ...formData },
-          });
-        }
+
+        await supabase.rpc("log_activity", {
+          p_user_id: user?.id,
+          p_action: "Category updated",
+          p_details: { category_id: currentCategory.id, ...formData },
+        });
       }
     } else {
       const { error } = await supabase.from("categories").insert([formData]);
 
       if (error) {
-        toast.error(isArabic ? "فشل الإضافة" : "Failed to add");
+        toast.error(isArabic ? "فشل الإضافة" : "Add failed");
       } else {
-        toast.success(isArabic ? "تمت الإضافة بنجاح" : "Added successfully");
-        if (user?.id) {
-          await supabase.rpc("log_activity", {
-            p_user_id: user.id,
-            p_action: "Category created",
-            p_details: formData,
-          });
-        }
+        toast.success(isArabic ? "تمت الإضافة" : "Added successfully");
+
+        await supabase.rpc("log_activity", {
+          p_user_id: user?.id,
+          p_action: "Category created",
+          p_details: formData,
+        });
       }
     }
 
@@ -144,63 +146,55 @@ export default function Categories() {
   };
 
   const handleRequestDelete = async (category: any) => {
-    const ownerCheck = isOwner();
-
-    if (ownerCheck) {
+    if (isOwner()) {
+      // OWNER CAN DELETE INSTANT
       const { error } = await supabase
         .from("categories")
         .delete()
         .eq("id", category.id);
 
-      if (error) {
-        toast.error(isArabic ? "فشل الحذف" : "Delete failed");
-      } else {
-        toast.success(isArabic ? "تم الحذف بنجاح" : "Deleted successfully");
-        if (user?.id) {
-          await supabase.rpc("log_activity", {
-            p_user_id: user.id,
-            p_action: "Category deleted instantly by owner",
-            p_details: {
-              category_id: category.id,
-              category_name_ar: category.name_ar,
-              category_name_en: category.name_en,
-            },
-          });
-        }
+      if (!error) {
+        toast.success(isArabic ? "تم الحذف فوراً" : "Deleted instantly");
+
+        await supabase.rpc("log_activity", {
+          p_user_id: user?.id,
+          p_action: "Owner deleted category instantly",
+          p_details: { category_id: category.id, category },
+        });
+
         fetchCategories();
       }
-    } else {
-      const { error } = await supabase.from("deletion_reviews").insert([
-        {
-          item_type: "category",
-          item_id: category.id,
-          item_data: category,
-          requested_by: user?.id,
-          requested_by_email: user?.email,
-        },
-      ]);
+      return;
+    }
 
-      if (error) {
-        toast.error(isArabic ? "فشل الطلب" : "Request failed");
-      } else {
-        toast.success(
-          isArabic
-            ? "تم إرسال الطلب للمراجعة للمالك"
-            : "Deletion request sent to owner for review"
-        );
-        if (user?.id) {
-          await supabase.rpc("log_activity", {
-            p_user_id: user.id,
-            p_action: "Category deletion requested (pending owner approval)",
-            p_details: {
-              category_id: category.id,
-              category_name_ar: category.name_ar,
-              category_name_en: category.name_en,
-            },
-          });
-        }
-        fetchDeletionReviews();
-      }
+    // EDITORS & ADMINS → SUBMIT REVIEW
+    const { error } = await supabase.from("deletion_reviews").insert([
+      {
+        item_type: "category",
+        item_id: category.id,
+        item_data: category,
+        requested_by: user?.id,
+        requested_by_email: user?.email,
+        status: "pending",
+      },
+    ]);
+
+    if (error) {
+      toast.error(isArabic ? "فشل الطلب" : "Request failed");
+    } else {
+      toast.success(
+        isArabic
+          ? "تم إرسال الطلب للمالك"
+          : "Deletion request sent to owner"
+      );
+
+      await supabase.rpc("log_activity", {
+        p_user_id: user?.id,
+        p_action: "Deletion review created",
+        p_details: { category_id: category.id },
+      });
+
+      fetchDeletionReviews();
     }
   };
 
@@ -224,32 +218,23 @@ export default function Categories() {
   };
 
   const handleApproveDelete = async (reviewId: string, categoryId: string) => {
-    const { error: deleteError } = await supabase
-      .from("categories")
-      .delete()
-      .eq("id", categoryId);
+    await supabase.from("categories").delete().eq("id", categoryId);
 
-    if (!deleteError) {
-      await supabase
-        .from("deletion_reviews")
-        .update({ status: "approved" })
-        .eq("id", reviewId);
+    await supabase
+      .from("deletion_reviews")
+      .update({ status: "approved" })
+      .eq("id", reviewId);
 
-      toast.success(
-        isArabic ? "تمت الموافقة على الحذف" : "Deletion approved by owner"
-      );
-      if (user?.id) {
-        await supabase.rpc("log_activity", {
-          p_user_id: user.id,
-          p_action: "Category deletion approved by owner",
-          p_details: { category_id: categoryId, review_id: reviewId },
-        });
-      }
-      fetchCategories();
-      fetchDeletionReviews();
-    } else {
-      toast.error(isArabic ? "فشل الحذف" : "Deletion failed");
-    }
+    toast.success(isArabic ? "تمت الموافقة" : "Approved");
+
+    await supabase.rpc("log_activity", {
+      p_user_id: user?.id,
+      p_action: "Owner approved category deletion",
+      p_details: { categoryId, reviewId },
+    });
+
+    fetchCategories();
+    fetchDeletionReviews();
   };
 
   const handleRejectDelete = async (reviewId: string) => {
@@ -258,19 +243,20 @@ export default function Categories() {
       .update({ status: "rejected" })
       .eq("id", reviewId);
 
-    toast.success(isArabic ? "تم رفض الحذف" : "Deletion rejected by owner");
-    if (user?.id) {
-      await supabase.rpc("log_activity", {
-        p_user_id: user.id,
-        p_action: "Category deletion rejected by owner",
-        p_details: { review_id: reviewId },
-      });
-    }
+    toast.success(isArabic ? "تم الرفض" : "Rejected");
+
+    await supabase.rpc("log_activity", {
+      p_user_id: user?.id,
+      p_action: "Owner rejected category deletion",
+      p_details: { reviewId },
+    });
+
     fetchDeletionReviews();
   };
 
   return (
     <div className="space-y-6">
+      {/* PAGE HEADER */}
       <div className="flex items-center justify-between">
         <h1 className="font-arabic text-3xl font-bold">
           {isArabic ? "إدارة الفئات" : "Categories Management"}
@@ -298,11 +284,8 @@ export default function Categories() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name_ar">
-                    {isArabic ? "الاسم بالعربية" : "Arabic Name"}
-                  </Label>
+                  <Label>{isArabic ? "الاسم بالعربية" : "Arabic Name"}</Label>
                   <Input
-                    id="name_ar"
                     value={formData.name_ar}
                     onChange={(e) =>
                       setFormData({ ...formData, name_ar: e.target.value })
@@ -310,12 +293,10 @@ export default function Categories() {
                     required
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="name_en">
-                    {isArabic ? "الاسم بالإنجليزية" : "English Name"}
-                  </Label>
+                  <Label>{isArabic ? "الاسم بالإنجليزية" : "English Name"}</Label>
                   <Input
-                    id="name_en"
                     value={formData.name_en}
                     onChange={(e) =>
                       setFormData({ ...formData, name_en: e.target.value })
@@ -326,9 +307,8 @@ export default function Categories() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="slug">{isArabic ? "الرابط" : "Slug"}</Label>
+                <Label>{isArabic ? "الرابط" : "Slug"}</Label>
                 <Input
-                  id="slug"
                   value={formData.slug}
                   onChange={(e) =>
                     setFormData({ ...formData, slug: e.target.value })
@@ -338,27 +318,31 @@ export default function Categories() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description_ar">
+                <Label>
                   {isArabic ? "الوصف بالعربية" : "Arabic Description"}
                 </Label>
                 <Textarea
-                  id="description_ar"
                   value={formData.description_ar}
                   onChange={(e) =>
-                    setFormData({ ...formData, description_ar: e.target.value })
+                    setFormData({
+                      ...formData,
+                      description_ar: e.target.value,
+                    })
                   }
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description_en">
+                <Label>
                   {isArabic ? "الوصف بالإنجليزية" : "English Description"}
                 </Label>
                 <Textarea
-                  id="description_en"
                   value={formData.description_en}
                   onChange={(e) =>
-                    setFormData({ ...formData, description_en: e.target.value })
+                    setFormData({
+                      ...formData,
+                      description_en: e.target.value,
+                    })
                   }
                 />
               </div>
@@ -377,93 +361,120 @@ export default function Categories() {
         </Dialog>
       </div>
 
+      {/* OWNER ONLY — PENDING DELETION REQUESTS */}
       {isOwner() && deletionReviews.length > 0 && (
         <Card className="border-yellow-500">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-yellow-600">
               <AlertCircle className="h-5 w-5" />
-              {isArabic
-                ? "طلبات الحذف قيد المراجعة"
-                : "Pending Deletion Requests"}
+              {isArabic ? "طلبات الحذف" : "Pending Deletion Requests"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {deletionReviews.map((review) => (
-                <div
-                  key={review.id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium">{review.item_data.name_ar}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {isArabic ? "طلب من" : "Requested by"}:{" "}
-                      {review.requested_by_email}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() =>
-                        handleApproveDelete(review.id, review.item_id)
-                      }
-                    >
-                      {isArabic ? "موافقة" : "Approve"}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleRejectDelete(review.id)}
-                    >
-                      {isArabic ? "رفض" : "Reject"}
-                    </Button>
-                  </div>
+            {deletionReviews.map((review) => (
+              <div
+                key={review.id}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
+                <div>
+                  <p className="font-medium">{review.item_data.name_ar}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {isArabic ? "طلب من" : "Requested by"}{" "}
+                    {review.requested_by_email}
+                  </p>
                 </div>
-              ))}
-            </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() =>
+                      handleApproveDelete(review.id, review.item_id)
+                    }
+                  >
+                    {isArabic ? "موافقة" : "Approve"}
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleRejectDelete(review.id)}
+                  >
+                    {isArabic ? "رفض" : "Reject"}
+                  </Button>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
       )}
 
+      {/* CATEGORY TABLE */}
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{isArabic ? "الاسم بالعربية" : "Arabic Name"}</TableHead>
-              <TableHead>{isArabic ? "الاسم بالإنجليزية" : "English Name"}</TableHead>
-              <TableHead>{isArabic ? "الرابط" : "Slug"}</TableHead>
-              <TableHead>{isArabic ? "الإجراءات" : "Actions"}</TableHead>
+              <TableHead>{isArabic ? "الاسم بالعربية" : "Arabic"}</TableHead>
+              <TableHead>{isArabic ? "الاسم بالإنجليزية" : "English"}</TableHead>
+              <TableHead>Slug</TableHead>
+              <TableHead>{isArabic ? "حالة" : "Status"}</TableHead>
+              <TableHead>{isArabic ? "إجراءات" : "Actions"}</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
-            {categories.map((category) => (
-              <TableRow key={category.id}>
-                <TableCell className="font-medium">{category.name_ar}</TableCell>
-                <TableCell>{category.name_en}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">{category.slug}</Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleEdit(category)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleRequestDelete(category)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {categories.map((category) => {
+              const reviewPending = deletionReviews.some(
+                (r) => r.item_id === category.id
+              );
+
+              return (
+                <TableRow key={category.id}>
+                  <TableCell>{category.name_ar}</TableCell>
+                  <TableCell>{category.name_en}</TableCell>
+                  <TableCell>
+                    <Badge>{category.slug}</Badge>
+                  </TableCell>
+
+                  {/* Status Column */}
+                  <TableCell>
+                    {reviewPending ? (
+                      <Badge variant="destructive">
+                        {isArabic
+                          ? "قيد المراجعة لدى المالك"
+                          : "Pending owner review"}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary">
+                        {isArabic ? "نشط" : "Active"}
+                      </Badge>
+                    )}
+                  </TableCell>
+
+                  {/* ACTIONS */}
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEdit(category)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        disabled={reviewPending}
+                        onClick={() => handleRequestDelete(category)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
