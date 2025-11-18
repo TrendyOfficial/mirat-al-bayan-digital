@@ -145,13 +145,17 @@ export default function Authors() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="image_url">{isArabic ? 'رابط الصورة' : 'Image URL'}</Label>
+                <Label htmlFor="image_url">{isArabic ? 'صورة الكاتب (رابط)' : 'Author Image (URL)'}</Label>
                 <Input
                   id="image_url"
                   type="url"
+                  placeholder={isArabic ? 'https://example.com/author.jpg' : 'https://example.com/author.jpg'}
                   value={formData.image_url}
                   onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                 />
+                <p className="text-xs text-muted-foreground">
+                  {isArabic ? 'أدخل رابط صورة الكاتب (JPG, PNG) - اختياري' : 'Enter author image URL (JPG, PNG) - optional'}
+                </p>
               </div>
 
               <Button type="submit" className="w-full">

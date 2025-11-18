@@ -35,7 +35,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <h1 className="font-arabic text-2xl font-bold bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="font-arabic text-2xl font-bold text-primary hover:text-primary/80 transition-colors">
             {isArabic ? 'مرآة البيان' : 'Miratl Bayan'}
           </h1>
         </Link>

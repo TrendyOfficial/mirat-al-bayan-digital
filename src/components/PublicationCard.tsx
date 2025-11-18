@@ -47,46 +47,48 @@ export function PublicationCard({
 
   return (
     <Card className="group overflow-hidden hover:shadow-card transition-all duration-300 animate-fade-in">
-      <Link to={`/publication/${slug}`}>
-        {featured_image_url && (
+      {featured_image_url && (
+        <Link to={`/publication/${slug}`}>
           <div className="aspect-[16/9] overflow-hidden">
             <img
               src={featured_image_url}
               alt={title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-contain bg-muted group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-        )}
-        <div className="p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Link to={`/category/${category_slug}`}>
-              <Badge variant="secondary">{categoryName}</Badge>
-            </Link>
-            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Eye className="h-3 w-3" />
-              {views}
-            </span>
-          </div>
-          
+        </Link>
+      )}
+      <div className="p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Link to={`/category/${category_slug}`} onClick={(e) => e.stopPropagation()}>
+            <Badge variant="secondary">{categoryName}</Badge>
+          </Link>
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Eye className="h-3 w-3" />
+            {views}
+          </span>
+        </div>
+        
+        <Link to={`/publication/${slug}`}>
           <h3 className="font-arabic text-xl font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">
             {title}
           </h3>
-          
-          {excerpt && (
-            <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-              {excerpt}
-            </p>
-          )}
-          
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>{authorName}</span>
-            <span className="flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              {format(new Date(published_at), 'MMM dd, yyyy')}
-            </span>
-          </div>
+        </Link>
+        
+        {excerpt && (
+          <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+            {excerpt}
+          </p>
+        )}
+        
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>{authorName}</span>
+          <span className="flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            {format(new Date(published_at), 'MMM dd, yyyy')}
+          </span>
         </div>
-      </Link>
+      </div>
     </Card>
   );
 }
