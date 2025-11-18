@@ -70,10 +70,10 @@ export default function DeletionReviews() {
       .eq("id", item_id);
 
     if (!deleteError) {
-      // Update review status
+      // Delete review (not update)
       await supabase
         .from("deletion_reviews")
-        .update({ status: "approved" })
+        .delete()
         .eq("id", reviewId);
 
       toast.success(isArabic ? "تمت الموافقة على الحذف" : "Deletion approved");
@@ -97,7 +97,7 @@ export default function DeletionReviews() {
   const handleReject = async (reviewId: string, itemType: string) => {
     await supabase
       .from("deletion_reviews")
-      .update({ status: "rejected" })
+      .delete()
       .eq("id", reviewId);
 
     toast.success(isArabic ? "تم رفض الحذف" : "Deletion rejected");

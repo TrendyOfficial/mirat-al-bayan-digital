@@ -62,6 +62,12 @@ export default function Publications() {
       if (error) {
         toast.error(isArabic ? 'خطأ في الحذف' : 'Delete failed');
       } else {
+        // Also delete any pending deletion reviews
+        await supabase
+          .from('deletion_reviews')
+          .delete()
+          .match({ item_type: 'publication', item_id: id });
+
         toast.success(isArabic ? 'تم الحذف بنجاح' : 'Deleted successfully');
         await supabase.rpc('log_activity', {
           p_user_id: user.id,
