@@ -30,7 +30,21 @@ export default function Categories() {
   const { language } = useLanguage();
   const { user, isOwner, hasRole } = useAuth();
   const isArabic = language === "ar";
+  
+  // Initialize all hooks first
+  const [categories, setCategories] = useState<any[]>([]);
+  const [deletionReviews, setDeletionReviews] = useState<any[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState<any>(null);
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
+  const [formData, setFormData] = useState({
+    name_ar: "",
+    name_en: "",
+    description_ar: "",
+    description_en: "",
+    slug: "",
+  });
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -45,6 +59,13 @@ export default function Categories() {
     checkAccess();
   }, [user]);
 
+  useEffect(() => {
+    if (canAccess) {
+      fetchCategories();
+      fetchDeletionReviews();
+    }
+  }, [canAccess]);
+
   if (canAccess === null) {
     return <div className="p-6 text-center">{isArabic ? "جاري التحميل..." : "Loading..."}</div>;
   }
@@ -58,24 +79,6 @@ export default function Categories() {
       </div>
     );
   }
-
-  const [categories, setCategories] = useState<any[]>([]);
-  const [deletionReviews, setDeletionReviews] = useState<any[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState<any>(null);
-  const [formData, setFormData] = useState({
-    name_ar: "",
-    name_en: "",
-    description_ar: "",
-    description_en: "",
-    slug: "",
-  });
-
-  useEffect(() => {
-    fetchCategories();
-    fetchDeletionReviews();
-  }, []);
 
   const fetchCategories = async () => {
     const { data } = await supabase
