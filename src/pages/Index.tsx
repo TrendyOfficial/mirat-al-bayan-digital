@@ -98,7 +98,7 @@ export default function Index() {
                   ? 'مجلة أدبية عربية حديثة تحتفي بالشعر والدراسات النقدية والقصص'
                   : 'A modern Arabic literature magazine celebrating poetry, critical studies, and stories'}
               </p>
-              <Button size="lg" variant="secondary" asChild>
+              <Button size="lg" className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:opacity-90 text-white border-0" asChild>
                 <Link to="/search">
                   {isArabic ? 'استكشف المقالات' : 'Explore Articles'}
                   <ArrowRight className="mr-2 h-5 w-5" />
@@ -110,13 +110,13 @@ export default function Index() {
 
         {/* Hero Image Section */}
         {heroImage && (
-          <section className="py-16 bg-muted/30">
+          <section className="py-16 bg-background">
             <div className="container">
               <div className="max-w-6xl mx-auto">
                 <img
                   src={heroImage}
-                  alt="Hero"
-                  className="w-full h-[400px] object-cover rounded-lg shadow-elegant"
+                  alt="Hero Magazine Cover"
+                  className="w-full h-[500px] object-cover rounded-lg shadow-elegant"
                 />
               </div>
             </div>
@@ -152,7 +152,7 @@ export default function Index() {
         )}
 
         {/* Categories */}
-        <section className="py-16">
+        <section className="py-16 bg-background">
           <div className="container">
             <h2 className="font-arabic text-3xl font-bold mb-8 text-center">
               {isArabic ? 'الفئات' : 'Categories'}
