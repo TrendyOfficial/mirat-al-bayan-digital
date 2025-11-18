@@ -119,6 +119,47 @@ export type Database = {
         }
         Relationships: []
       }
+      comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          publication_id: string
+          updated_at: string
+          user_email: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          publication_id: string
+          updated_at?: string
+          user_email: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          publication_id?: string
+          updated_at?: string
+          user_email?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_publication_id_fkey"
+            columns: ["publication_id"]
+            isOneToOne: false
+            referencedRelation: "publications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deletion_reviews: {
         Row: {
           id: string
@@ -240,6 +281,7 @@ export type Database = {
       }
       publications: {
         Row: {
+          author_face_image_url: string | null
           author_id: string | null
           category_id: string | null
           content_ar: string
@@ -259,6 +301,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          author_face_image_url?: string | null
           author_id?: string | null
           category_id?: string | null
           content_ar: string
@@ -278,6 +321,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          author_face_image_url?: string | null
           author_id?: string | null
           category_id?: string | null
           content_ar?: string

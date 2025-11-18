@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
 import { PublicationCard } from "@/components/PublicationCard";
+import { Comments } from "@/components/Comments";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -288,34 +289,55 @@ export default function Publication() {
             </div>
           </div>
 
-          {/* Related Publications */}
-          {relatedPublications.length > 0 && (
-            <div className="border-t pt-8 mt-8">
-              <h3 className="font-arabic text-2xl font-bold mb-6">
-                {isArabic ? 'مقالات ذات صلة' : 'Related Articles'}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedPublications.map((pub) => (
-                  <PublicationCard
-                    key={pub.id}
-                    id={pub.id}
-                    title_ar={pub.title_ar}
-                    title_en={pub.title_en}
-                    excerpt_ar={pub.excerpt_ar}
-                    excerpt_en={pub.excerpt_en}
-                    featured_image_url={pub.featured_image_url}
-                    slug={pub.slug}
-                    category_name_ar={pub.category?.name_ar}
-                    category_name_en={pub.category?.name_en}
-                    category_slug={pub.category?.slug}
-                    author_name_ar={pub.author?.name_ar}
-                    author_name_en={pub.author?.name_en}
-                    published_at={pub.published_at}
+          {/* Author Face Image & Related Publications */}
+          <div className="grid md:grid-cols-3 gap-8 border-t pt-8 mt-8">
+            <div className="md:col-span-2">
+              {publication.author_face_image_url && (
+                <div className="mb-8">
+                  <h3 className="font-arabic text-xl font-bold mb-4">
+                    {isArabic ? 'صورة الشخصية' : 'Featured Person'}
+                  </h3>
+                  <img
+                    src={publication.author_face_image_url}
+                    alt={isArabic ? 'صورة الشخصية' : 'Featured Person'}
+                    className="w-48 h-48 object-cover rounded-lg"
                   />
-                ))}
-              </div>
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Related Publications */}
+            {relatedPublications.length > 0 && (
+              <div className="md:col-span-1">
+                <h3 className="font-arabic text-xl font-bold mb-4">
+                  {isArabic ? 'مقالات ذات صلة' : 'Related Articles'}
+                </h3>
+                <div className="space-y-4">
+                  {relatedPublications.map((pub) => (
+                    <PublicationCard
+                      key={pub.id}
+                      id={pub.id}
+                      title_ar={pub.title_ar}
+                      title_en={pub.title_en}
+                      excerpt_ar={pub.excerpt_ar}
+                      excerpt_en={pub.excerpt_en}
+                      featured_image_url={pub.featured_image_url}
+                      slug={pub.slug}
+                      category_name_ar={pub.category?.name_ar}
+                      category_name_en={pub.category?.name_en}
+                      category_slug={pub.category?.slug}
+                      author_name_ar={pub.author?.name_ar}
+                      author_name_en={pub.author?.name_en}
+                      published_at={pub.published_at}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Comments Section */}
+          <Comments publicationId={publication.id} />
         </article>
       </main>
 
