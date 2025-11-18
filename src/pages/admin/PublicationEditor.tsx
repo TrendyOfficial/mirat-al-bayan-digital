@@ -32,6 +32,7 @@ export default function PublicationEditor() {
     content_ar: "",
     content_en: "",
     featured_image_url: "",
+    author_face_image_url: "",
     author_id: "",
     category_id: "",
     status: "draft",
@@ -226,6 +227,20 @@ export default function PublicationEditor() {
             value={formData.featured_image_url || ''}
             onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="author_face_image_url">{isArabic ? 'صورة الشخصية (رابط أو رفع)' : 'Featured Person Image (URL or Upload)'}</Label>
+          <Input
+            id="author_face_image_url"
+            type="url"
+            value={formData.author_face_image_url || ''}
+            onChange={(e) => setFormData({ ...formData, author_face_image_url: e.target.value })}
+            placeholder={isArabic ? 'أدخل رابط الصورة' : 'Enter image URL'}
+          />
+          <p className="text-sm text-muted-foreground">
+            {isArabic ? 'صورة الشخص المذكور في المقال (اختياري)' : 'Image of the person featured in the article (optional)'}
+          </p>
         </div>
 
         <div className="space-y-2">
