@@ -1,1 +1,8 @@
 project_id = "nmsbskifihjxwdqeqgpk"
+
+[auth]
+enable_signup = true
+email_auto_confirm = true
+
+[functions.generate-pdf]
+verify_jwt = false

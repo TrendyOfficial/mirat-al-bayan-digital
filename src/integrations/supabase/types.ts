@@ -119,12 +119,46 @@ export type Database = {
         }
         Relationships: []
       }
+      comment_likes: {
+        Row: {
+          comment_id: string
+          created_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comments: {
         Row: {
           content: string
           created_at: string
           id: string
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_reason: string | null
+          parent_comment_id: string | null
           publication_id: string
+          status: string | null
           updated_at: string
           user_email: string
           user_id: string
@@ -134,7 +168,12 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_reason?: string | null
+          parent_comment_id?: string | null
           publication_id: string
+          status?: string | null
           updated_at?: string
           user_email: string
           user_id: string
@@ -144,13 +183,25 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_reason?: string | null
+          parent_comment_id?: string | null
           publication_id?: string
+          status?: string | null
           updated_at?: string
           user_email?: string
           user_id?: string
           username?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "comments_publication_id_fkey"
             columns: ["publication_id"]

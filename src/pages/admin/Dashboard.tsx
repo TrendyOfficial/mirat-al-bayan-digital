@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HeroImageUpload } from "@/components/HeroImageUpload";
+import { HeroImageManager } from "@/components/HeroImageManager";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { FileText, Users, Eye, FolderOpen } from "lucide-react";
@@ -110,6 +111,11 @@ export default function Dashboard() {
         onImageUpdate={handleImageUpdate}
         language={language}
       />
+      
+      {/* Hero Images Manager */}
+      <div className="mt-8">
+        <HeroImageManager onImagesUpdated={fetchStats} />
+      </div>
     </div>
   );
 }

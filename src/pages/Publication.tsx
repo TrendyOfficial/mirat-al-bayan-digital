@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Eye, Calendar, Share2, Facebook, Twitter, Mail, Home, ChevronRight } from "lucide-react";
+import { Eye, Calendar, Share2, Facebook, Twitter, Mail, Home, ChevronRight, Download } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
@@ -30,6 +30,7 @@ export default function Publication() {
   const [views, setViews] = useState(0);
   const [relatedPublications, setRelatedPublications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   useEffect(() => {
     fetchPublication();
@@ -137,6 +138,49 @@ export default function Publication() {
 
     if (shareUrl) {
       window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!publication) return;
+
+    setDownloadingPdf(true);
+    try {
+      const title = isArabic ? publication.title_ar : publication.title_en || publication.title_ar;
+      const content = isArabic ? publication.content_ar : publication.content_en || publication.content_ar;
+
+      const { data, error } = await supabase.functions.invoke('generate-pdf', {
+        body: {
+          title,
+          content,
+          language: isArabic ? 'ar' : 'en'
+        }
+      });
+
+      if (error) {
+        console.error('PDF generation error:', error);
+        toast.error(isArabic ? 'فشل في إنشاء PDF' : 'Failed to generate PDF');
+        return;
+      }
+
+      // Create a blob from the HTML and trigger download
+      const htmlContent = data.html;
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${title.replace(/[^a-z0-9]/gi, '_')}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success(isArabic ? 'تم تنزيل الملف' : 'File downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast.error(isArabic ? 'فشل في تنزيل الملف' : 'Failed to download file');
+    } finally {
+      setDownloadingPdf(false);
     }
   };
 
@@ -261,6 +305,18 @@ export default function Publication() {
                 <Button variant="outline" size="sm" onClick={() => handleShare('copy')}>
                   <Share2 className="h-4 w-4 mr-2" />
                   {isArabic ? 'نسخ الرابط' : 'Copy Link'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadPdf}
+                  disabled={downloadingPdf}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  {downloadingPdf 
+                    ? (isArabic ? 'جاري التحميل...' : 'Downloading...') 
+                    : (isArabic ? 'تحميل PDF' : 'Download PDF')
+                  }
                 </Button>
               </div>
             </div>

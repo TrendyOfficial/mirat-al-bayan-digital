@@ -16,6 +16,8 @@ export default function Index() {
   const [recentPublications, setRecentPublications] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [heroImage, setHeroImage] = useState("");
+  const [heroImageLeft, setHeroImageLeft] = useState("");
+  const [heroImageRight, setHeroImageRight] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,14 +26,32 @@ export default function Index() {
   }, []);
 
   const fetchHeroImage = async () => {
-    const { data } = await supabase
+    const { data: middle } = await supabase
       .from("settings")
       .select("value")
       .eq("key", "hero_image")
       .single();
 
-    if (data?.value) {
-      setHeroImage((data.value as any).url || "");
+    const { data: left } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "hero_image_left")
+      .single();
+
+    const { data: right } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "hero_image_right")
+      .single();
+
+    if (middle?.value) {
+      setHeroImage((middle.value as any).url || "");
+    }
+    if (left?.value) {
+      setHeroImageLeft((left.value as any).url || "");
+    }
+    if (right?.value) {
+      setHeroImageRight((right.value as any).url || "");
     }
   };
 
@@ -72,14 +92,26 @@ export default function Index() {
         setRecentPublications(recent);
       }
 
-      // Fetch categories
+      // Fetch categories with article counts
       const { data: cats } = await supabase
         .from('categories')
         .select('*')
         .order('name_ar');
 
       if (cats) {
-        setCategories(cats);
+        // Get publication counts for each category
+        const categoriesWithCounts = await Promise.all(
+          cats.map(async (cat) => {
+            const { count } = await supabase
+              .from('publications')
+              .select('*', { count: 'exact', head: true })
+              .eq('category_id', cat.id)
+              .eq('status', 'published');
+            
+            return { ...cat, count: count || 0 };
+          })
+        );
+        setCategories(categoriesWithCounts);
       }
     } finally {
       setLoading(false);
@@ -114,16 +146,49 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Hero Image Section */}
-        {heroImage && (
+        {/* Hero Images Section - 3 images with dividers */}
+        {(heroImage || heroImageLeft || heroImageRight) && (
           <section className="py-16 bg-background">
             <div className="container">
-              <div className="max-w-6xl mx-auto">
-                <img
-                  src={heroImage}
-                  alt="Hero Magazine Cover"
-                  className="w-full max-h-[500px] object-contain rounded-lg shadow-elegant"
-                />
+              <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                {/* Left Image */}
+                {heroImageLeft && (
+                  <>
+                    <div className="flex justify-center">
+                      <img
+                        src={heroImageLeft}
+                        alt="Magazine Cover Left"
+                        className="w-full max-w-[300px] h-auto max-h-[400px] object-contain rounded-lg shadow-lg"
+                      />
+                    </div>
+                    <div className="hidden md:block w-px bg-border mx-auto h-full min-h-[400px]"></div>
+                  </>
+                )}
+                
+                {/* Middle Image - Larger */}
+                {heroImage && (
+                  <div className="flex justify-center md:col-span-1">
+                    <img
+                      src={heroImage}
+                      alt="Hero Magazine Cover"
+                      className="w-full max-w-[500px] h-auto max-h-[600px] object-contain rounded-lg shadow-elegant"
+                    />
+                  </div>
+                )}
+                
+                {/* Right Image */}
+                {heroImageRight && (
+                  <>
+                    <div className="hidden md:block w-px bg-border mx-auto h-full min-h-[400px]"></div>
+                    <div className="flex justify-center">
+                      <img
+                        src={heroImageRight}
+                        alt="Magazine Cover Right"
+                        className="w-full max-w-[300px] h-auto max-h-[400px] object-contain rounded-lg shadow-lg"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </section>
@@ -181,6 +246,7 @@ export default function Index() {
                     slug={category.slug}
                     description_ar={category.description_ar}
                     description_en={category.description_en}
+                    count={category.count}
                   />
                 ))}
               </div>

@@ -27,7 +27,7 @@ export function CategoryCard({
   const description = isArabic ? description_ar : description_en;
 
   return (
-    <Card className="group overflow-hidden hover:shadow-elegant transition-all duration-300 bg-gradient-card border-2 hover:border-primary/50">
+    <Card className="group overflow-hidden hover:shadow-elegant transition-all duration-300 bg-card dark:bg-card border-2 hover:border-primary/50">
       <Link to={`/category/${slug}`} className="block p-6">
         <div className="flex items-start justify-between mb-3">
           <h3 className="font-arabic text-2xl font-bold text-primary group-hover:text-primary/80 transition-colors">
