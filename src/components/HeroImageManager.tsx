@@ -46,6 +46,27 @@ export function HeroImageManager({ onImagesUpdated }: HeroImageManagerProps) {
     }
   };
 
+  const handleRemove = async (position: 'left' | 'middle' | 'right') => {
+    setUploading(true);
+    try {
+      const key = position === 'middle' ? 'hero_image' : `hero_image_${position}`;
+      const { error } = await supabase
+        .from("settings")
+        .delete()
+        .eq("key", key);
+
+      if (error) throw error;
+
+      toast.success(`${position} image removed successfully!`);
+      onImagesUpdated();
+    } catch (error) {
+      console.error("Error removing image:", error);
+      toast.error("Failed to remove image");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <Card className="p-6">
       <h3 className="text-xl font-bold mb-4">Manage Hero Images</h3>
@@ -77,6 +98,13 @@ export function HeroImageManager({ onImagesUpdated }: HeroImageManagerProps) {
               >
                 Update
               </Button>
+              <Button
+                variant="destructive"
+                onClick={() => handleRemove('left')}
+                disabled={uploading}
+              >
+                Remove
+              </Button>
             </div>
           </div>
         </TabsContent>
@@ -98,6 +126,13 @@ export function HeroImageManager({ onImagesUpdated }: HeroImageManagerProps) {
               >
                 Update
               </Button>
+              <Button
+                variant="destructive"
+                onClick={() => handleRemove('middle')}
+                disabled={uploading}
+              >
+                Remove
+              </Button>
             </div>
           </div>
         </TabsContent>
@@ -118,6 +153,13 @@ export function HeroImageManager({ onImagesUpdated }: HeroImageManagerProps) {
                 disabled={!rightUrl || uploading}
               >
                 Update
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => handleRemove('right')}
+                disabled={uploading}
+              >
+                Remove
               </Button>
             </div>
           </div>
