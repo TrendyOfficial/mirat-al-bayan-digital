@@ -143,18 +143,24 @@ export default function Settings() {
 
     setIsLoading(true);
 
-    // Log activity before deletion
-    await supabase.rpc('log_activity', {
-      p_user_id: user?.id,
-      p_action: 'Account deleted',
-      p_details: { email: user?.email }
-    });
-
-    // Delete user roles first
-    await supabase
+    // First remove all roles for this user
+    const { error: roleError } = await supabase
       .from('user_roles')
       .delete()
-      .eq('user_id', user?.id);
+      .eq('user_id', user.id);
+
+    if (roleError) {
+      console.error('Failed to remove roles:', roleError);
+    }
+
+    // Log the account deletion before deleting
+    if (user?.id) {
+      await supabase.rpc('log_activity', {
+        p_user_id: user.id,
+        p_action: 'User deleted their account',
+        p_details: { email: user.email },
+      });
+    }
 
     // Delete profile
     await supabase

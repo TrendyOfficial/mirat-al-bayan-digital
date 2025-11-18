@@ -19,28 +19,34 @@ export type Database = {
           action: string
           created_at: string | null
           details: Json | null
+          encrypted_data: string | null
           id: string
           user_email: string
           user_id: string | null
           user_name: string | null
+          user_role: string | null
         }
         Insert: {
           action: string
           created_at?: string | null
           details?: Json | null
+          encrypted_data?: string | null
           id?: string
           user_email: string
           user_id?: string | null
           user_name?: string | null
+          user_role?: string | null
         }
         Update: {
           action?: string
           created_at?: string | null
           details?: Json | null
+          encrypted_data?: string | null
           id?: string
           user_email?: string
           user_id?: string | null
           user_name?: string | null
+          user_role?: string | null
         }
         Relationships: []
       }

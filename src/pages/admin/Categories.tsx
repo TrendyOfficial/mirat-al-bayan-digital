@@ -28,13 +28,28 @@ import { Badge } from "@/components/ui/badge";
 
 export default function Categories() {
   const { language } = useLanguage();
-  const { user, isOwner } = useAuth();
+  const { user, isOwner, hasRole } = useAuth();
   const isArabic = language === "ar";
+  const [canAccess, setCanAccess] = useState<boolean | null>(null);
 
-  // Only allow owner, admin, or editor
-  const isAdmin = user?.role === "admin";
-  const isEditor = user?.role === "editor";
-  if (!isOwner() && !isAdmin && !isEditor) {
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (isOwner()) {
+        setCanAccess(true);
+        return;
+      }
+      const isAdmin = await hasRole('admin');
+      const isEditor = await hasRole('editor');
+      setCanAccess(isAdmin || isEditor);
+    };
+    checkAccess();
+  }, [user]);
+
+  if (canAccess === null) {
+    return <div className="p-6 text-center">{isArabic ? "جاري التحميل..." : "Loading..."}</div>;
+  }
+
+  if (!canAccess) {
     return (
       <div className="p-6 text-center text-red-500 font-bold">
         {isArabic
@@ -141,7 +156,7 @@ export default function Categories() {
         if (user?.id) {
           await supabase.rpc("log_activity", {
             p_user_id: user.id,
-            p_action: "Category deleted by owner",
+            p_action: "Category deleted instantly by owner",
             p_details: {
               category_id: category.id,
               category_name_ar: category.name_ar,
@@ -167,13 +182,13 @@ export default function Categories() {
       } else {
         toast.success(
           isArabic
-            ? "تم إرسال الطلب للمراجعة"
-            : "Request sent for review"
+            ? "تم إرسال الطلب للمراجعة للمالك"
+            : "Deletion request sent to owner for review"
         );
         if (user?.id) {
           await supabase.rpc("log_activity", {
             p_user_id: user.id,
-            p_action: "Category deletion requested",
+            p_action: "Category deletion requested (pending owner approval)",
             p_details: {
               category_id: category.id,
               category_name_ar: category.name_ar,
@@ -218,17 +233,19 @@ export default function Categories() {
         .eq("id", reviewId);
 
       toast.success(
-        isArabic ? "تمت الموافقة على الحذف" : "Deletion approved"
+        isArabic ? "تمت الموافقة على الحذف" : "Deletion approved by owner"
       );
       if (user?.id) {
         await supabase.rpc("log_activity", {
           p_user_id: user.id,
-          p_action: "Category deletion approved",
-          p_details: { category_id: categoryId },
+          p_action: "Category deletion approved by owner",
+          p_details: { category_id: categoryId, review_id: reviewId },
         });
       }
       fetchCategories();
       fetchDeletionReviews();
+    } else {
+      toast.error(isArabic ? "فشل الحذف" : "Deletion failed");
     }
   };
 
@@ -238,11 +255,11 @@ export default function Categories() {
       .update({ status: "rejected" })
       .eq("id", reviewId);
 
-    toast.success(isArabic ? "تم رفض الحذف" : "Deletion rejected");
+    toast.success(isArabic ? "تم رفض الحذف" : "Deletion rejected by owner");
     if (user?.id) {
       await supabase.rpc("log_activity", {
         p_user_id: user.id,
-        p_action: "Category deletion rejected",
+        p_action: "Category deletion rejected by owner",
         p_details: { review_id: reviewId },
       });
     }
