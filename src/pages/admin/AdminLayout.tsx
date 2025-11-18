@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, FileText, Users, FolderOpen, BarChart3, Settings, Home, UserCog } from "lucide-react";
+import { LayoutDashboard, FileText, Users, FolderOpen, BarChart3, Settings, Home, UserCog, AlertCircle } from "lucide-react";
 export default function AdminLayout() {
   const location = useLocation();
   const {
@@ -12,17 +12,23 @@ export default function AdminLayout() {
   } = useLanguage();
   const {
     signOut,
-    hasRole
+    hasRole,
+    isOwner
   } = useAuth();
   const isArabic = language === 'ar';
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isOwnerUser, setIsOwnerUser] = useState(false);
+  
   useEffect(() => {
-    const checkAdmin = async () => {
+    const checkRoles = async () => {
       const adminStatus = await hasRole('admin');
+      const ownerStatus = isOwner();
       setIsAdmin(adminStatus);
+      setIsOwnerUser(ownerStatus);
     };
-    checkAdmin();
-  }, [hasRole]);
+    checkRoles();
+  }, [hasRole, isOwner]);
+
   const allNavItems = [{
     icon: LayoutDashboard,
     label: isArabic ? 'الرئيسية' : 'Dashboard',
@@ -42,24 +48,44 @@ export default function AdminLayout() {
     icon: FolderOpen,
     label: isArabic ? 'الفئات' : 'Categories',
     path: '/admin/categories',
-    allowedRoles: ['admin', 'editor']
+    allowedRoles: ['admin', 'editor'],
+    ownerOnly: false
   }, {
     icon: BarChart3,
     label: isArabic ? 'سجل النشاطات' : 'Activity Logs',
     path: '/admin/logs',
-    allowedRoles: ['admin']
+    allowedRoles: [],
+    ownerOnly: true
   }, {
     icon: UserCog,
     label: isArabic ? 'المستخدمون' : 'Users',
     path: '/admin/users',
-    allowedRoles: ['admin']
+    allowedRoles: ['admin'],
+    ownerOnly: false
+  }, {
+    icon: AlertCircle,
+    label: isArabic ? 'طلبات الحذف' : 'Deletion Reviews',
+    path: '/admin/deletion-reviews',
+    allowedRoles: [],
+    ownerOnly: true
   }];
 
-  // Filter navigation items - only show Users to admins
+  // Filter navigation items
   const navItems = allNavItems.filter(item => {
+    // Owner can see everything
+    if (isOwnerUser) return true;
+    
+    // Check if owner-only
+    if (item.ownerOnly) return false;
+    
+    // Check specific paths
     if (item.path === '/admin/users') {
       return isAdmin;
     }
+    if (item.path === '/admin/logs') {
+      return false; // Only owner can see logs
+    }
+    
     return true;
   });
   return <div className="flex min-h-screen">
