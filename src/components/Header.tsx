@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Search, User, LogOut, Settings as SettingsIcon } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { DarkModeToggle } from "./DarkModeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -72,6 +73,7 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
+          <DarkModeToggle />
           <Button variant="ghost" size="icon" asChild>
             <Link to="/search">
               <Search className="h-5 w-5" />

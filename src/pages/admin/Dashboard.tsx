@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HeroImageUpload } from "@/components/HeroImageUpload";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { FileText, Users, Eye, FolderOpen } from "lucide-react";
@@ -14,10 +15,24 @@ export default function Dashboard() {
     totalViews: 0,
     categories: 0,
   });
+  const [heroImage, setHeroImage] = useState("");
 
   useEffect(() => {
     fetchStats();
+    fetchHeroImage();
   }, []);
+
+  const fetchHeroImage = async () => {
+    const { data } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "hero_image")
+      .single();
+
+    if (data?.value) {
+      setHeroImage((data.value as any).url || "");
+    }
+  };
 
   const fetchStats = async () => {
     const [pubCount, authorCount, viewCount, catCount] = await Promise.all([
@@ -68,7 +83,7 @@ export default function Dashboard() {
         {isArabic ? 'لوحة التحكم' : 'Dashboard'}
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statCards.map((stat) => (
           <Link key={stat.title} to={stat.link}>
             <Card className="hover:shadow-card transition-shadow">
@@ -85,6 +100,12 @@ export default function Dashboard() {
           </Link>
         ))}
       </div>
+
+      <HeroImageUpload
+        currentImage={heroImage}
+        onImageUpdate={setHeroImage}
+        language={language}
+      />
     </div>
   );
 }

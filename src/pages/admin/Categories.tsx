@@ -154,6 +154,12 @@ export default function Categories() {
         .eq("id", category.id);
 
       if (!error) {
+        // Also delete any pending deletion reviews
+        await supabase
+          .from('deletion_reviews')
+          .delete()
+          .match({ item_type: 'category', item_id: category.id });
+
         toast.success(isArabic ? "تم الحذف فوراً" : "Deleted instantly");
 
         await supabase.rpc("log_activity", {

@@ -15,10 +15,24 @@ export default function Index() {
   const [featuredPublication, setFeaturedPublication] = useState<any>(null);
   const [recentPublications, setRecentPublications] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [heroImage, setHeroImage] = useState("");
 
   useEffect(() => {
     fetchData();
+    fetchHeroImage();
   }, []);
+
+  const fetchHeroImage = async () => {
+    const { data } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "hero_image")
+      .single();
+
+    if (data?.value) {
+      setHeroImage((data.value as any).url || "");
+    }
+  };
 
   const fetchData = async () => {
     // Fetch featured publication
@@ -71,8 +85,9 @@ export default function Index() {
       <Header />
       
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative bg-gradient-hero text-white py-20 overflow-hidden">
+        {/* Hero Section with animated gradient */}
+        <section className="relative bg-gradient-lovable text-white py-20 overflow-hidden">
+          <div className="absolute inset-0 hero-gradient-animated"></div>
           <div className="container relative z-10">
             <div className="max-w-3xl mx-auto text-center">
               <h1 className="font-arabic text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
@@ -92,6 +107,21 @@ export default function Index() {
             </div>
           </div>
         </section>
+
+        {/* Hero Image Section */}
+        {heroImage && (
+          <section className="py-16 bg-muted/30">
+            <div className="container">
+              <div className="max-w-6xl mx-auto">
+                <img
+                  src={heroImage}
+                  alt="Hero"
+                  className="w-full h-[400px] object-cover rounded-lg shadow-elegant"
+                />
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Featured Publication */}
         {featuredPublication && (
