@@ -1,39 +1,47 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function TurnstileGate() {
-  const navigate = useNavigate();
-  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Load Cloudflare Turnstile script
     const script = document.createElement("script");
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
     script.async = true;
+    script.onload = () => {
+      // Render the Turnstile widget
+      // @ts-ignore
+      window.turnstile.render("#cf-turnstile", {
+        sitekey: "0x4AAAAAACCDHi8H3fmnNIcf",
+        callback: async (token: string) => {
+          setLoading(true); // show spinner
+          try {
+            const res = await fetch("/api/verify-turnstile", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token }),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+              localStorage.setItem("turnstile_passed", "true");
+              // Slight delay to show spinner before redirect
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 1000);
+            } else {
+              alert("Verification failed. Try again.");
+              window.location.reload();
+            }
+          } catch (err) {
+            alert("Error verifying Turnstile. Try again.");
+            window.location.reload();
+          }
+        },
+      });
+    };
     document.body.appendChild(script);
   }, []);
-
-  useEffect(() => {
-    if (token) verifyToken(token);
-  }, [token]);
-
-  const verifyToken = async (token: string) => {
-    const res = await fetch("/api/verify-turnstile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      localStorage.setItem("turnstile_passed", "true");
-      // ⬅️ FIXED REDIRECT
-      window.location.href = "/"; 
-    } else {
-      alert("Verification failed. Try again.");
-      window.location.reload();
-    }
-  };
 
   return (
     <div
@@ -47,12 +55,13 @@ export default function TurnstileGate() {
     >
       <h2>Please verify you are human</h2>
 
-      <div
-        className="cf-challenge"
-        data-sitekey="0x4AAAAAACCDHi8H3fmnNIcf"
-        data-callback={(token: string) => setToken(token)}
-        style={{ marginTop: "20px" }}
-      ></div>
+      <div id="cf-turnstile" style={{ marginTop: "20px" }}></div>
+
+      {loading && (
+        <div style={{ marginTop: "20px" }}>
+          <span>Verifying... ⏳</span>
+        </div>
+      )}
     </div>
   );
 }
