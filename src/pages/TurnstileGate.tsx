@@ -11,28 +11,23 @@ export default function TurnstileGate() {
     script.onload = () => {
       // @ts-ignore
       window.turnstile.render("#cf-turnstile", {
-        sitekey: "0x4AAAAAACCDHi8H3fmnNIcf",
+        sitekey: "0x4AAAAAACCDHi8H3fmnNIcf", // <-- replace with your site key
         callback: async (token: string) => {
           setLoading(true);
-
           try {
-            // ✅ Call your Supabase Edge Function directly with full URL
-            const res = await fetch(
-              "https://nmsbskifihjxwdqeqgpk.supabase.co/functions/v1/verify-turnstile",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token }),
-              }
-            );
+            const res = await fetch("https://miratlbayan.dmin138p.workers.dev", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token }),
+            });
+
             const data = await res.json();
 
             if (data.success) {
               localStorage.setItem("turnstile_passed", "true");
-              // Redirect after 0.5s to show spinner
               setTimeout(() => {
                 window.location.href = "/";
-              }, 500);
+              }, 500); // slight delay for UX
             } else {
               alert("Verification failed. Try again.");
               window.location.reload();
