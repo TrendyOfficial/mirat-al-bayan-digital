@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Trash2, Key, User, ArrowLeft } from "lucide-react";
+import { Trash2, Key, User, ArrowLeft, Settings as SettingsIcon, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
@@ -21,6 +21,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { IconPicker } from "@/components/IconPicker";
+import { ColorPicker } from "@/components/ColorPicker";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 
 export default function Settings() {
   const { language } = useLanguage();
@@ -35,6 +40,13 @@ export default function Settings() {
   const [deleteEmail, setDeleteEmail] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Profile customization state
+  const [profileIcon, setProfileIcon] = useState("user");
+  const [colorOne, setColorOne] = useState("#3b82f6");
+  const [colorTwo, setColorTwo] = useState("#ec4899");
+  const [useGradient, setUseGradient] = useState(true);
+  const [activeSection, setActiveSection] = useState("profile");
 
   useEffect(() => {
     if (!user) {
@@ -47,12 +59,24 @@ export default function Settings() {
   const fetchProfile = async () => {
     const { data } = await supabase
       .from('profiles')
-      .select('full_name')
+      .select('*')
       .eq('id', user?.id)
       .maybeSingle();
     
     if (data) {
       setFullName(data.full_name || '');
+      setProfileIcon(data.profile_icon || 'user');
+      setColorOne(data.profile_color_one || '#3b82f6');
+      setColorTwo(data.profile_color_two || '#ec4899');
+      setUseGradient(data.use_gradient ?? true);
+    }
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    setActiveSection(sectionId);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -62,7 +86,13 @@ export default function Settings() {
 
     const { error } = await supabase
       .from('profiles')
-      .update({ full_name: fullName })
+      .update({ 
+        full_name: fullName,
+        profile_icon: profileIcon,
+        profile_color_one: colorOne,
+        profile_color_two: colorTwo,
+        use_gradient: useGradient
+      })
       .eq('id', user?.id);
 
     if (error) {
@@ -183,7 +213,7 @@ export default function Settings() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 container mx-auto px-4 py-8 mt-20">
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
             <Button
               variant="ghost"
@@ -197,50 +227,164 @@ export default function Settings() {
             </h1>
           </div>
 
-          {/* Profile Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                {isArabic ? 'معلومات الملف الشخصي' : 'Profile Information'}
-              </CardTitle>
-              <CardDescription>
-                {isArabic ? 'تحديث معلومات ملفك الشخصي' : 'Update your profile information'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleUpdateProfile} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">{isArabic ? 'البريد الإلكتروني' : 'Email'}</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={user?.email || ''}
-                    disabled
-                    className="bg-muted"
-                  />
-                </div>
+          <div className="flex gap-6">
+            {/* Sidebar Navigation */}
+            <aside className="w-64 space-y-1 sticky top-24 h-fit">
+              <h2 className="text-xs uppercase font-semibold text-muted-foreground mb-4 px-3">
+                {isArabic ? 'الإعدادات' : 'SETTINGS'}
+              </h2>
+              <button
+                onClick={() => scrollToSection('profile')}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
+                  activeSection === 'profile' 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-muted"
+                )}
+              >
+                <Palette className="h-4 w-4" />
+                <span>{isArabic ? 'المظهر' : 'Appearance'}</span>
+              </button>
+              <button
+                onClick={() => scrollToSection('account')}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
+                  activeSection === 'account' 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-muted"
+                )}
+              >
+                <User className="h-4 w-4" />
+                <span>{isArabic ? 'الحساب' : 'Account'}</span>
+              </button>
+              <button
+                onClick={() => scrollToSection('password')}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
+                  activeSection === 'password' 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-muted"
+                )}
+              >
+                <Key className="h-4 w-4" />
+                <span>{isArabic ? 'كلمة المرور' : 'Password'}</span>
+              </button>
+              <button
+                onClick={() => scrollToSection('delete')}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
+                  activeSection === 'delete' 
+                    ? "bg-destructive/10 text-destructive" 
+                    : "hover:bg-muted text-destructive"
+                )}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>{isArabic ? 'حذف الحساب' : 'Delete Account'}</span>
+              </button>
+            </aside>
 
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">{isArabic ? 'الاسم الكامل' : 'Full Name'}</Label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder={isArabic ? 'أدخل اسمك الكامل' : 'Enter your full name'}
-                  />
-                </div>
+            {/* Main Content */}
+            <div className="flex-1 space-y-6">
+              {/* Profile Customization */}
+              <Card id="profile">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Palette className="h-5 w-5" />
+                    {isArabic ? 'تخصيص المظهر' : 'Customize Appearance'}
+                  </CardTitle>
+                  <CardDescription>
+                    {isArabic ? 'خصص أيقونتك وألوان ملفك الشخصي' : 'Customize your profile icon and colors'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Preview */}
+                  <div className="flex flex-col items-center gap-4 p-6 bg-muted/50 rounded-lg">
+                    <ProfileAvatar
+                      icon={profileIcon}
+                      colorOne={colorOne}
+                      colorTwo={colorTwo}
+                      useGradient={useGradient}
+                      size="xl"
+                    />
+                    <p className="text-lg font-semibold">{fullName || user?.email}</p>
+                  </div>
 
-                <Button type="submit" disabled={isLoading}>
-                  {isArabic ? 'حفظ التغييرات' : 'Save Changes'}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                  <form onSubmit={handleUpdateProfile} className="space-y-6">
+                    {/* Full Name */}
+                    <div className="space-y-2">
+                      <Label htmlFor="displayName">{isArabic ? 'الاسم الكامل' : 'Full Name'}</Label>
+                      <Input
+                        id="displayName"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder={isArabic ? 'أدخل اسمك الكامل' : 'Enter your full name'}
+                      />
+                    </div>
 
-          {/* Change Password */}
-          <Card>
+                    {/* Color Pickers */}
+                    <div className="space-y-4">
+                      <ColorPicker
+                        color={colorOne}
+                        onColorChange={setColorOne}
+                        label={isArabic ? 'اللون الأول' : 'Profile color one'}
+                      />
+                      <ColorPicker
+                        color={colorTwo}
+                        onColorChange={setColorTwo}
+                        label={isArabic ? 'اللون الثاني' : 'Profile color two'}
+                      />
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={useGradient}
+                          onCheckedChange={setUseGradient}
+                        />
+                        <Label>{isArabic ? 'استخدام تدرج الألوان' : 'Use gradient'}</Label>
+                      </div>
+                    </div>
+
+                    {/* Icon Picker */}
+                    <div className="space-y-2">
+                      <Label>{isArabic ? 'اختر أيقونة' : 'User icon'}</Label>
+                      <IconPicker
+                        selectedIcon={profileIcon}
+                        onSelectIcon={setProfileIcon}
+                      />
+                    </div>
+
+                    <Button type="submit" disabled={isLoading} className="w-full">
+                      {isArabic ? 'حفظ التغييرات' : 'Save Changes'}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+
+              {/* Account Information */}
+              <Card id="account">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    {isArabic ? 'معلومات الحساب' : 'Account Information'}
+                  </CardTitle>
+                  <CardDescription>
+                    {isArabic ? 'عرض معلومات حسابك' : 'View your account information'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">{isArabic ? 'البريد الإلكتروني' : 'Email'}</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={user?.email || ''}
+                      disabled
+                      className="bg-muted"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Change Password */}
+              <Card id="password">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Key className="h-5 w-5" />
@@ -292,8 +436,8 @@ export default function Settings() {
             </CardContent>
           </Card>
 
-          {/* Delete Account */}
-          <Card className="border-destructive">
+              {/* Delete Account */}
+              <Card id="delete" className="border-destructive">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-destructive">
                 <Trash2 className="h-5 w-5" />
@@ -347,6 +491,8 @@ export default function Settings() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+            </div>
+          </div>
         </div>
       </main>
       <Footer />
