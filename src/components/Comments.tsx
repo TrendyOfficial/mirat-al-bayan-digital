@@ -309,6 +309,28 @@ export function Comments({ publicationId }: CommentsProps) {
     }
   };
 
+  const handleReport = async (commentId: string, reason: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('comment_reports')
+        .insert({
+          comment_id: commentId,
+          reported_by: user.id,
+          reported_by_email: user.email || '',
+          reason,
+        });
+
+      if (error) throw error;
+
+      toast.success("Report submitted. Thank you for reporting.");
+    } catch (error) {
+      console.error('Error reporting comment:', error);
+      toast.error("Failed to submit report");
+    }
+  };
+
   const canDeleteComment = (comment: Comment) => {
     if (!user) return false;
     return comment.user_id === user.id || isAdmin || isOwner();
@@ -479,6 +501,21 @@ export function Comments({ publicationId }: CommentsProps) {
                     >
                       <Reply className="h-4 w-4 mr-1" />
                       Reply
+                    </Button>
+                  )}
+                  {user && user.id !== comment.user_id && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const reason = prompt("Please provide a reason for reporting this comment:");
+                        if (reason && reason.trim()) {
+                          handleReport(comment.id, reason.trim());
+                        }
+                      }}
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      Report
                     </Button>
                   )}
                 </div>

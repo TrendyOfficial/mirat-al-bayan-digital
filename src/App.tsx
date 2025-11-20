@@ -22,6 +22,7 @@ import Categories from "./pages/admin/Categories";
 import ActivityLogs from "./pages/admin/ActivityLogs";
 import Settings from "./pages/Settings";
 import DeletionReviews from "./pages/admin/DeletionReviews";
+import Reports from "./pages/admin/Reports";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -66,6 +67,7 @@ const App = () => (
                 <Route path="logs" element={<ActivityLogs />} />
                 <Route path="users" element={<Users />} />
                 <Route path="deletion-reviews" element={<DeletionReviews />} />
+                <Route path="reports" element={<Reports />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

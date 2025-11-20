@@ -86,6 +86,35 @@ export type Database = {
         }
         Relationships: []
       }
+      bookmarks: {
+        Row: {
+          created_at: string | null
+          id: string
+          publication_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          publication_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          publication_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmarks_publication_id_fkey"
+            columns: ["publication_id"]
+            isOneToOne: false
+            referencedRelation: "publications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string | null
@@ -141,6 +170,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comment_reports: {
+        Row: {
+          comment_id: string
+          created_at: string | null
+          id: string
+          reason: string
+          reported_by: string
+          reported_by_email: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string | null
+          id?: string
+          reason: string
+          reported_by: string
+          reported_by_email: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string | null
+          id?: string
+          reason?: string
+          reported_by?: string
+          reported_by_email?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_reports_comment_id_fkey"
             columns: ["comment_id"]
             isOneToOne: false
             referencedRelation: "comments"
@@ -270,6 +343,35 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      publication_likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          publication_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          publication_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          publication_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "publication_likes_publication_id_fkey"
+            columns: ["publication_id"]
+            isOneToOne: false
+            referencedRelation: "publications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       publication_tags: {
         Row: {

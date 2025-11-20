@@ -3,8 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
-import { Pencil, Trash2, Save, X, Heart, Reply, ShieldCheck, ShieldX } from "lucide-react";
+import { Pencil, Trash2, Save, X, Heart, Reply, ShieldCheck, ShieldX, Flag } from "lucide-react";
 import DOMPurify from "dompurify";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface CommentItemProps {
   comment: any;
@@ -20,6 +28,7 @@ interface CommentItemProps {
   onLike: () => void;
   onReply: () => void;
   onModerate: (status: 'approved' | 'rejected', reason?: string) => void;
+  onReport?: (reason: string) => void;
   isEditing: boolean;
   editContent: string;
   setEditContent: (content: string) => void;
@@ -46,6 +55,7 @@ export function CommentItem({
   onLike,
   onReply,
   onModerate,
+  onReport,
   isEditing,
   editContent,
   setEditContent,
@@ -59,6 +69,8 @@ export function CommentItem({
 }: CommentItemProps) {
   const [moderateReason, setModerateReason] = useState("");
   const [showModeration, setShowModeration] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [reportReason, setReportReason] = useState("");
 
   return (
     <Card className={`p-4 ${comment.parent_comment_id ? 'ml-8 mt-2' : ''}`}>
@@ -203,7 +215,53 @@ export function CommentItem({
             Reply
           </Button>
         )}
+        {user && user.id !== comment.user_id && onReport && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowReportDialog(true)}
+            className="text-muted-foreground hover:text-destructive"
+          >
+            <Flag className="h-4 w-4 mr-1" />
+            Report
+          </Button>
+        )}
       </div>
+
+      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Report Comment</DialogTitle>
+            <DialogDescription>
+              Please provide a reason for reporting this comment.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            value={reportReason}
+            onChange={(e) => setReportReason(e.target.value)}
+            placeholder="Enter reason for reporting..."
+            className="min-h-[100px]"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowReportDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (reportReason.trim() && onReport) {
+                  onReport(reportReason.trim());
+                  setShowReportDialog(false);
+                  setReportReason("");
+                }
+              }}
+              disabled={!reportReason.trim()}
+            >
+              Submit Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Reply form */}
       {isReplying && (
