@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search, User, LogOut, Settings as SettingsIcon, BookmarkIcon, UserCircle } from "lucide-react";
+import { Search, User, LogOut, Settings as SettingsIcon, BookmarkIcon, UserCircle, LayoutDashboard } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -109,7 +109,8 @@ export function Header() {
                 {/* Dashboard (admins only) */}
                 {showDashboard && (
                   <DropdownMenuItem asChild>
-                    <Link to="/admin">
+                    <Link to="/admin" className="flex items-center">
+                      <LayoutDashboard className="h-4 w-4 mr-2" />
                       {isArabic ? 'لوحة التحكم' : 'Dashboard'}
                     </Link>
                   </DropdownMenuItem>
