@@ -4,46 +4,43 @@ export default function TurnstileGate() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Load Cloudflare Turnstile script
     const script = document.createElement("script");
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
     script.async = true;
-    document.body.appendChild(script);
-
     script.onload = () => {
+      // Render the Turnstile widget
       // @ts-ignore
       window.turnstile.render("#cf-turnstile", {
-        sitekey: "0x4AAAAAACCDHi8H3fmnNIcf", // Your site key
+        sitekey: "0x4AAAAAACCDHi8H3fmnNIcf",
         callback: async (token: string) => {
-          setLoading(true);
+          setLoading(true); // show spinner
           try {
-            const res = await fetch(
-              "https://miratlbayan.dmin138p.workers.dev", // Worker URL
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token }),
-              }
-            );
+            const res = await fetch("/api/verify-turnstile", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token }),
+            });
             const data = await res.json();
 
             if (data.success) {
               localStorage.setItem("turnstile_passed", "true");
+              // Slight delay to show spinner before redirect
               setTimeout(() => {
                 window.location.href = "/";
-              }, 500);
+              }, 1000);
             } else {
-              alert("Error verifying Turnstile. Try again.");
+              alert("Verification failed. Try again.");
               window.location.reload();
             }
           } catch (err) {
             alert("Error verifying Turnstile. Try again.");
             window.location.reload();
-          } finally {
-            setLoading(false);
           }
         },
       });
     };
+    document.body.appendChild(script);
   }, []);
 
   return (
@@ -57,7 +54,9 @@ export default function TurnstileGate() {
       }}
     >
       <h2>Please verify you are human</h2>
+
       <div id="cf-turnstile" style={{ marginTop: "20px" }}></div>
+
       {loading && (
         <div style={{ marginTop: "20px" }}>
           <span>Verifying... ⏳</span>
