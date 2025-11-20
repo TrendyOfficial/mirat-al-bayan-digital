@@ -1,4 +1,4 @@
-import { User, Star, Heart, Coffee, Music, Camera, Zap, Flame, Cloud, Umbrella, Sun, Moon, Sparkles, Crown, Headphones, Film } from "lucide-react";
+import { User, Star, Heart, Coffee, Music, Camera, Zap, Flame, Cloud, Umbrella, Sun, Moon, Sparkles, Crown, Headphones, Film, Award, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const AVAILABLE_ICONS = [
@@ -18,6 +18,8 @@ const AVAILABLE_ICONS = [
   { name: 'crown', Icon: Crown },
   { name: 'headphones', Icon: Headphones },
   { name: 'film', Icon: Film },
+  { name: 'award', Icon: Award },
+  { name: 'palette', Icon: Palette },
 ];
 
 interface IconPickerProps {
@@ -34,13 +36,13 @@ export function IconPicker({ selectedIcon, onSelectIcon }: IconPickerProps) {
           type="button"
           onClick={() => onSelectIcon(name)}
           className={cn(
-            "p-3 rounded-lg border-2 transition-all hover:scale-105",
+            "p-2 rounded-lg border-2 transition-all hover:scale-105",
             selectedIcon === name
               ? "border-primary bg-primary/10"
               : "border-border bg-background hover:border-primary/50"
           )}
         >
-          <Icon className="w-6 h-6" />
+          <Icon className="w-5 h-5" />
         </button>
       ))}
     </div>
