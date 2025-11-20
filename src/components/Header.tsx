@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Settings, LogOut, LayoutDashboard, Search, BookmarkIcon } from 'lucide-react';
+import { Settings, LogOut, LayoutDashboard, Search, BookmarkIcon, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DarkModeToggle } from './DarkModeToggle';
@@ -24,13 +24,40 @@ export const Header = () => {
   const [colorOne, setColorOne] = useState("#3b82f6");
   const [colorTwo, setColorTwo] = useState("#ec4899");
   const [useGradient, setUseGradient] = useState(true);
+  const [displayName, setDisplayName] = useState<string | null>(null);
   const isArabic = language === 'ar';
 
   useEffect(() => {
-    if (user) {
-      checkAdminStatus();
-      fetchProfile();
-    }
+    if (!user) return;
+
+    checkAdminStatus();
+    fetchProfile();
+
+    const handleProfileUpdated = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        profile_icon?: string;
+        profile_color_one?: string;
+        profile_color_two?: string;
+        use_gradient?: boolean;
+        full_name?: string | null;
+      }>).detail;
+
+      if (detail) {
+        if (detail.profile_icon) setProfileIcon(detail.profile_icon);
+        if (detail.profile_color_one) setColorOne(detail.profile_color_one);
+        if (detail.profile_color_two) setColorTwo(detail.profile_color_two);
+        if (typeof detail.use_gradient === 'boolean') setUseGradient(detail.use_gradient);
+        if (detail.full_name !== undefined) setDisplayName(detail.full_name);
+      } else {
+        fetchProfile();
+      }
+    };
+
+    window.addEventListener('profile-updated', handleProfileUpdated);
+
+    return () => {
+      window.removeEventListener('profile-updated', handleProfileUpdated);
+    };
   }, [user]);
 
   const checkAdminStatus = async () => {
@@ -44,10 +71,14 @@ export const Header = () => {
   };
 
   const fetchProfile = async () => {
+    if (!user) return;
+
+    setDisplayName(user.email || null);
+
     const { data } = await supabase
       .from('profiles')
-      .select('profile_icon, profile_color_one, profile_color_two, use_gradient')
-      .eq('id', user?.id)
+      .select('profile_icon, profile_color_one, profile_color_two, use_gradient, full_name')
+      .eq('id', user.id)
       .maybeSingle();
     
     if (data) {
@@ -55,6 +86,7 @@ export const Header = () => {
       setColorOne(data.profile_color_one || '#3b82f6');
       setColorTwo(data.profile_color_two || '#ec4899');
       setUseGradient(data.use_gradient ?? true);
+      setDisplayName(data.full_name || user.email || null);
     }
   };
 
