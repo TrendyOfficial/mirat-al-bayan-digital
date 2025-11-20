@@ -30,7 +30,7 @@ const queryClient = new QueryClient();
 
 function GateGuard({ children }: any) {
   const passed = localStorage.getItem("turnstile_passed") === "true";
-  return passed ? children : <Navigate to="/verify" />;
+  return passed ? children : <Navigate to="/verify" replace />;
 }
 
 const App = () => (
@@ -42,10 +42,10 @@ const App = () => (
         <AuthProvider>
           <LanguageProvider>
             <Routes>
-              {/* TURNSTILE ROUTE */}
+              {/* TURNSTILE VERIFICATION ROUTE */}
               <Route path="/verify" element={<TurnstileGate />} />
 
-              {/* PROTECTED BY CLOUDFARE TURNSTILE */}
+              {/* ALL OTHER ROUTES PROTECTED BY TURNSTILE */}
               <Route
                 path="/*"
                 element={
