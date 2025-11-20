@@ -12,12 +12,12 @@ export default function TurnstileGate() {
     script.onload = () => {
       // @ts-ignore
       window.turnstile.render("#cf-turnstile", {
-        sitekey: "0x4AAAAAACCDHi8H3fmnNIcf",
+        sitekey: "0x4AAAAAACCDHi8H3fmnNIcf", // Your site key
         callback: async (token: string) => {
           setLoading(true);
           try {
             const res = await fetch(
-              "https://miratlbayan.dmin138p.workers.dev",
+              "https://miratlbayan.dmin138p.workers.dev", // Worker URL
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -28,12 +28,16 @@ export default function TurnstileGate() {
 
             if (data.success) {
               localStorage.setItem("turnstile_passed", "true");
-              window.location.href = "/";
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 500);
             } else {
-              alert("Verification failed. Try again.");
+              alert("Error verifying Turnstile. Try again.");
+              window.location.reload();
             }
           } catch (err) {
             alert("Error verifying Turnstile. Try again.");
+            window.location.reload();
           } finally {
             setLoading(false);
           }
@@ -54,7 +58,11 @@ export default function TurnstileGate() {
     >
       <h2>Please verify you are human</h2>
       <div id="cf-turnstile" style={{ marginTop: "20px" }}></div>
-      {loading && <span>Verifying... ⏳</span>}
+      {loading && (
+        <div style={{ marginTop: "20px" }}>
+          <span>Verifying... ⏳</span>
+        </div>
+      )}
     </div>
   );
 }
