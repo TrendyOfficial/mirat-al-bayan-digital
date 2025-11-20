@@ -74,8 +74,6 @@ export const Header = () => {
   const fetchProfile = async () => {
     if (!user) return;
 
-    setDisplayName(user.email || null);
-
     const { data } = await supabase
       .from('profiles')
       .select('profile_icon, profile_color_one, profile_color_two, use_gradient, full_name')
@@ -88,6 +86,8 @@ export const Header = () => {
       setColorTwo(data.profile_color_two || '#ec4899');
       setUseGradient(data.use_gradient ?? true);
       setDisplayName(data.full_name || user.email || null);
+    } else {
+      setDisplayName(user.email || null);
     }
   };
 
@@ -174,15 +174,12 @@ export const Header = () => {
                     colorOne={colorOne}
                     colorTwo={colorTwo}
                     useGradient={useGradient}
-                    size="md"
-                    className="w-10 h-10"
+                    size="sm"
+                    className="w-9 h-9"
                   />
                   <div className="flex flex-col min-w-0">
                     <span className="font-semibold text-sm truncate">
                       {displayName || user.email}
-                    </span>
-                    <span className="text-xs text-muted-foreground truncate">
-                      {user.email}
                     </span>
                   </div>
                 </div>

@@ -19,7 +19,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import DOMPurify from "dompurify";
-import { Turnstile } from "@/components/Turnstile";
 
 interface Comment {
   id: string;
@@ -59,7 +58,6 @@ export function Comments({ publicationId }: CommentsProps) {
   const [moderateId, setModerateId] = useState<string | null>(null);
   const [moderationReason, setModerationReason] = useState("");
   const [showCommentForm, setShowCommentForm] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   useEffect(() => {
     checkAdminStatus();
@@ -137,24 +135,8 @@ export function Comments({ publicationId }: CommentsProps) {
     
     if (!user || !newComment.trim()) return;
 
-    if (!turnstileToken) {
-      toast.error("Please complete security verification");
-      return;
-    }
-
     setIsSubmitting(true);
     try {
-      // Verify Turnstile token server-side
-      const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-turnstile', {
-        body: { token: turnstileToken }
-      });
-
-      if (verifyError || !verifyData?.success) {
-        toast.error("Security verification failed");
-        setIsSubmitting(false);
-        return;
-      }
-
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')
@@ -175,7 +157,6 @@ export function Comments({ publicationId }: CommentsProps) {
 
       setNewComment("");
       setShowCommentForm(false);
-      setTurnstileToken(null);
       toast.success("Comment posted successfully!");
     } catch (error) {
       console.error('Error posting comment:', error);
@@ -379,13 +360,10 @@ export function Comments({ publicationId }: CommentsProps) {
               className="mb-4 min-h-[100px]"
               disabled={isSubmitting}
             />
-            <div className="mb-4">
-              <Turnstile onSuccess={setTurnstileToken} />
-            </div>
             <div className="flex gap-2">
               <Button 
                 type="submit" 
-                disabled={isSubmitting || !newComment.trim() || !turnstileToken}
+                disabled={isSubmitting || !newComment.trim()}
               >
                 {isSubmitting ? "Posting..." : "Post Comment"}
               </Button>
@@ -395,7 +373,6 @@ export function Comments({ publicationId }: CommentsProps) {
                 onClick={() => {
                   setShowCommentForm(false);
                   setNewComment("");
-                  setTurnstileToken(null);
                 }}
               >
                 Cancel
