@@ -8,6 +8,13 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      "/api/verify-turnstile": {
+        target: "https://nmsbskifihjxwdqeqgpk.supabase.co/functions/v1/verify-turnstile",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/verify-turnstile/, ""),
+      },
+    },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
