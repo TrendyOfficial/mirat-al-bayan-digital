@@ -19,6 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import DOMPurify from "dompurify";
+import { Turnstile } from "@/components/Turnstile";
 
 interface Comment {
   id: string;
@@ -57,6 +58,8 @@ export function Comments({ publicationId }: CommentsProps) {
   const [commentLikes, setCommentLikes] = useState<Record<string, CommentLike[]>>({});
   const [moderateId, setModerateId] = useState<string | null>(null);
   const [moderationReason, setModerationReason] = useState("");
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   useEffect(() => {
     checkAdminStatus();
@@ -132,7 +135,7 @@ export function Comments({ publicationId }: CommentsProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user || !newComment.trim()) return;
+    if (!user || !newComment.trim() || !turnstileToken) return;
 
     setIsSubmitting(true);
     try {
@@ -155,6 +158,8 @@ export function Comments({ publicationId }: CommentsProps) {
       if (error) throw error;
 
       setNewComment("");
+      setShowCommentForm(false);
+      setTurnstileToken(null);
       toast.success("Comment posted successfully!");
     } catch (error) {
       console.error('Error posting comment:', error);
@@ -349,21 +354,45 @@ export function Comments({ publicationId }: CommentsProps) {
 
       {/* Comment Form */}
       {user ? (
-        <form onSubmit={handleSubmit} className="mb-8">
-          <Textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Write a comment..."
-            className="mb-4 min-h-[100px]"
-            disabled={isSubmitting}
-          />
-          <Button 
-            type="submit" 
-            disabled={isSubmitting || !newComment.trim()}
-          >
-            {isSubmitting ? "Posting..." : "Post Comment"}
-          </Button>
-        </form>
+        showCommentForm ? (
+          <form onSubmit={handleSubmit} className="mb-8">
+            <Textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write a comment..."
+              className="mb-4 min-h-[100px]"
+              disabled={isSubmitting}
+            />
+            <div className="mb-4">
+              <Turnstile onSuccess={setTurnstileToken} />
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                type="submit" 
+                disabled={isSubmitting || !newComment.trim() || !turnstileToken}
+              >
+                {isSubmitting ? "Posting..." : "Post Comment"}
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={() => {
+                  setShowCommentForm(false);
+                  setNewComment("");
+                  setTurnstileToken(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <div className="mb-8">
+            <Button onClick={() => setShowCommentForm(true)}>
+              Write a Comment
+            </Button>
+          </div>
+        )
       ) : (
         <Card className="p-6 mb-8 text-center">
           <p className="text-muted-foreground mb-4">

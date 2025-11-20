@@ -12,6 +12,8 @@ import Auth from "./pages/Auth";
 import Category from "./pages/Category";
 import Publication from "./pages/Publication";
 import Search from "./pages/Search";
+import Profile from "./pages/Profile";
+import Bookmarks from "./pages/Bookmarks";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Publications from "./pages/admin/Publications";
@@ -41,6 +43,22 @@ const App = () => (
               <Route path="/category/:slug" element={<Category />} />
               <Route path="/publication/:slug" element={<Publication />} />
               <Route path="/search" element={<Search />} />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/bookmarks" 
+                element={
+                  <ProtectedRoute>
+                    <Bookmarks />
+                  </ProtectedRoute>
+                } 
+              />
               <Route 
                 path="/settings" 
                 element={
