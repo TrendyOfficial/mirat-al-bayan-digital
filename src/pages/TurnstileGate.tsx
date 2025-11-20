@@ -6,7 +6,6 @@ export default function TurnstileGate() {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load Cloudflare Turnstile script
     const script = document.createElement("script");
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
     script.async = true;
@@ -14,9 +13,7 @@ export default function TurnstileGate() {
   }, []);
 
   useEffect(() => {
-    if (token) {
-      verifyToken(token);
-    }
+    if (token) verifyToken(token);
   }, [token]);
 
   const verifyToken = async (token: string) => {
@@ -30,7 +27,8 @@ export default function TurnstileGate() {
 
     if (data.success) {
       localStorage.setItem("turnstile_passed", "true");
-      navigate("/");
+      // ⬅️ FIXED REDIRECT
+      window.location.href = "/"; 
     } else {
       alert("Verification failed. Try again.");
       window.location.reload();
@@ -38,14 +36,22 @@ export default function TurnstileGate() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <h2>Please verify you are human</h2>
 
       <div
         className="cf-challenge"
-        style={{ marginTop: "20px" }}
         data-sitekey="0x4AAAAAACCDHi8H3fmnNIcf"
-        data-callback={(t: string) => setToken(t)}
+        data-callback={(token: string) => setToken(token)}
+        style={{ marginTop: "20px" }}
       ></div>
     </div>
   );
