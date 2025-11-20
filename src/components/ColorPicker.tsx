@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Paintbrush } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
@@ -53,7 +53,7 @@ export function ColorPicker({ color, onColorChange, label }: ColorPickerProps) {
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="w-12 h-12 rounded-lg border-2 border-border hover:border-primary transition-all"
+              className="w-12 h-12 rounded-lg border-2 border-border hover:border-primary transition-all relative flex items-center justify-center"
               style={{ 
                 backgroundColor: color,
                 backgroundImage: !PRESET_COLORS.includes(color) 
@@ -63,7 +63,9 @@ export function ColorPicker({ color, onColorChange, label }: ColorPickerProps) {
                 backgroundSize: '10px 10px',
                 backgroundPosition: '0 0, 5px 5px'
               }}
-            />
+            >
+              <Paintbrush className="w-4 h-4 text-white drop-shadow-lg" />
+            </button>
           </PopoverTrigger>
           <PopoverContent className="w-64">
             <div className="space-y-3">

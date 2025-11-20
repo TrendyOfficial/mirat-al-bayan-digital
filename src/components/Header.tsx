@@ -1,35 +1,62 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Search, User, LogOut, Settings as SettingsIcon, BookmarkIcon, UserCircle, LayoutDashboard } from "lucide-react";
-import { LanguageSwitcher } from "./LanguageSwitcher";
-import { DarkModeToggle } from "./DarkModeToggle";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Settings, LogOut, LayoutDashboard, Search, BookmarkIcon } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { DarkModeToggle } from './DarkModeToggle';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { ProfileAvatar } from './ProfileAvatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
-export function Header() {
+export const Header = () => {
+  const { user, signOut } = useAuth();
   const { language } = useLanguage();
-  const { user, signOut, hasAnyRole } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [profileIcon, setProfileIcon] = useState("user");
+  const [colorOne, setColorOne] = useState("#3b82f6");
+  const [colorTwo, setColorTwo] = useState("#ec4899");
+  const [useGradient, setUseGradient] = useState(true);
   const isArabic = language === 'ar';
-  const [showDashboard, setShowDashboard] = useState(false);
 
   useEffect(() => {
-    const checkAccess = async () => {
-      if (user) {
-        const hasAccess = await hasAnyRole();
-        setShowDashboard(hasAccess);
-      } else {
-        setShowDashboard(false);
-      }
-    };
-    checkAccess();
-  }, [user, hasAnyRole]);
+    if (user) {
+      checkAdminStatus();
+      fetchProfile();
+    }
+  }, [user]);
+
+  const checkAdminStatus = async () => {
+    const { data } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user?.id)
+      .single();
+    
+    setIsAdmin(data?.role === 'admin');
+  };
+
+  const fetchProfile = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('profile_icon, profile_color_one, profile_color_two, use_gradient')
+      .eq('id', user?.id)
+      .maybeSingle();
+    
+    if (data) {
+      setProfileIcon(data.profile_icon || 'user');
+      setColorOne(data.profile_color_one || '#3b82f6');
+      setColorTwo(data.profile_color_two || '#ec4899');
+      setUseGradient(data.use_gradient ?? true);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -83,53 +110,47 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="rounded-full p-0">
+                  <ProfileAvatar 
+                    icon={profileIcon}
+                    colorOne={colorOne}
+                    colorTwo={colorTwo}
+                    useGradient={useGradient}
+                    size="sm"
+                  />
                 </Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end">
-
-                {/* Profile */}
                 <DropdownMenuItem asChild>
-                  <Link to="/profile" className="flex items-center">
-                    <UserCircle className="h-4 w-4 mr-2" />
-                    {isArabic ? 'الملف الشخصي' : 'Profile'}
-                  </Link>
-                </DropdownMenuItem>
-
-                {/* Bookmarks */}
-                <DropdownMenuItem asChild>
-                  <Link to="/bookmarks" className="flex items-center">
+                  <Link to="/bookmarks" className="cursor-pointer flex items-center">
                     <BookmarkIcon className="h-4 w-4 mr-2" />
                     {isArabic ? 'المفضلات' : 'Bookmarks'}
                   </Link>
                 </DropdownMenuItem>
 
-                {/* Dashboard (admins only) */}
-                {showDashboard && (
+                <DropdownMenuItem asChild>
+                  <Link to="/settings" className="cursor-pointer flex items-center">
+                    <Settings className="h-4 w-4 mr-2" />
+                    {isArabic ? 'الإعدادات' : 'Settings'}
+                  </Link>
+                </DropdownMenuItem>
+
+                {isAdmin && (
                   <DropdownMenuItem asChild>
-                    <Link to="/admin" className="flex items-center">
+                    <Link to="/admin" className="cursor-pointer flex items-center">
                       <LayoutDashboard className="h-4 w-4 mr-2" />
                       {isArabic ? 'لوحة التحكم' : 'Dashboard'}
                     </Link>
                   </DropdownMenuItem>
                 )}
 
-                {/* Settings with icon */}
-                <DropdownMenuItem asChild>
-                  <Link to="/settings" className="flex items-center">
-                    <SettingsIcon className="h-4 w-4 mr-2" />
-                    {isArabic ? 'الإعدادات' : 'Settings'}
-                  </Link>
-                </DropdownMenuItem>
+                <DropdownMenuSeparator />
 
-                {/* Logout */}
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">
                   <LogOut className="h-4 w-4 mr-2" />
                   {isArabic ? 'تسجيل الخروج' : 'Logout'}
                 </DropdownMenuItem>
-
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
@@ -143,4 +164,4 @@ export function Header() {
       </div>
     </header>
   );
-}
+};

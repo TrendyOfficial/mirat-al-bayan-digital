@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Trash2, Key, User, ArrowLeft, Settings as SettingsIcon, Palette } from "lucide-react";
+import { Trash2, Key, User, ArrowLeft, Settings as SettingsIcon, Palette, Edit2, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
@@ -19,6 +19,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { IconPicker } from "@/components/IconPicker";
@@ -46,7 +52,8 @@ export default function Settings() {
   const [colorOne, setColorOne] = useState("#3b82f6");
   const [colorTwo, setColorTwo] = useState("#ec4899");
   const [useGradient, setUseGradient] = useState(true);
-  const [activeSection, setActiveSection] = useState("profile");
+  const [activeSection, setActiveSection] = useState("all");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -74,14 +81,15 @@ export default function Settings() {
 
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (sectionId !== 'all') {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   };
 
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleUpdateProfile = async () => {
     setIsLoading(true);
 
     const { error } = await supabase
@@ -101,6 +109,7 @@ export default function Settings() {
       });
     } else {
       toast.success(isArabic ? 'تم تحديث الملف الشخصي' : 'Profile updated successfully');
+      setIsEditDialogOpen(false);
       
       // Log activity
       await supabase.rpc('log_activity', {
@@ -234,16 +243,16 @@ export default function Settings() {
                 {isArabic ? 'الإعدادات' : 'SETTINGS'}
               </h2>
               <button
-                onClick={() => scrollToSection('profile')}
+                onClick={() => scrollToSection('all')}
                 className={cn(
                   "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
-                  activeSection === 'profile' 
+                  activeSection === 'all' 
                     ? "bg-primary/10 text-primary" 
                     : "hover:bg-muted"
                 )}
               >
-                <Palette className="h-4 w-4" />
-                <span>{isArabic ? 'المظهر' : 'Appearance'}</span>
+                <SettingsIcon className="h-4 w-4" />
+                <span>{isArabic ? 'جميع الإعدادات' : 'All Settings'}</span>
               </button>
               <button
                 onClick={() => scrollToSection('account')}
@@ -284,107 +293,73 @@ export default function Settings() {
             </aside>
 
             {/* Main Content */}
-            <div className="flex-1 space-y-6">
-              {/* Profile Customization */}
-              <Card id="profile">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Palette className="h-5 w-5" />
-                    {isArabic ? 'تخصيص المظهر' : 'Customize Appearance'}
-                  </CardTitle>
-                  <CardDescription>
-                    {isArabic ? 'خصص أيقونتك وألوان ملفك الشخصي' : 'Customize your profile icon and colors'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Preview */}
-                  <div className="flex flex-col items-center gap-4 p-6 bg-muted/50 rounded-lg">
-                    <ProfileAvatar
-                      icon={profileIcon}
-                      colorOne={colorOne}
-                      colorTwo={colorTwo}
-                      useGradient={useGradient}
-                      size="xl"
-                    />
-                    <p className="text-lg font-semibold">{fullName || user?.email}</p>
-                  </div>
-
-                  <form onSubmit={handleUpdateProfile} className="space-y-6">
-                    {/* Full Name */}
-                    <div className="space-y-2">
-                      <Label htmlFor="displayName">{isArabic ? 'الاسم الكامل' : 'Full Name'}</Label>
-                      <Input
-                        id="displayName"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder={isArabic ? 'أدخل اسمك الكامل' : 'Enter your full name'}
-                      />
-                    </div>
-
-                    {/* Color Pickers */}
-                    <div className="space-y-4">
-                      <ColorPicker
-                        color={colorOne}
-                        onColorChange={setColorOne}
-                        label={isArabic ? 'اللون الأول' : 'Profile color one'}
-                      />
-                      <ColorPicker
-                        color={colorTwo}
-                        onColorChange={setColorTwo}
-                        label={isArabic ? 'اللون الثاني' : 'Profile color two'}
-                      />
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          checked={useGradient}
-                          onCheckedChange={setUseGradient}
-                        />
-                        <Label>{isArabic ? 'استخدام تدرج الألوان' : 'Use gradient'}</Label>
+            <div className="flex-1 space-y-6" style={{ display: activeSection === 'all' ? 'flex' : 'block', flexDirection: 'column', overflow: activeSection !== 'all' ? 'hidden' : 'auto', maxHeight: activeSection !== 'all' ? '100vh' : 'none' }}>
+              {/* Profile Card */}
+              {(activeSection === 'all' || activeSection === 'account') && (
+                <Card id="account" className="border-2">
+                  <CardHeader>
+                    <CardTitle>{isArabic ? 'الحساب' : 'Account'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-start justify-between gap-6 p-6 bg-muted/30 rounded-lg border">
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <ProfileAvatar
+                            icon={profileIcon}
+                            colorOne={colorOne}
+                            colorTwo={colorTwo}
+                            useGradient={useGradient}
+                            size="xl"
+                          />
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-8 text-xs gap-1"
+                            onClick={() => setIsEditDialogOpen(true)}
+                          >
+                            <Edit2 className="h-3 w-3" />
+                            {isArabic ? 'تعديل' : 'Edit'}
+                          </Button>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">{isArabic ? 'الاسم الكامل' : 'Nickname'}</p>
+                          <p className="text-lg font-semibold">{fullName || user?.email}</p>
+                          <Button
+                            variant="destructive"
+                            className="mt-4"
+                            onClick={async () => {
+                              await signOut();
+                              navigate('/');
+                            }}
+                          >
+                            <LogOut className="mr-2 h-4 w-4" />
+                            {isArabic ? 'تسجيل الخروج' : 'Log out'}
+                          </Button>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">{isArabic ? 'اسم الجهاز' : 'Device name'}</p>
+                        <p className="text-lg font-semibold">{isArabic ? 'المسؤول' : 'Admin'}</p>
                       </div>
                     </div>
 
-                    {/* Icon Picker */}
-                    <div className="space-y-2">
-                      <Label>{isArabic ? 'اختر أيقونة' : 'User icon'}</Label>
-                      <IconPicker
-                        selectedIcon={profileIcon}
-                        onSelectIcon={setProfileIcon}
+                    <div className="mt-6 space-y-2">
+                      <Label htmlFor="email">{isArabic ? 'البريد الإلكتروني' : 'Email'}</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={user?.email || ''}
+                        disabled
+                        className="bg-muted"
                       />
                     </div>
-
-                    <Button type="submit" disabled={isLoading} className="w-full">
-                      {isArabic ? 'حفظ التغييرات' : 'Save Changes'}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-
-              {/* Account Information */}
-              <Card id="account">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    {isArabic ? 'معلومات الحساب' : 'Account Information'}
-                  </CardTitle>
-                  <CardDescription>
-                    {isArabic ? 'عرض معلومات حسابك' : 'View your account information'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">{isArabic ? 'البريد الإلكتروني' : 'Email'}</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={user?.email || ''}
-                      disabled
-                      className="bg-muted"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Change Password */}
-              <Card id="password">
+              {(activeSection === 'all' || activeSection === 'password') && (
+                <Card id="password">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Key className="h-5 w-5" />
@@ -435,9 +410,11 @@ export default function Settings() {
               </form>
             </CardContent>
           </Card>
+              )}
 
               {/* Delete Account */}
-              <Card id="delete" className="border-destructive">
+              {(activeSection === 'all' || activeSection === 'delete') && (
+                <Card id="delete" className="border-destructive">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-destructive">
                 <Trash2 className="h-5 w-5" />
@@ -456,6 +433,8 @@ export default function Settings() {
               </Button>
             </CardContent>
           </Card>
+              )}
+          </div>
 
           <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
             <AlertDialogContent>
@@ -491,7 +470,75 @@ export default function Settings() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-            </div>
+
+          {/* Edit Profile Dialog */}
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  {isArabic ? 'تعديل صورة الملف الشخصي' : 'Edit profile picture'}
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6 py-4">
+                <div className="flex justify-center">
+                  <ProfileAvatar
+                    icon={profileIcon}
+                    colorOne={colorOne}
+                    colorTwo={colorTwo}
+                    useGradient={useGradient}
+                    size="xl"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="dialogDisplayName">{isArabic ? 'الاسم الكامل' : 'Full Name'}</Label>
+                  <Input
+                    id="dialogDisplayName"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={isArabic ? 'أدخل اسمك الكامل' : 'Enter your full name'}
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <ColorPicker
+                    color={colorOne}
+                    onColorChange={setColorOne}
+                    label={isArabic ? 'اللون الأول' : 'Profile color one'}
+                  />
+                  <ColorPicker
+                    color={colorTwo}
+                    onColorChange={setColorTwo}
+                    label={isArabic ? 'اللون الثاني' : 'Profile color two'}
+                  />
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={useGradient}
+                      onCheckedChange={setUseGradient}
+                    />
+                    <Label>{isArabic ? 'استخدام تدرج الألوان' : 'Use gradient'}</Label>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{isArabic ? 'اختر أيقونة' : 'User icon'}</Label>
+                  <IconPicker
+                    selectedIcon={profileIcon}
+                    onSelectIcon={setProfileIcon}
+                  />
+                </div>
+
+                <Button 
+                  onClick={handleUpdateProfile} 
+                  disabled={isLoading} 
+                  className="w-full"
+                >
+                  {isArabic ? 'إنهاء التعديل' : 'Finish editing'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
           </div>
         </div>
       </main>
