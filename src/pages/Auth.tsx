@@ -10,8 +10,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { Turnstile } from "@/components/Turnstile";
 import { z } from "zod";
+import { CheckCircle2, XCircle, Circle } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -46,7 +46,6 @@ export default function Auth() {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const resetSchema = z.object({
     email: z.string().email("Invalid email address").max(255),
@@ -91,25 +90,9 @@ export default function Auth() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!turnstileToken) {
-      toast.error(isArabic ? "يرجى إكمال التحقق الأمني" : "Please complete security verification");
-      return;
-    }
-    
     try {
       loginSchema.parse(loginData);
       setIsLoading(true);
-
-      // Verify Turnstile token server-side
-      const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-turnstile', {
-        body: { token: turnstileToken }
-      });
-
-      if (verifyError || !verifyData?.success) {
-        toast.error(isArabic ? "فشل التحقق الأمني" : "Security verification failed");
-        setIsLoading(false);
-        return;
-      }
 
       const { error } = await signIn(loginData.email, loginData.password);
 
@@ -143,28 +126,24 @@ export default function Auth() {
     }
   };
 
+  const getPasswordStrength = (password: string) => {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (password.length >= 12) strength++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^a-zA-Z0-9]/.test(password)) strength++;
+    return strength;
+  };
+
+  const passwordStrength = getPasswordStrength(signupData.password);
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!turnstileToken) {
-      toast.error(isArabic ? "يرجى إكمال التحقق الأمني" : "Please complete security verification");
-      return;
-    }
 
     try {
       signupSchema.parse(signupData);
       setIsLoading(true);
-
-      // Verify Turnstile token server-side
-      const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-turnstile', {
-        body: { token: turnstileToken }
-      });
-
-      if (verifyError || !verifyData?.success) {
-        toast.error(isArabic ? "فشل التحقق الأمني" : "Security verification failed");
-        setIsLoading(false);
-        return;
-      }
 
       const { error } = await signUp(
         signupData.email,
@@ -263,11 +242,7 @@ export default function Auth() {
                     required
                   />
                 </div>
-                <Turnstile 
-                  onSuccess={(token) => setTurnstileToken(token)}
-                  onError={() => setTurnstileToken(null)}
-                />
-                <Button type="submit" className="w-full" disabled={isLoading || !turnstileToken}>
+                <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading
                     ? (isArabic ? 'جاري التحميل...' : 'Loading...')
                     : (isArabic ? 'تسجيل الدخول' : 'Login')}
@@ -318,6 +293,50 @@ export default function Auth() {
                     }
                     required
                   />
+                  {signupData.password && (
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        {passwordStrength >= 1 ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        <span className={passwordStrength >= 1 ? "text-green-500" : "text-muted-foreground"}>
+                          {isArabic ? 'على الأقل 8 أحرف' : 'At least 8 characters'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {passwordStrength >= 3 ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        <span className={passwordStrength >= 3 ? "text-green-500" : "text-muted-foreground"}>
+                          {isArabic ? 'أحرف كبيرة وصغيرة' : 'Upper & lowercase letters'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {passwordStrength >= 4 ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        <span className={passwordStrength >= 4 ? "text-green-500" : "text-muted-foreground"}>
+                          {isArabic ? 'يحتوي على أرقام' : 'Contains numbers'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {passwordStrength >= 5 ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        <span className={passwordStrength >= 5 ? "text-green-500" : "text-muted-foreground"}>
+                          {isArabic ? 'رموز خاصة (!@#$...)' : 'Special characters (!@#$...)'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-confirm">
@@ -333,11 +352,7 @@ export default function Auth() {
                     required
                   />
                 </div>
-                <Turnstile 
-                  onSuccess={(token) => setTurnstileToken(token)}
-                  onError={() => setTurnstileToken(null)}
-                />
-                <Button type="submit" className="w-full" disabled={isLoading || !turnstileToken}>
+                <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading
                     ? (isArabic ? 'جاري التحميل...' : 'Loading...')
                     : (isArabic ? 'إنشاء حساب' : 'Sign Up')}
