@@ -117,14 +117,18 @@ export default function Bookmarks() {
             <PublicationCard
               key={publication.id}
               id={publication.id}
-              title={isArabic ? publication.title_ar : (publication.title_en || publication.title_ar)}
-              excerpt={isArabic ? publication.excerpt_ar : (publication.excerpt_en || publication.excerpt_ar)}
-              imageUrl={publication.featured_image_url}
+              title_ar={publication.title_ar}
+              title_en={publication.title_en}
+              excerpt_ar={publication.excerpt_ar}
+              excerpt_en={publication.excerpt_en}
+              featured_image_url={publication.featured_image_url}
               slug={publication.slug}
-              publishedAt={publication.published_at}
-              category={publication.categories ? (isArabic ? publication.categories.name_ar : publication.categories.name_en) : ''}
-              categorySlug={publication.categories?.slug || ''}
-              author={publication.authors ? (isArabic ? publication.authors.name_ar : publication.authors.name_en) : ''}
+              published_at={publication.published_at || ''}
+              category_name_ar={publication.categories?.name_ar || ''}
+              category_name_en={publication.categories?.name_en || ''}
+              category_slug={publication.categories?.slug || ''}
+              author_name_ar={publication.authors?.name_ar || ''}
+              author_name_en={publication.authors?.name_en || ''}
             />
           ))}
         </div>
