@@ -19,21 +19,22 @@ const FullscreenReader = ({ isOpen, onClose, titleEn, titleAr, contentEn, conten
   const content = language === 'en' ? contentEn || contentAr : contentAr;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex items-center justify-center p-4 overflow-auto">
+    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4">
       <button
         onClick={onClose}
-        className="fixed top-4 right-4 z-10 p-2 rounded-full bg-background border border-border hover:bg-accent transition-colors"
+        className="fixed top-4 right-4 z-10 p-2 rounded-full bg-background border border-border hover:bg-accent transition-colors shadow-lg"
         aria-label="Close fullscreen"
       >
         <X className="h-6 w-6" />
       </button>
       
-      <div className="w-full max-w-4xl mx-auto my-8">
+      <div className="w-full h-full flex items-center justify-center overflow-auto">
         <div 
-          className="bg-card border border-border shadow-2xl rounded-lg p-12 min-h-[297mm]"
+          className="bg-card border border-border shadow-2xl rounded-lg p-12 my-8 mx-auto overflow-y-auto"
           style={{
-            aspectRatio: '210/297',
-            maxWidth: '210mm',
+            width: '210mm',
+            minHeight: '297mm',
+            maxHeight: '90vh',
           }}
         >
           <article className="prose prose-lg dark:prose-invert max-w-none">
@@ -41,7 +42,7 @@ const FullscreenReader = ({ isOpen, onClose, titleEn, titleAr, contentEn, conten
               {title}
             </h1>
             <div 
-              className="text-foreground leading-relaxed"
+              className="text-foreground leading-relaxed whitespace-pre-wrap"
               dangerouslySetInnerHTML={{ __html: content }}
             />
           </article>

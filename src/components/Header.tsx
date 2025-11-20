@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search, User, LogOut, Settings as SettingsIcon } from "lucide-react";
+import { Search, User, LogOut, Settings as SettingsIcon, BookmarkIcon, UserCircle } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -90,6 +90,22 @@ export function Header() {
 
               <DropdownMenuContent align="end">
 
+                {/* Profile */}
+                <DropdownMenuItem asChild>
+                  <Link to="/profile" className="flex items-center">
+                    <UserCircle className="h-4 w-4 mr-2" />
+                    {isArabic ? 'الملف الشخصي' : 'Profile'}
+                  </Link>
+                </DropdownMenuItem>
+
+                {/* Bookmarks */}
+                <DropdownMenuItem asChild>
+                  <Link to="/bookmarks" className="flex items-center">
+                    <BookmarkIcon className="h-4 w-4 mr-2" />
+                    {isArabic ? 'المفضلات' : 'Bookmarks'}
+                  </Link>
+                </DropdownMenuItem>
+
                 {/* Dashboard (admins only) */}
                 {showDashboard && (
                   <DropdownMenuItem asChild>
@@ -99,7 +115,7 @@ export function Header() {
                   </DropdownMenuItem>
                 )}
 
-                {/* ⭐ Settings with icon */}
+                {/* Settings with icon */}
                 <DropdownMenuItem asChild>
                   <Link to="/settings" className="flex items-center">
                     <SettingsIcon className="h-4 w-4 mr-2" />
