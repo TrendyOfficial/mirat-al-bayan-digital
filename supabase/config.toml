@@ -4,5 +4,5 @@ project_id = "nmsbskifihjxwdqeqgpk"
 enable_signup = true
 email_auto_confirm = true
 
-[functions.generate-pdf]
+[functions.verify-turnstile]
 verify_jwt = false

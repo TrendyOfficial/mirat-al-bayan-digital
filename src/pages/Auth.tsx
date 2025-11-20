@@ -100,6 +100,17 @@ export default function Auth() {
       loginSchema.parse(loginData);
       setIsLoading(true);
 
+      // Verify Turnstile token server-side
+      const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-turnstile', {
+        body: { token: turnstileToken }
+      });
+
+      if (verifyError || !verifyData?.success) {
+        toast.error(isArabic ? "فشل التحقق الأمني" : "Security verification failed");
+        setIsLoading(false);
+        return;
+      }
+
       const { error } = await signIn(loginData.email, loginData.password);
 
       if (error) {
@@ -143,6 +154,17 @@ export default function Auth() {
     try {
       signupSchema.parse(signupData);
       setIsLoading(true);
+
+      // Verify Turnstile token server-side
+      const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-turnstile', {
+        body: { token: turnstileToken }
+      });
+
+      if (verifyError || !verifyData?.success) {
+        toast.error(isArabic ? "فشل التحقق الأمني" : "Security verification failed");
+        setIsLoading(false);
+        return;
+      }
 
       const { error } = await signUp(
         signupData.email,

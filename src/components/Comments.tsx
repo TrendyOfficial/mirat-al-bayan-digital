@@ -135,10 +135,26 @@ export function Comments({ publicationId }: CommentsProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user || !newComment.trim() || !turnstileToken) return;
+    if (!user || !newComment.trim()) return;
+
+    if (!turnstileToken) {
+      toast.error("Please complete security verification");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
+      // Verify Turnstile token server-side
+      const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-turnstile', {
+        body: { token: turnstileToken }
+      });
+
+      if (verifyError || !verifyData?.success) {
+        toast.error("Security verification failed");
+        setIsSubmitting(false);
+        return;
+      }
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')

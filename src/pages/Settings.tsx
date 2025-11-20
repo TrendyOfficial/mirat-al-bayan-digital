@@ -319,6 +319,7 @@ export default function Settings() {
                 <Trash2 className="h-4 w-4" />
                 <span>{isArabic ? 'حذف الحساب' : 'Delete Account'}</span>
               </button>
+              </div>
             </aside>
 
             {/* Main Content */}
@@ -365,8 +366,8 @@ export default function Settings() {
                             {isArabic ? 'تسجيل الخروج' : 'Log out'}
                           </Button>
                         </div>
-                       </div>
-                     </div>
+                      </div>
+                    </div>
 
                     <div className="mt-6 space-y-2">
                       <Label htmlFor="email">{isArabic ? 'البريد الإلكتروني' : 'Email'}</Label>
