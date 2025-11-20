@@ -445,7 +445,7 @@ export default function Publication() {
                   onClick={() => setIsFullscreen(true)}
                 >
                   <Maximize2 className="h-4 w-4 mr-2" />
-                  {isArabic ? '' : ''}
+                  {isArabic ? 'ملء الشاشة' : 'Fullscreen'}
                 </Button>
                 <Button
                   variant="outline"
@@ -463,7 +463,7 @@ export default function Publication() {
                   className={isBookmarked ? 'text-primary' : ''}
                 >
                   <Bookmark className={`h-4 w-4 mr-2 ${isBookmarked ? 'fill-current' : ''}`} />
-                  {isArabic ? (isBookmarked ? 'محفوظ' : 'حفظ') : (isBookmarked ? '' : '')}
+                  {isArabic ? (isBookmarked ? 'محفوظ' : 'حفظ') : (isBookmarked ? 'Bookmarked' : 'Bookmark')}
                 </Button>
               </div>
             </div>
