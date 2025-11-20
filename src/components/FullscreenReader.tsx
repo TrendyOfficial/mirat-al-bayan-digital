@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import DOMPurify from "dompurify";
 
 interface FullscreenReaderProps {
   isOpen: boolean;
@@ -42,7 +43,7 @@ const FullscreenReader = ({ isOpen, onClose, titleEn, titleAr, contentEn, conten
             </h1>
             <div 
               className="text-foreground leading-relaxed whitespace-pre-wrap break-words"
-              dangerouslySetInnerHTML={{ __html: content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
             />
           </article>
         </div>
