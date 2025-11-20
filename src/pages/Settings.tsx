@@ -33,6 +33,21 @@ import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
+const passwordStrengthLabelEn = ["Too short", "Weak", "Medium", "Strong"] as const;
+const passwordStrengthLabelAr = ["قصيرة جداً", "ضعيفة", "متوسطة", "قوية"] as const;
+
+const getPasswordStrength = (password: string): number => {
+  let score = 0;
+  if (password.length >= 6) score++;
+  if (password.length >= 10) score++;
+  if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++;
+  if (/\d/.test(password) && /\W/.test(password)) score++;
+  if (score >= 3) return 3;
+  if (score === 2) return 2;
+  if (score === 1) return 1;
+  return 0;
+};
+
 export default function Settings() {
   const { language } = useLanguage();
   const { user, signOut } = useAuth();

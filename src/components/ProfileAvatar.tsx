@@ -11,14 +11,14 @@ interface ProfileAvatarProps {
 }
 
 const sizeMap = {
-  sm: 'w-12 h-12',
+  sm: 'w-8 h-8',
   md: 'w-20 h-20',
   lg: 'w-32 h-32',
   xl: 'w-40 h-40',
 };
 
 const iconSizeMap = {
-  sm: 'w-6 h-6',
+  sm: 'w-4 h-4',
   md: 'w-10 h-10',
   lg: 'w-16 h-16',
   xl: 'w-20 h-20',

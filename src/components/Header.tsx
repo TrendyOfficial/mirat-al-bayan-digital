@@ -142,27 +142,38 @@ export const Header = () => {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full p-0">
+                <Button
+                  variant="ghost"
+                  className="group flex items-center gap-2 rounded-full px-2 py-1 h-10 hover:bg-accent transition-colors"
+                >
                   <ProfileAvatar 
                     icon={profileIcon}
                     colorOne={colorOne}
                     colorTwo={colorTwo}
                     useGradient={useGradient}
                     size="sm"
+                    className="w-8 h-8"
                   />
+                  <span className="hidden sm:inline text-sm font-medium max-w-[120px] truncate">
+                    {displayName || user.email}
+                  </span>
+                  <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent
+                align="end"
+                className="w-64 rounded-xl border bg-popover shadow-lg p-2 animate-in slide-in-from-top-2 duration-200"
+              >
                 <DropdownMenuItem asChild>
-                  <Link to="/bookmarks" className="cursor-pointer flex items-center">
+                  <Link to="/bookmarks" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent">
                     <BookmarkIcon className="h-4 w-4 mr-2" />
                     {isArabic ? 'المفضلات' : 'Bookmarks'}
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
-                  <Link to="/settings" className="cursor-pointer flex items-center">
+                  <Link to="/settings" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent">
                     <Settings className="h-4 w-4 mr-2" />
                     {isArabic ? 'الإعدادات' : 'Settings'}
                   </Link>
@@ -170,16 +181,16 @@ export const Header = () => {
 
                 {isAdmin && (
                   <DropdownMenuItem asChild>
-                    <Link to="/admin" className="cursor-pointer flex items-center">
+                    <Link to="/admin" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent">
                       <LayoutDashboard className="h-4 w-4 mr-2" />
                       {isArabic ? 'لوحة التحكم' : 'Dashboard'}
                     </Link>
                   </DropdownMenuItem>
                 )}
 
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="my-2" />
 
-                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">
+                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer rounded-lg px-3 py-2 text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive">
                   <LogOut className="h-4 w-4 mr-2" />
                   {isArabic ? 'تسجيل الخروج' : 'Logout'}
                 </DropdownMenuItem>
