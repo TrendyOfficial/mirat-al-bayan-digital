@@ -248,51 +248,53 @@ export default function Settings() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 mt-20">
+      <main className="flex-1 container mx-auto px-4 py-4 md:py-8 mt-14 md:mt-20">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
             <Button
               variant="ghost"
               size="icon"
+              className="h-9 w-9 md:h-10 md:w-10"
               onClick={() => navigate(-1)}
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
             </Button>
-            <h1 className="font-arabic text-3xl font-bold">
+            <h1 className="font-arabic text-2xl md:text-3xl font-bold">
               {isArabic ? 'الإعدادات' : 'Settings'}
             </h1>
           </div>
 
-          <div className="flex gap-6">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6">
             {/* Sidebar Navigation */}
-            <aside className="w-64 space-y-1 sticky top-24 h-fit">
-              <h2 className="text-xs uppercase font-semibold text-muted-foreground mb-4 px-3">
+            <aside className="w-full md:w-64 md:space-y-1 md:sticky md:top-24 md:h-fit">
+              <h2 className="hidden md:block text-xs uppercase font-semibold text-muted-foreground mb-4 px-3">
                 {isArabic ? 'الإعدادات' : 'SETTINGS'}
               </h2>
-              <button
-                onClick={() => scrollToSection('all')}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
-                  activeSection === 'all' 
-                    ? "bg-primary/10 text-primary" 
-                    : "hover:bg-muted"
-                )}
-              >
-                <SettingsIcon className="h-4 w-4" />
-                <span>{isArabic ? 'جميع الإعدادات' : 'All Settings'}</span>
-              </button>
-              <button
-                onClick={() => scrollToSection('account')}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
-                  activeSection === 'account' 
-                    ? "bg-primary/10 text-primary" 
-                    : "hover:bg-muted"
-                )}
-              >
-                <User className="h-4 w-4" />
-                <span>{isArabic ? 'الحساب' : 'Account'}</span>
-              </button>
+              <div className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto pb-2 md:pb-0">
+                <button
+                  onClick={() => scrollToSection('all')}
+                  className={cn(
+                    "flex items-center gap-2 md:gap-3 px-3 py-2 rounded-lg transition-colors whitespace-nowrap md:w-full text-left",
+                    activeSection === 'all' 
+                      ? "bg-primary/10 text-primary" 
+                      : "hover:bg-muted"
+                  )}
+                >
+                  <SettingsIcon className="h-4 w-4 flex-shrink-0" />
+                  <span className="text-sm">{isArabic ? 'الكل' : 'All'}</span>
+                </button>
+                <button
+                  onClick={() => scrollToSection('account')}
+                  className={cn(
+                    "flex items-center gap-2 md:gap-3 px-3 py-2 rounded-lg transition-colors whitespace-nowrap md:w-full text-left",
+                    activeSection === 'account' 
+                      ? "bg-primary/10 text-primary" 
+                      : "hover:bg-muted"
+                  )}
+                >
+                  <User className="h-4 w-4 flex-shrink-0" />
+                  <span className="text-sm">{isArabic ? 'الحساب' : 'Account'}</span>
+                </button>
               <button
                 onClick={() => scrollToSection('password')}
                 className={cn(
@@ -320,16 +322,16 @@ export default function Settings() {
             </aside>
 
             {/* Main Content */}
-            <div className="flex-1 space-y-6" style={{ display: activeSection === 'all' ? 'flex' : 'block', flexDirection: 'column', overflow: activeSection !== 'all' ? 'hidden' : 'auto', maxHeight: activeSection !== 'all' ? '100vh' : 'none' }}>
+            <div className="flex-1 space-y-4 md:space-y-6" style={{ display: activeSection === 'all' ? 'flex' : 'block', flexDirection: 'column', overflow: activeSection !== 'all' ? 'hidden' : 'auto', maxHeight: activeSection !== 'all' ? '100vh' : 'none' }}>
               {/* Profile Card */}
               {(activeSection === 'all' || activeSection === 'account') && (
                 <Card id="account" className="border-2">
                   <CardHeader>
-                    <CardTitle>{isArabic ? 'الحساب' : 'Account'}</CardTitle>
+                    <CardTitle className="text-lg md:text-xl">{isArabic ? 'الحساب' : 'Account'}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-start justify-between gap-6 p-6 bg-muted/30 rounded-lg border">
-                      <div className="flex items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-6 p-4 md:p-6 bg-muted/30 rounded-lg border">
+                      <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
                         <div className="relative">
                           <ProfileAvatar
                             icon={profileIcon}
