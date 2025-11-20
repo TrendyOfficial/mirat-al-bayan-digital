@@ -414,57 +414,74 @@ export default function Publication() {
                 <span>{authorName}</span>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" onClick={() => handleShare('facebook')}>
-                  <Facebook className="h-4 w-4 mr-2" />
-                  {isArabic ? 'شارك' : 'Share'}
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => handleShare('twitter')}>
-                  <Twitter className="h-4 w-4 mr-2" />
-                  {isArabic ? 'غرد' : 'Tweet'}
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => handleShare('copy')}>
-                  <LinkIcon className="h-4 w-4 mr-2" />
-                  {isArabic ? 'نسخ الرابط' : 'Copy Link'}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownloadPdf}
-                  disabled={downloadingPdf}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  {downloadingPdf 
-                    ? (isArabic ? 'جاري التحميل...' : 'Downloading...') 
-                    : (isArabic ? 'تحميل PDF' : 'Download PDF')
-                  }
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsFullscreen(true)}
-                >
-                  <Maximize2 className="h-4 w-4 mr-2" />
-                  {isArabic ? 'ملء الشاشة' : 'Fullscreen'}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleLike}
-                  className={isLiked ? 'text-red-500' : ''}
-                >
-                  <Heart className={`h-4 w-4 mr-2 ${isLiked ? 'fill-current' : ''}`} />
-                  {likesCount}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleBookmark}
-                  className={isBookmarked ? 'text-primary' : ''}
-                >
-                  <Bookmark className={`h-4 w-4 mr-2 ${isBookmarked ? 'fill-current' : ''}`} />
-                  {isArabic ? (isBookmarked ? 'محفوظ' : 'حفظ') : (isBookmarked ? 'Bookmarked' : 'Bookmark')}
-                </Button>
+              <div className="flex flex-wrap items-center gap-2 mb-6">
+                {/* Social Share Buttons */}
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" onClick={() => handleShare('facebook')}>
+                    <Facebook className="h-4 w-4 mr-2" />
+                    {isArabic ? 'شارك' : 'Share'}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => handleShare('twitter')}>
+                    <Twitter className="h-4 w-4 mr-2" />
+                    {isArabic ? 'غرد' : 'Tweet'}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => handleShare('copy')}>
+                    <LinkIcon className="h-4 w-4 mr-2" />
+                    {isArabic ? 'نسخ' : 'Copy'}
+                  </Button>
+                </div>
+
+                {/* Divider */}
+                <div className="h-6 w-px bg-border hidden sm:block" />
+
+                {/* Reading Tools */}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDownloadPdf}
+                    disabled={downloadingPdf}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    {downloadingPdf 
+                      ? (isArabic ? 'جاري التحميل...' : 'Downloading...') 
+                      : (isArabic ? 'PDF' : 'PDF')
+                    }
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsFullscreen(true)}
+                  >
+                    <Maximize2 className="h-4 w-4 mr-2" />
+                    {isArabic ? 'ملء الشاشة' : 'Fullscreen'}
+                  </Button>
+                </div>
+
+                {/* Divider */}
+                <div className="h-6 w-px bg-border hidden sm:block" />
+
+                {/* Engagement Actions */}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLike}
+                    className={isLiked ? 'text-red-500 border-red-500/50' : ''}
+                  >
+                    <Heart className={`h-4 w-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
+                    {likesCount}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleBookmark}
+                    className={isBookmarked ? 'text-primary border-primary/50' : ''}
+                  >
+                    <Bookmark className={`h-4 w-4 mr-1 ${isBookmarked ? 'fill-current' : ''}`} />
+                    {isArabic ? (isBookmarked ? 'محفوظ' : 'حفظ') : (isBookmarked ? 'Saved' : 'Save')}
+                  </Button>
+                </div>
               </div>
             </div>
 
