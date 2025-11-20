@@ -55,13 +55,7 @@ export function ColorPicker({ color, onColorChange, label }: ColorPickerProps) {
               type="button"
               className="w-12 h-12 rounded-lg border-2 border-border hover:border-primary transition-all relative flex items-center justify-center"
               style={{ 
-                backgroundColor: color,
-                backgroundImage: !PRESET_COLORS.includes(color) 
-                  ? `linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc),
-                     linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc)`
-                  : 'none',
-                backgroundSize: '10px 10px',
-                backgroundPosition: '0 0, 5px 5px'
+                backgroundColor: color
               }}
             >
               <Paintbrush className="w-4 h-4 text-white drop-shadow-lg" />
