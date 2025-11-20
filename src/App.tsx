@@ -18,7 +18,7 @@ export default function App() {
             <GateGuard>
               <Routes>
                 <Route path="/" element={<Index />} />
-                {/* Add your other routes here */}
+                {/* your other routes */}
               </Routes>
             </GateGuard>
           }
