@@ -110,6 +110,18 @@ export default function Settings() {
     } else {
       toast.success(isArabic ? 'تم تحديث الملف الشخصي' : 'Profile updated successfully');
       setIsEditDialogOpen(false);
+
+      window.dispatchEvent(
+        new CustomEvent('profile-updated', {
+          detail: {
+            profile_icon: profileIcon,
+            profile_color_one: colorOne,
+            profile_color_two: colorTwo,
+            use_gradient: useGradient,
+            full_name: fullName,
+          },
+        })
+      );
       
       // Log activity
       await supabase.rpc('log_activity', {
@@ -336,12 +348,8 @@ export default function Settings() {
                             {isArabic ? 'تسجيل الخروج' : 'Log out'}
                           </Button>
                         </div>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">{isArabic ? 'اسم الجهاز' : 'Device name'}</p>
-                        <p className="text-lg font-semibold">{isArabic ? 'المسؤول' : 'Admin'}</p>
-                      </div>
-                    </div>
+                       </div>
+                     </div>
 
                     <div className="mt-6 space-y-2">
                       <Label htmlFor="email">{isArabic ? 'البريد الإلكتروني' : 'Email'}</Label>
@@ -382,16 +390,46 @@ export default function Settings() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword">{isArabic ? 'كلمة المرور الجديدة' : 'New Password'}</Label>
-                  <Input
-                    id="newPassword"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                  />
-                </div>
+                 <div className="space-y-2">
+                   <Label htmlFor="newPassword">{isArabic ? 'كلمة المرور الجديدة' : 'New Password'}</Label>
+                   <Input
+                     id="newPassword"
+                     type="password"
+                     value={newPassword}
+                     onChange={(e) => setNewPassword(e.target.value)}
+                     required
+                   />
+                   {newPassword && (
+                     <div className="animate-fade-in text-xs text-muted-foreground">
+                       <div className="mt-1 flex gap-1">
+                         {Array.from({ length: 3 }).map((_, index) => {
+                           const strength = getPasswordStrength(newPassword);
+                           const isActive = strength > index;
+                           const colorClass =
+                             strength <= 1
+                               ? "bg-destructive"
+                               : strength === 2
+                                 ? "bg-secondary"
+                                 : "bg-primary";
+                           return (
+                             <div
+                               key={index}
+                               className={cn(
+                                 "h-1 flex-1 rounded-full bg-muted transition-colors",
+                                 isActive && colorClass
+                               )}
+                             />
+                           );
+                         })}
+                       </div>
+                       <span className="mt-1 block">
+                         {isArabic
+                           ? passwordStrengthLabelAr[getPasswordStrength(newPassword)]
+                           : passwordStrengthLabelEn[getPasswordStrength(newPassword)]}
+                       </span>
+                     </div>
+                   )}
+                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">{isArabic ? 'تأكيد كلمة المرور' : 'Confirm Password'}</Label>
