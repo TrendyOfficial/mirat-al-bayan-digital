@@ -10,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Turnstile } from "@/components/Turnstile";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -45,6 +46,7 @@ export default function Auth() {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const resetSchema = z.object({
     email: z.string().email("Invalid email address").max(255),
@@ -89,6 +91,11 @@ export default function Auth() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!turnstileToken) {
+      toast.error(isArabic ? "يرجى إكمال التحقق الأمني" : "Please complete security verification");
+      return;
+    }
+    
     try {
       loginSchema.parse(loginData);
       setIsLoading(true);
@@ -127,6 +134,11 @@ export default function Auth() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!turnstileToken) {
+      toast.error(isArabic ? "يرجى إكمال التحقق الأمني" : "Please complete security verification");
+      return;
+    }
 
     try {
       signupSchema.parse(signupData);
@@ -229,7 +241,11 @@ export default function Auth() {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Turnstile 
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onError={() => setTurnstileToken(null)}
+                />
+                <Button type="submit" className="w-full" disabled={isLoading || !turnstileToken}>
                   {isLoading
                     ? (isArabic ? 'جاري التحميل...' : 'Loading...')
                     : (isArabic ? 'تسجيل الدخول' : 'Login')}
@@ -295,7 +311,11 @@ export default function Auth() {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Turnstile 
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onError={() => setTurnstileToken(null)}
+                />
+                <Button type="submit" className="w-full" disabled={isLoading || !turnstileToken}>
                   {isLoading
                     ? (isArabic ? 'جاري التحميل...' : 'Loading...')
                     : (isArabic ? 'إنشاء حساب' : 'Sign Up')}
