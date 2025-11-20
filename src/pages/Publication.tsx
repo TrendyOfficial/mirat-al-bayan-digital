@@ -5,13 +5,15 @@ import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Eye, Calendar, Share2, Facebook, Twitter, Mail, Home, ChevronRight, Download } from "lucide-react";
+import { Eye, Calendar, Share2, Facebook, Twitter, Mail, Home, ChevronRight, Download, Maximize2, Heart, Bookmark, Link as LinkIcon } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
 import { PublicationCard } from "@/components/PublicationCard";
 import { Comments } from "@/components/Comments";
+import FullscreenReader from "@/components/FullscreenReader";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,12 +27,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Publication() {
   const { slug } = useParams();
   const { language } = useLanguage();
+  const { user } = useAuth();
   const isArabic = language === 'ar';
   const [publication, setPublication] = useState<any>(null);
   const [views, setViews] = useState(0);
   const [relatedPublications, setRelatedPublications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
     fetchPublication();
@@ -111,6 +118,120 @@ export default function Publication() {
       if (!error) {
         fetchPublication();
       }
+    }
+  };
+
+  useEffect(() => {
+    if (publication && user) {
+      checkLikeStatus();
+      checkBookmarkStatus();
+    }
+  }, [publication, user]);
+
+  const checkLikeStatus = async () => {
+    if (!publication || !user) return;
+
+    try {
+      const { data: likeData } = await supabase
+        .from('publication_likes')
+        .select('id')
+        .eq('publication_id', publication.id)
+        .eq('user_id', user.id)
+        .single();
+
+      setIsLiked(!!likeData);
+
+      const { count } = await supabase
+        .from('publication_likes')
+        .select('*', { count: 'exact', head: true })
+        .eq('publication_id', publication.id);
+
+      setLikesCount(count || 0);
+    } catch (error) {
+      console.error('Error checking like status:', error);
+    }
+  };
+
+  const checkBookmarkStatus = async () => {
+    if (!publication || !user) return;
+
+    try {
+      const { data: bookmarkData } = await supabase
+        .from('bookmarks')
+        .select('id')
+        .eq('publication_id', publication.id)
+        .eq('user_id', user.id)
+        .single();
+
+      setIsBookmarked(!!bookmarkData);
+    } catch (error) {
+      console.error('Error checking bookmark status:', error);
+    }
+  };
+
+  const handleLike = async () => {
+    if (!user || !publication) {
+      toast.error(isArabic ? 'يجب تسجيل الدخول أولاً' : 'Please sign in to like publications');
+      return;
+    }
+
+    try {
+      if (isLiked) {
+        await supabase
+          .from('publication_likes')
+          .delete()
+          .eq('publication_id', publication.id)
+          .eq('user_id', user.id);
+
+        setIsLiked(false);
+        setLikesCount(prev => prev - 1);
+      } else {
+        await supabase
+          .from('publication_likes')
+          .insert({
+            publication_id: publication.id,
+            user_id: user.id,
+          });
+
+        setIsLiked(true);
+        setLikesCount(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast.error(isArabic ? 'فشل في تحديث الإعجاب' : 'Failed to update like');
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!user || !publication) {
+      toast.error(isArabic ? 'يجب تسجيل الدخول أولاً' : 'Please sign in to bookmark publications');
+      return;
+    }
+
+    try {
+      if (isBookmarked) {
+        await supabase
+          .from('bookmarks')
+          .delete()
+          .eq('publication_id', publication.id)
+          .eq('user_id', user.id);
+
+        setIsBookmarked(false);
+        toast.success(isArabic ? 'تمت إزالة الحفظ' : 'Bookmark removed');
+      } else {
+        await supabase
+          .from('bookmarks')
+          .insert({
+            publication_id: publication.id,
+            user_id: user.id,
+          });
+
+        setIsBookmarked(true);
+        toast.success(isArabic ? 'تم الحفظ بنجاح' : 'Bookmarked successfully');
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+      toast.error(isArabic ? 'فشل في تحديث الحفظ' : 'Failed to update bookmark');
     }
   };
 
@@ -293,7 +414,7 @@ export default function Publication() {
                 <span>{authorName}</span>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button variant="outline" size="sm" onClick={() => handleShare('facebook')}>
                   <Facebook className="h-4 w-4 mr-2" />
                   {isArabic ? 'شارك' : 'Share'}
@@ -303,7 +424,7 @@ export default function Publication() {
                   {isArabic ? 'غرد' : 'Tweet'}
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => handleShare('copy')}>
-                  <Share2 className="h-4 w-4 mr-2" />
+                  <LinkIcon className="h-4 w-4 mr-2" />
                   {isArabic ? 'نسخ الرابط' : 'Copy Link'}
                 </Button>
                 <Button
@@ -317,6 +438,32 @@ export default function Publication() {
                     ? (isArabic ? 'جاري التحميل...' : 'Downloading...') 
                     : (isArabic ? 'تحميل PDF' : 'Download PDF')
                   }
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsFullscreen(true)}
+                >
+                  <Maximize2 className="h-4 w-4 mr-2" />
+                  {isArabic ? 'ملء الشاشة' : 'Fullscreen'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLike}
+                  className={isLiked ? 'text-red-500' : ''}
+                >
+                  <Heart className={`h-4 w-4 mr-2 ${isLiked ? 'fill-current' : ''}`} />
+                  {likesCount}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleBookmark}
+                  className={isBookmarked ? 'text-primary' : ''}
+                >
+                  <Bookmark className={`h-4 w-4 mr-2 ${isBookmarked ? 'fill-current' : ''}`} />
+                  {isArabic ? (isBookmarked ? 'محفوظ' : 'حفظ') : (isBookmarked ? 'Bookmarked' : 'Bookmark')}
                 </Button>
               </div>
             </div>
@@ -398,6 +545,15 @@ export default function Publication() {
       </main>
 
       <Footer />
+
+      <FullscreenReader
+        isOpen={isFullscreen}
+        onClose={() => setIsFullscreen(false)}
+        titleEn={publication.title_en}
+        titleAr={publication.title_ar}
+        contentEn={publication.content_en}
+        contentAr={publication.content_ar}
+      />
     </div>
   );
 }

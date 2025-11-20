@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, FileText, Users, FolderOpen, BarChart3, Settings, Home, UserCog, AlertCircle } from "lucide-react";
+import { LayoutDashboard, FileText, Users, FolderOpen, BarChart3, Settings, Home, UserCog, AlertCircle, Flag } from "lucide-react";
 export default function AdminLayout() {
   const location = useLocation();
   const {
@@ -105,6 +105,12 @@ export default function AdminLayout() {
     allowedRoles: [],
     ownerOnly: true,
     badge: pendingDeletions > 0 ? pendingDeletions : null
+  }, {
+    icon: Flag,
+    label: isArabic ? 'البلاغات' : 'Reports',
+    path: '/admin/reports',
+    allowedRoles: ['admin'],
+    ownerOnly: false
   }];
 
   // Filter navigation items
