@@ -61,8 +61,9 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        "pill-background": "rgba(255, 255, 255, 0.1)",
-        "pill-backgroundHover": "rgba(255, 255, 255, 0.2)",
+        "pill-background": "hsl(var(--pill-background))",
+        "pill-backgroundHover": "hsl(var(--pill-backgroundHover))",
+        "lightbar-light": "hsl(var(--lightbar-light))",
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PublicationCard } from "@/components/PublicationCard";
 import { CategoryCard } from "@/components/CategoryCard";
-import { BlackHole } from "@/components/BlackHole";
+import { Lightbar } from "@/components/Lightbar";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -124,12 +124,12 @@ export default function Index() {
       <Header />
       
       <main className="flex-1">
-        {/* Hero Section with animated gradient and black hole */}
+        {/* Hero Section with animated gradient and lightbar */}
         <section className="relative bg-gradient-lovable text-white py-32 overflow-hidden">
           <div className="absolute inset-0 hero-gradient-animated"></div>
           
-          {/* Black Hole with floating icons */}
-          <BlackHole />
+          {/* Lightbar with floating particles */}
+          <Lightbar />
           
           <div className="container relative z-10 mt-24">
             <div className="max-w-3xl mx-auto text-center">
