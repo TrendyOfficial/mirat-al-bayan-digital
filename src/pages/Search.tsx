@@ -48,7 +48,7 @@ export default function Search() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col animate-fade-in">
+    <div className="flex min-h-screen flex-col page-enter">
       <Header />
       
       <main className="flex-1">

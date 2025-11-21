@@ -36,18 +36,25 @@ export function DarkModeToggle() {
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
+    <button
       onClick={toggleDarkMode}
       aria-label="Toggle dark mode"
-      className="rounded-full border-2 border-transparent bg-pill-background bg-opacity-50 hover:bg-opacity-100 transition-all duration-75 hover:scale-110 hover:bg-pill-backgroundHover active:scale-125 h-10 w-10"
+      className="rounded-full border-2 border-transparent transition-[background-color,transform,border-color] duration-75 hover:scale-110 active:scale-125 h-10 w-10 flex items-center justify-center"
+      style={{
+        backgroundColor: 'var(--pill-background)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = 'var(--pill-backgroundHover)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = 'var(--pill-background)';
+      }}
     >
       {isDark ? (
-        <Sun className={`h-5 w-5 ${isAnimating ? 'animate-spin-slow' : ''}`} />
+        <Sun className={`h-5 w-5 ${isAnimating ? 'animate-spin-slow' : ''}`} style={{ color: 'var(--type-logo)' }} />
       ) : (
-        <Moon className={`h-5 w-5 ${isAnimating ? 'animate-spin-slow' : ''}`} />
+        <Moon className={`h-5 w-5 ${isAnimating ? 'animate-spin-slow' : ''}`} style={{ color: 'var(--type-logo)' }} />
       )}
-    </Button>
+    </button>
   );
 }

@@ -62,7 +62,7 @@ export default function Category() {
   const categoryDescription = isArabic ? category.description_ar : category.description_en;
 
   return (
-    <div className="flex min-h-screen flex-col animate-fade-in">
+    <div className="flex min-h-screen flex-col page-enter">
       <Header />
       
       <main className="flex-1">
