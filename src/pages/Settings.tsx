@@ -295,30 +295,42 @@ export default function Settings() {
                   <User className="h-4 w-4 flex-shrink-0" />
                   <span className="text-sm">{isArabic ? 'الحساب' : 'Account'}</span>
                 </button>
-              <button
-                onClick={() => scrollToSection('password')}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
-                  activeSection === 'password' 
-                    ? "bg-primary/10 text-primary" 
-                    : "hover:bg-muted"
-                )}
-              >
-                <Key className="h-4 w-4" />
-                <span>{isArabic ? 'كلمة المرور' : 'Password'}</span>
-              </button>
-              <button
-                onClick={() => scrollToSection('delete')}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-left",
-                  activeSection === 'delete' 
-                    ? "bg-destructive/10 text-destructive" 
-                    : "hover:bg-muted text-destructive"
-                )}
-              >
-                <Trash2 className="h-4 w-4" />
-                <span>{isArabic ? 'حذف الحساب' : 'Delete Account'}</span>
-              </button>
+                <button
+                  onClick={() => scrollToSection('password')}
+                  className={cn(
+                    "flex items-center gap-2 md:gap-3 px-3 py-2 rounded-lg transition-colors whitespace-nowrap md:w-full text-left",
+                    activeSection === 'password' 
+                      ? "bg-primary/10 text-primary" 
+                      : "hover:bg-muted"
+                  )}
+                >
+                  <Key className="h-4 w-4 flex-shrink-0" />
+                  <span className="text-sm">{isArabic ? 'كلمة المرور' : 'Password'}</span>
+                </button>
+                <button
+                  onClick={() => scrollToSection('preferences')}
+                  className={cn(
+                    "flex items-center gap-2 md:gap-3 px-3 py-2 rounded-lg transition-colors whitespace-nowrap md:w-full text-left",
+                    activeSection === 'preferences' 
+                      ? "bg-primary/10 text-primary" 
+                      : "hover:bg-muted"
+                  )}
+                >
+                  <Palette className="h-4 w-4 flex-shrink-0" />
+                  <span className="text-sm">{isArabic ? 'التفضيلات' : 'Preferences'}</span>
+                </button>
+                <button
+                  onClick={() => scrollToSection('delete')}
+                  className={cn(
+                    "flex items-center gap-2 md:gap-3 px-3 py-2 rounded-lg transition-colors whitespace-nowrap md:w-full text-left",
+                    activeSection === 'delete' 
+                      ? "bg-destructive/10 text-destructive" 
+                      : "hover:bg-muted text-destructive"
+                  )}
+                >
+                  <Trash2 className="h-4 w-4 flex-shrink-0" />
+                  <span className="text-sm">{isArabic ? 'حذف الحساب' : 'Delete Account'}</span>
+                </button>
               </div>
             </aside>
 
@@ -379,6 +391,26 @@ export default function Settings() {
                         className="bg-muted"
                       />
                     </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Preferences */}
+              {(activeSection === 'all' || activeSection === 'preferences') && (
+                <Card id="preferences">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Palette className="h-5 w-5" />
+                      {isArabic ? 'التفضيلات' : 'Preferences'}
+                    </CardTitle>
+                    <CardDescription>
+                      {isArabic ? 'خصص تجربتك' : 'Customize your experience'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      {isArabic ? 'قريباً...' : 'Coming soon...'}
+                    </p>
                   </CardContent>
                 </Card>
               )}

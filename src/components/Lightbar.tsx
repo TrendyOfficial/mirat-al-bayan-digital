@@ -39,7 +39,7 @@ class Particle {
 
   reset(canvas: HTMLCanvasElement) {
     this.x = Math.round((Math.random() * canvas.width) / 2 + canvas.width / 4);
-    this.y = Math.random() * 100 + 5;
+    this.y = Math.random() * canvas.height * 0.6 + 5;
 
     this.radius = 1 + Math.floor(Math.random() * 0.5);
     this.direction = (Math.random() * Math.PI) / 2 + Math.PI / 4;
