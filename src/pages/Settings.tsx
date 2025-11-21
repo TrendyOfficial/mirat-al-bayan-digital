@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Trash2, Key, User, ArrowLeft, Settings as SettingsIcon, Palette, Edit2, LogOut, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { t } from "@/utils/translations";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -121,11 +122,11 @@ export default function Settings() {
       .eq('id', user?.id);
 
     if (error) {
-      toast.error(isArabic ? 'فشل التحديث' : 'Update failed', {
+      toast.error(t(language, 'settings.updateFailed'), {
         description: error.message,
       });
     } else {
-      toast.success(isArabic ? 'تم تحديث الملف الشخصي' : 'Profile updated successfully');
+      toast.success(t(language, 'settings.profileUpdated'));
       setIsEditDialogOpen(false);
 
       window.dispatchEvent(
@@ -155,13 +156,13 @@ export default function Settings() {
     setIsLoading(true);
 
     if (newPassword !== confirmPassword) {
-      toast.error(isArabic ? 'كلمات المرور غير متطابقة' : 'Passwords do not match');
+      toast.error(t(language, 'settings.passwordsDoNotMatch'));
       setIsLoading(false);
       return;
     }
 
     if (newPassword.length < 6) {
-      toast.error(isArabic ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' : 'Password must be at least 6 characters');
+      toast.error(t(language, 'settings.passwordTooShort'));
       setIsLoading(false);
       return;
     }
@@ -173,7 +174,7 @@ export default function Settings() {
     });
 
     if (signInError) {
-      toast.error(isArabic ? 'كلمة المرور القديمة غير صحيحة' : 'Old password is incorrect');
+      toast.error(t(language, 'settings.oldPasswordIncorrect'));
       setIsLoading(false);
       return;
     }
@@ -184,11 +185,11 @@ export default function Settings() {
     });
 
     if (error) {
-      toast.error(isArabic ? 'فشل تغيير كلمة المرور' : 'Password change failed', {
+      toast.error(t(language, 'settings.passwordChangeFailed'), {
         description: error.message,
       });
     } else {
-      toast.success(isArabic ? 'تم تغيير كلمة المرور بنجاح' : 'Password changed successfully');
+      toast.success(t(language, 'settings.passwordChanged'));
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -205,7 +206,7 @@ export default function Settings() {
 
   const handleDeleteAccount = async () => {
     if (deleteEmail !== user?.email) {
-      toast.error(isArabic ? 'البريد الإلكتروني غير متطابق' : 'Email does not match');
+      toast.error(t(language, 'settings.emailDoesNotMatch'));
       return;
     }
 
@@ -239,7 +240,7 @@ export default function Settings() {
     // Sign out
     await signOut();
     
-    toast.success(isArabic ? 'تم حذف الحساب بنجاح' : 'Account deleted successfully');
+    toast.success(t(language, 'settings.accountDeleted'));
     navigate('/');
   };
 
@@ -262,7 +263,7 @@ export default function Settings() {
               <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
             </Button>
             <h1 className="font-arabic text-2xl md:text-3xl font-bold">
-              {isArabic ? 'الإعدادات' : 'Settings'}
+              {t(language, 'settings.title')}
             </h1>
           </div>
 
@@ -270,7 +271,7 @@ export default function Settings() {
             {/* Sidebar Navigation */}
             <aside className="w-full md:w-64 md:space-y-1 md:sticky md:top-24 md:h-fit">
               <h2 className="hidden md:block text-xs uppercase font-semibold text-muted-foreground mb-4 px-3">
-                {isArabic ? 'الإعدادات' : 'SETTINGS'}
+                {t(language, 'settings.title')}
               </h2>
               <div className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto pb-2 md:pb-0">
                 <button
@@ -283,7 +284,7 @@ export default function Settings() {
                   )}
                 >
                   <SettingsIcon className="h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{isArabic ? 'الكل' : 'All'}</span>
+                  <span className="text-sm">{t(language, 'settings.all')}</span>
                 </button>
                 <button
                   onClick={() => scrollToSection('account')}
@@ -295,7 +296,7 @@ export default function Settings() {
                   )}
                 >
                   <User className="h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{isArabic ? 'الحساب' : 'Account'}</span>
+                  <span className="text-sm">{t(language, 'settings.account')}</span>
                 </button>
                 <button
                   onClick={() => scrollToSection('password')}
@@ -307,7 +308,7 @@ export default function Settings() {
                   )}
                 >
                   <Key className="h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{isArabic ? 'كلمة المرور' : 'Password'}</span>
+                  <span className="text-sm">{t(language, 'settings.password')}</span>
                 </button>
                 <button
                   onClick={() => scrollToSection('preferences')}
@@ -319,7 +320,7 @@ export default function Settings() {
                   )}
                 >
                   <Palette className="h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{isArabic ? 'التفضيلات' : 'Preferences'}</span>
+                  <span className="text-sm">{t(language, 'settings.preferences')}</span>
                 </button>
               </div>
             </aside>
@@ -330,7 +331,7 @@ export default function Settings() {
               {(activeSection === 'all' || activeSection === 'account') && (
                 <Card id="account" className="border-2">
                   <CardHeader>
-                    <CardTitle className="text-lg md:text-xl">{isArabic ? 'الحساب' : 'Account'}</CardTitle>
+                    <CardTitle className="text-lg md:text-xl">{t(language, 'settings.account')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-6 p-4 md:p-6 bg-muted/30 rounded-lg border">
@@ -350,11 +351,11 @@ export default function Settings() {
                             onClick={() => setIsEditDialogOpen(true)}
                           >
                             <Edit2 className="h-3 w-3" />
-                            {isArabic ? 'تعديل' : 'Edit'}
+                            {t(language, 'settings.edit')}
                           </Button>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">{isArabic ? 'الاسم الكامل' : 'Nickname'}</p>
+                          <p className="text-sm text-muted-foreground">{t(language, 'settings.nickname')}</p>
                           <p className="text-lg font-semibold">{fullName || user?.email}</p>
                           <Button
                             variant="destructive"
@@ -372,7 +373,7 @@ export default function Settings() {
                     </div>
 
                     <div className="mt-6 space-y-2">
-                      <Label htmlFor="email">{isArabic ? 'البريد الإلكتروني' : 'Email'}</Label>
+                      <Label htmlFor="email">{t(language, 'settings.email')}</Label>
                       <Input
                         id="email"
                         type="email"
@@ -384,30 +385,30 @@ export default function Settings() {
 
                     {/* Actions Section */}
                     <div className="mt-6 pt-6 border-t space-y-4">
-                      <h3 className="text-lg font-semibold mb-4">{isArabic ? 'الإجراءات' : 'Actions'}</h3>
+                      <h3 className="text-lg font-semibold mb-4">{t(language, 'settings.actions')}</h3>
                       
                       {/* Account Migration */}
                       <div className="flex items-center justify-between p-4 border rounded-lg">
                         <div>
-                          <h4 className="font-medium">{isArabic ? 'نقل الحساب' : 'Account migration'}</h4>
+                          <h4 className="font-medium">{t(language, 'settings.accountMigration')}</h4>
                           <p className="text-sm text-muted-foreground">
-                            {isArabic ? 'قم بنقل حسابك إلى خادم جديد أو حمّل بياناتك' : 'Migrate your account to a new server or download your data'}
+                            {t(language, 'settings.accountMigrationDescription')}
                           </p>
                         </div>
                         <Button
                           variant="outline"
                           onClick={() => navigate('/migration')}
                         >
-                          {isArabic ? 'نقل الحساب' : 'Migrate Account'}
+                          {t(language, 'settings.migrateAccount')}
                         </Button>
                       </div>
 
                       {/* End All Sessions */}
                       <div className="flex items-center justify-between p-4 border rounded-lg">
                         <div>
-                          <h4 className="font-medium">{isArabic ? 'إنهاء جميع الجلسات' : 'End all sessions'}</h4>
+                          <h4 className="font-medium">{t(language, 'settings.endAllSessions')}</h4>
                           <p className="text-sm text-muted-foreground">
-                            {isArabic ? 'سيؤدي هذا إلى تسجيل خروجك من جميع الأجهزة المرتبطة بحسابك' : 'This will log you out from all devices linked to your account'}
+                            {t(language, 'settings.endAllSessionsDescription')}
                           </p>
                         </div>
                         <Button
@@ -417,23 +418,23 @@ export default function Settings() {
                             navigate('/');
                           }}
                         >
-                          {isArabic ? 'تسجيل الخروج من جميع الأجهزة' : 'Log out from all devices'}
+                          {t(language, 'settings.endAllSessionsButton')}
                         </Button>
                       </div>
 
                       {/* Delete Account */}
                       <div className="flex items-center justify-between p-4 border border-destructive/50 rounded-lg bg-destructive/5">
                         <div>
-                          <h4 className="font-medium text-destructive">{isArabic ? 'حذف الحساب' : 'Delete Account'}</h4>
+                          <h4 className="font-medium text-destructive">{t(language, 'settings.deleteAccount')}</h4>
                           <p className="text-sm text-muted-foreground">
-                            {isArabic ? 'هذا الإجراء لا يمكن التراجع عنه. سيتم حذف جميع البيانات ولا يمكن استعادتها' : 'This action cannot be undone. All data will be deleted and cannot be recovered'}
+                            {t(language, 'settings.deleteAccountDescription')}
                           </p>
                         </div>
                         <Button
                           variant="destructive"
                           onClick={() => setShowDeleteDialog(true)}
                         >
-                          {isArabic ? 'حذف الحساب' : 'Delete Account'}
+                          {t(language, 'settings.deleteAccountButton')}
                         </Button>
                       </div>
                     </div>
@@ -447,7 +448,7 @@ export default function Settings() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Globe className="h-5 w-5" />
-                      {isArabic ? 'التفضيلات' : 'Preferences'}
+                      {t(language, 'settings.preferences')}
                     </CardTitle>
                     <CardDescription>
                       {isArabic ? 'خصص تجربتك' : 'Customize your experience'}
@@ -457,12 +458,10 @@ export default function Settings() {
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <label className="text-sm font-medium">
-                          {isArabic ? 'لغة التطبيق' : 'Application Language'}
+                          {t(language, 'settings.appLanguage')}
                         </label>
                         <p className="text-sm text-muted-foreground mb-2">
-                          {isArabic 
-                            ? 'اللغة المطبقة على التطبيق بالكامل' 
-                            : 'Language applied to the entire application'}
+                          {t(language, 'settings.appLanguageDescription')}
                         </p>
                         <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
                           <SelectTrigger className="w-full">
@@ -489,18 +488,16 @@ export default function Settings() {
 
                       <div className="space-y-2">
                         <label className="text-sm font-medium">
-                          {isArabic ? 'التبديل السريع للغة' : 'Quick Switch Languages'}
+                          {t(language, 'settings.quickSwitchLanguage')}
                         </label>
                         <p className="text-sm text-muted-foreground mb-2">
-                          {isArabic 
-                            ? 'اختر لغتين للتبديل السريع بينهما' 
-                            : 'Choose two languages to quickly switch between'}
+                          {t(language, 'settings.quickSwitchDescription')}
                         </p>
                         
                         <div className="space-y-3">
                           <div>
                             <label className="text-xs text-muted-foreground mb-2 block">
-                              {isArabic ? 'اللغة الأولى' : 'First Language'}
+                              {t(language, 'settings.firstLanguage')}
                             </label>
                             <Select 
                               value={quickSwitchLanguages[0]} 
@@ -528,7 +525,7 @@ export default function Settings() {
 
                           <div>
                             <label className="text-xs text-muted-foreground mb-2 block">
-                              {isArabic ? 'اللغة الثانية' : 'Second Language'}
+                              {t(language, 'settings.secondLanguage')}
                             </label>
                             <Select 
                               value={quickSwitchLanguages[1]} 
