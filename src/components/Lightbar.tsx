@@ -39,7 +39,7 @@ class Particle {
 
   reset(canvas: HTMLCanvasElement) {
     this.x = Math.round((Math.random() * canvas.width) / 2 + canvas.width / 4);
-    this.y = Math.random() * canvas.height * 0.6 + 5;
+    this.y = Math.random() * 100 + 5;
 
     this.radius = 1 + Math.floor(Math.random() * 0.5);
     this.direction = (Math.random() * Math.PI) / 2 + Math.PI / 4;
@@ -136,87 +136,35 @@ function ParticlesCanvas() {
 
     const particleCount = 265;
 
-    let imageOverride: { image: string; sizeRange?: [number, number] }[] = [];
-    let imageParticleCount = particleCount;
+    // Image configurations stored for later use
+    // Uncomment when needed:
+    /*
+    const imageConfigs = {
+      cat: [{ image: "/lightbar-images/cat.png", sizeRange: [30, 38] as [number, number] }],
+      camera: [
+        { image: "/lightbar-images/camera.png", sizeRange: [24, 32] as [number, number] },
+        { image: "/lightbar-images/popcorn.png", sizeRange: [18, 27] as [number, number] }
+      ],
+      fish: [
+        { image: "/lightbar-images/fishie.png", sizeRange: [10, 13] as [number, number] },
+        { image: "/lightbar-images/shark.png", sizeRange: [48, 56] as [number, number] }
+      ],
+      stars: [{ image: "/lightbar-images/star.png", sizeRange: [18, 28] as [number, number] }],
+      snowflake: [{ image: "/lightbar-images/snowflake.svg", sizeRange: [12, 20] as [number, number] }],
+      drinks: [
+        { image: "/lightbar-images/beer.png", sizeRange: [15, 35] as [number, number] },
+        { image: "/lightbar-images/wine.png", sizeRange: [15, 35] as [number, number] },
+        { image: "/lightbar-images/coin.png", sizeRange: [8, 20] as [number, number] }
+      ]
+    };
+    */
 
-    // Simple random selection for available images
-    const rand = Math.random();
-    
-    if (rand < 0.2) {
-      imageOverride = [
-        {
-          image: "/lightbar-images/cat.png",
-          sizeRange: [30, 38] as [number, number],
-        },
-      ];
-      imageParticleCount = particleCount / 6.6;
-    } else if (rand < 0.4) {
-      imageOverride = [
-        {
-          image: "/lightbar-images/camera.png",
-          sizeRange: [24, 32] as [number, number],
-        },
-        {
-          image: "/lightbar-images/popcorn.png",
-          sizeRange: [18, 27] as [number, number],
-        },
-      ];
-      imageParticleCount = particleCount / 7.85;
-    } else if (rand < 0.5) {
-      imageOverride = [
-        {
-          image: "/lightbar-images/fishie.png",
-          sizeRange: [10, 13] as [number, number],
-        },
-        {
-          image: "/lightbar-images/shark.png",
-          sizeRange: [48, 56] as [number, number],
-        },
-      ];
-      imageParticleCount = particleCount * 0.075;
-    } else if (rand < 0.65) {
-      imageOverride = [
-        {
-          image: "/lightbar-images/star.png",
-          sizeRange: [18, 28] as [number, number],
-        },
-      ];
-      imageParticleCount = particleCount / 6.6;
-    } else if (rand < 0.75) {
-      imageOverride = [
-        {
-          image: "/lightbar-images/snowflake.svg",
-          sizeRange: [12, 20] as [number, number],
-        },
-      ];
-      imageParticleCount = particleCount * 0.1;
-    } else {
-      imageOverride = [
-        {
-          image: "/lightbar-images/beer.png",
-          sizeRange: [15, 35] as [number, number],
-        },
-        {
-          image: "/lightbar-images/wine.png",
-          sizeRange: [15, 35] as [number, number],
-        },
-        {
-          image: "/lightbar-images/coin.png",
-          sizeRange: [8, 20] as [number, number],
-        },
-      ];
-      imageParticleCount = particleCount / 11;
-    }
-
+    // Create particles - using dots only for now
     for (let i = 0; i < particleCount; i += 1) {
-      const isImageParticle = imageOverride && i <= imageParticleCount;
-      const randomImageIndex = Math.floor(Math.random() * imageOverride.length);
-      const sizeRange = imageOverride[randomImageIndex]?.sizeRange;
-      const src = imageOverride[randomImageIndex]?.image;
       const particle = new Particle(canvas, {
-        imgSrc: isImageParticle ? src : undefined,
-        horizontalMotion: src?.includes("fishie") || src?.includes("shark"),
-        sizeRange,
+        imgSrc: undefined, // No images, just dots
+        horizontalMotion: false,
+        sizeRange: [10, 15],
       });
       particles.push(particle);
     }

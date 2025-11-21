@@ -285,8 +285,8 @@ All colors MUST be HSL.
   
   /* Pill button tokens */
   :root {
-    --pill-background: 0 0% 0% / 0.15;
-    --pill-backgroundHover: 0 0% 0% / 0.25;
+    --pill-background: 0 0% 0% / 0.2;
+    --pill-backgroundHover: 0 0% 0% / 0.35;
     --type-logo: rgba(0, 0, 0, 0.9);
     --lightbar-light: 262 83% 58%;
   }

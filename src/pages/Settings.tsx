@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Trash2, Key, User, ArrowLeft, Settings as SettingsIcon, Palette, Edit2, LogOut } from "lucide-react";
+import { Trash2, Key, User, ArrowLeft, Settings as SettingsIcon, Palette, Edit2, LogOut, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
@@ -32,6 +32,7 @@ import { ColorPicker } from "@/components/ColorPicker";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const passwordStrengthLabelEn = ["Too short", "Weak", "Medium", "Strong"] as const;
 const passwordStrengthLabelAr = ["قصيرة جداً", "ضعيفة", "متوسطة", "قوية"] as const;
@@ -48,8 +49,13 @@ const getPasswordStrength = (password: string): number => {
   return 0;
 };
 
+const AVAILABLE_LANGUAGES = [
+  { code: 'ar' as const, name: 'العربية', nativeName: 'العربية', flag: '🇸🇦' },
+  { code: 'en' as const, name: 'English', nativeName: 'English', flag: '🇺🇸' },
+];
+
 export default function Settings() {
-  const { language } = useLanguage();
+  const { language, setLanguage, quickSwitchLanguages, setQuickSwitchLanguages } = useLanguage();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const isArabic = language === 'ar';
@@ -400,17 +406,104 @@ export default function Settings() {
                 <Card id="preferences">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Palette className="h-5 w-5" />
+                      <Globe className="h-5 w-5" />
                       {isArabic ? 'التفضيلات' : 'Preferences'}
                     </CardTitle>
                     <CardDescription>
                       {isArabic ? 'خصص تجربتك' : 'Customize your experience'}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      {isArabic ? 'قريباً...' : 'Coming soon...'}
-                    </p>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">
+                          {isArabic ? 'لغة التطبيق' : 'Application Language'}
+                        </label>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {isArabic 
+                            ? 'اللغة المطبقة على التطبيق بالكامل' 
+                            : 'Language applied to the entire application'}
+                        </p>
+                        <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'ar')}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {AVAILABLE_LANGUAGES.map((lang) => (
+                              <SelectItem key={lang.code} value={lang.code}>
+                                <div className="flex items-center gap-2">
+                                  <span>{lang.flag}</span>
+                                  <span>{lang.name} — {lang.nativeName}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="my-4 border-t" />
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">
+                          {isArabic ? 'تبديل سريع بين اللغات' : 'Quick Switch Languages'}
+                        </label>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          {isArabic 
+                            ? 'اختر لغتين للتبديل السريع بينهما باستخدام زر تبديل اللغة' 
+                            : 'Select two languages to quickly toggle between using the language switcher button'}
+                        </p>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-xs text-muted-foreground">
+                              {isArabic ? 'اللغة الأساسية' : 'Primary Language'}
+                            </label>
+                            <Select 
+                              value={quickSwitchLanguages[0]} 
+                              onValueChange={(value) => setQuickSwitchLanguages([value as 'en' | 'ar', quickSwitchLanguages[1]])}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {AVAILABLE_LANGUAGES.map((lang) => (
+                                  <SelectItem key={lang.code} value={lang.code}>
+                                    <div className="flex items-center gap-2">
+                                      <span>{lang.flag}</span>
+                                      <span>{lang.nativeName}</span>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-xs text-muted-foreground">
+                              {isArabic ? 'اللغة الثانوية' : 'Secondary Language'}
+                            </label>
+                            <Select 
+                              value={quickSwitchLanguages[1]} 
+                              onValueChange={(value) => setQuickSwitchLanguages([quickSwitchLanguages[0], value as 'en' | 'ar'])}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {AVAILABLE_LANGUAGES.map((lang) => (
+                                  <SelectItem key={lang.code} value={lang.code}>
+                                    <div className="flex items-center gap-2">
+                                      <span>{lang.flag}</span>
+                                      <span>{lang.nativeName}</span>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               )}

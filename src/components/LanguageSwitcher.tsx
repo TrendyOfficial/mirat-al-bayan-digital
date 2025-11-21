@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 
 export function LanguageSwitcher() {
-  const { language, toggleLanguage } = useLanguage();
+  const { language, toggleLanguage, quickSwitchLanguages } = useLanguage();
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleToggle = () => {
@@ -12,6 +12,9 @@ export function LanguageSwitcher() {
     toggleLanguage();
     setTimeout(() => setIsAnimating(false), 400);
   };
+
+  // Get the other language in the quick switch pair
+  const otherLanguage = quickSwitchLanguages.find(lang => lang !== language) || 'en';
 
   return (
     <button
@@ -28,9 +31,9 @@ export function LanguageSwitcher() {
         e.currentTarget.style.backgroundColor = 'var(--pill-background)';
       }}
     >
-      <Globe className={`h-5 w-5 transition-transform duration-300 ${isAnimating ? 'scale-110' : ''}`} style={{ color: 'var(--type-logo)' }} />
-      <span className={`absolute -bottom-1 -right-1 text-[10px] font-bold px-1 rounded bg-primary text-primary-foreground transition-transform duration-300 ${isAnimating ? 'scale-125' : ''}`}>
-        {language.toUpperCase()}
+      <Globe className={`h-5 w-5 transition-transform duration-300 ${isAnimating ? 'rotate-180 scale-110' : ''}`} style={{ color: 'var(--type-logo)' }} />
+      <span className={`absolute -bottom-1 -right-1 text-[10px] font-bold px-1 rounded bg-primary text-primary-foreground transition-all duration-300 ${isAnimating ? 'scale-125' : ''}`}>
+        {otherLanguage.toUpperCase()}
       </span>
     </button>
   );
