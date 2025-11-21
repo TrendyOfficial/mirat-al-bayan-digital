@@ -169,35 +169,12 @@ export default function Migration() {
               </h1>
               <p className="text-muted-foreground">
                 {isArabic 
-                  ? 'إذا كنت ترغب في نقل أو نسخ بياناتك احتياطيًا، يمكنك القيام بذلك باستخدام الخيارات أدناه. سيسمح لك ذلك بالاحتفاظ ببياناتك عند التبديل بين الخوادم الخلفية.'
-                  : 'If you wish to migrate or backup your data, you can do so using the options below. This will allow you to keep your data when you switch backend servers.'}
+                  ? 'إذا كنت ترغب في نقل أو نسخ بياناتك احتياطيًا، يمكنك القيام بذلك باستخدام الخيارات أدناه. سيسمح لك ذلك بالاحتفاظ ببياناتك عند التبديل بين الحسابات.'
+                  : 'If you wish to migrate or backup your data, you can do so using the options below. This will allow you to keep your data when you switch accounts.'}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Direct Migration - Disabled for now */}
-              <Card className="relative p-6 opacity-50 cursor-not-allowed border-border/50">
-                <Cloud className="h-12 w-12 mb-4 text-primary" />
-                <div className="mb-2">
-                  <span className="text-xs uppercase text-primary font-semibold">
-                    {isArabic ? 'الأسهل والأسرع' : 'EASIEST AND FASTEST'}
-                  </span>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">
-                  {isArabic ? 'النقل المباشر' : 'Direct migration'}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {isArabic 
-                    ? 'سينقل هذا بياناتك مباشرة إلى الخادم الجديد. هذا هو الخيار الأسرع.'
-                    : 'This will directly migrate your data to the new server. This is the fastest option.'}
-                </p>
-                <p className="text-xs text-muted-foreground italic">
-                  {isArabic 
-                    ? 'يتيح لك هذا الخيار الاحتفاظ بعبارة المرور الخاصة بك!'
-                    : 'This option allows you to keep your passphrase the same!'}
-                </p>
-              </Card>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Download Data */}
               <Card 
                 className="relative p-6 hover:shadow-lg transition-all cursor-pointer border-border hover:border-primary/50"
@@ -255,13 +232,13 @@ export default function Migration() {
               </Card>
             </div>
 
-            <div className="flex justify-between items-center pt-4">
-              <span className="text-sm text-muted-foreground uppercase">
+            {/* OR divider between the two options */}
+            <div className="flex items-center justify-center gap-4 py-4">
+              <div className="flex-1 h-px bg-border"></div>
+              <span className="text-sm text-muted-foreground uppercase font-semibold">
                 {isArabic ? 'أو' : 'OR'}
               </span>
-              <span className="text-sm text-muted-foreground uppercase">
-                {isArabic ? 'أو' : 'OR'}
-              </span>
+              <div className="flex-1 h-px bg-border"></div>
             </div>
           </div>
         )}

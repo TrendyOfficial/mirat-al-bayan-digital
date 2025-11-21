@@ -224,6 +224,22 @@ export function Lightbar(props: { className?: string; noParticles?: boolean }) {
           </div>
         </div>
       </div>
+      
+      {/* Navigation centered on lightbar */}
+      <nav className="absolute top-[180px] left-0 right-0 z-30 flex items-center justify-center gap-4">
+        <a href="/" className="text-white font-medium px-4 py-2 hover:opacity-80 transition-opacity">
+          Home
+        </a>
+        <a href="/category/poetry" className="text-white font-medium px-4 py-2 hover:opacity-80 transition-opacity">
+          Poetry
+        </a>
+        <a href="/category/critical-studies" className="text-white font-medium px-4 py-2 hover:opacity-80 transition-opacity">
+          Studies
+        </a>
+        <a href="/category/stories-novels" className="text-white font-medium px-4 py-2 hover:opacity-80 transition-opacity">
+          Stories
+        </a>
+      </nav>
     </div>
   );
 }
