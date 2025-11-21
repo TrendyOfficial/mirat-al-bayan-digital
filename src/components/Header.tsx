@@ -4,6 +4,7 @@ import { Settings, LogOut, LayoutDashboard, Search, BookmarkIcon, ChevronDown, F
 import { FaTiktok } from 'react-icons/fa';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from "@/utils/translations";
 import { DarkModeToggle } from './DarkModeToggle';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ProfileAvatar } from './ProfileAvatar';
@@ -132,7 +133,7 @@ export const Header = () => {
               e.currentTarget.style.backgroundColor = 'var(--pill-background)';
             }}
           >
-            {isArabic ? 'الرئيسية' : 'Home'}
+            {t(language, 'nav.home')}
           </Link>
           <Link 
             to="/category/poetry" 
@@ -148,7 +149,7 @@ export const Header = () => {
               e.currentTarget.style.backgroundColor = 'var(--pill-background)';
             }}
           >
-            {isArabic ? 'قصائد' : 'Poetry'}
+            {t(language, 'nav.poetry')}
           </Link>
           <Link 
             to="/category/critical-studies" 
@@ -164,7 +165,7 @@ export const Header = () => {
               e.currentTarget.style.backgroundColor = 'var(--pill-background)';
             }}
           >
-            {isArabic ? 'دراسات نقدية' : 'Studies'}
+            {t(language, 'nav.studies')}
           </Link>
           <Link 
             to="/category/stories-novels" 
@@ -180,7 +181,7 @@ export const Header = () => {
               e.currentTarget.style.backgroundColor = 'var(--pill-background)';
             }}
           >
-            {isArabic ? 'قصص' : 'Stories'}
+            {t(language, 'nav.stories')}
           </Link>
         </nav>
 
@@ -263,27 +264,27 @@ export const Header = () => {
                 <DropdownMenuItem asChild>
                   <Link to="/settings" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
                     <Settings className="h-4 w-4 mr-2" />
-                    {isArabic ? 'الإعدادات' : 'Settings'}
+                    {t(language, 'nav.settings')}
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
                   <Link to="/bookmarks" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
                     <BookmarkIcon className="h-4 w-4 mr-2" />
-                    {isArabic ? 'المفضلات' : 'Bookmarks'}
+                    {t(language, 'nav.bookmarks')}
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
                   <Link to="/admin" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
                     <LayoutDashboard className="h-4 w-4 mr-2" />
-                    {isArabic ? 'لوحة التحكم' : 'Dashboard'}
+                    {t(language, 'nav.dashboard')}
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer rounded-lg px-3 py-2 text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive transition-all duration-100 hover:scale-105">
                   <LogOut className="h-4 w-4 mr-2" />
-                  {isArabic ? 'تسجيل الخروج' : 'Logout'}
+                  {t(language, 'nav.logout')}
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator className="my-2" />
@@ -346,7 +347,7 @@ export const Header = () => {
                 e.currentTarget.style.backgroundColor = 'var(--pill-background)';
               }}
             >
-              {isArabic ? 'تسجيل الدخول' : 'Login'}
+              {t(language, 'nav.login')}
             </Link>
           )}
         </div>
