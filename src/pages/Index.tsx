@@ -128,8 +128,8 @@ export default function Index() {
         <section className="relative bg-gradient-lovable text-white py-32 overflow-hidden">
           <div className="absolute inset-0 hero-gradient-animated"></div>
           
-          {/* Lightbar with floating particles */}
-          <Lightbar />
+          {/* Lightbar with floating particles at the top */}
+          <Lightbar className="animate-fade-in" noParticles={false} />
           
           <div className="container relative z-10 mt-24">
             <div className="max-w-3xl mx-auto text-center">
