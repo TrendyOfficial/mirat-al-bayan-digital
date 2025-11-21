@@ -9,6 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { t } from "@/utils/translations";
 
 export default function Index() {
   const { language } = useLanguage();
@@ -135,16 +136,14 @@ export default function Index() {
           <div className="container relative z-10 mt-24">
             <div className="max-w-3xl mx-auto text-center">
               <h1 className="font-arabic text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-                {isArabic ? 'مرحباً بكم في مرآة البيان' : 'Welcome to Miratl Bayan'}
+                {t(language, "home.welcome")}
               </h1>
               <p className="text-lg md:text-xl mb-8 text-white/90 animate-slide-up">
-                {isArabic
-                  ? 'مجلة أدبية عربية حديثة تحتفي بالشعر والدراسات النقدية والقصص'
-                  : 'A modern Arabic literature magazine celebrating poetry, critical studies, and stories'}
+                {t(language, "home.description")}
               </p>
               <Button size="lg" className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:opacity-90 text-white border-0 glow-primary" asChild>
                 <Link to="/search">
-                  {isArabic ? 'استكشف المقالات' : 'Explore Articles'}
+                  {t(language, "home.exploreArticles")}
                   <ArrowRight className="mr-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -205,7 +204,7 @@ export default function Index() {
           <section className="py-16 bg-muted/30">
             <div className="container">
               <h2 className="font-arabic text-3xl font-bold mb-8 text-center">
-                {isArabic ? 'مقالة مميزة' : 'Featured Article'}
+                {t(language, "home.featuredArticle")}
               </h2>
               <div className="max-w-4xl mx-auto">
                 <PublicationCard
@@ -231,8 +230,8 @@ export default function Index() {
         {/* Categories */}
         <section className="py-16 bg-background">
           <div className="container">
-            <h2 className="font-arabic text-3xl font-bold mb-8 text-center">
-              {isArabic ? 'الفئات' : 'Categories'}
+             <h2 className="font-arabic text-3xl font-bold mb-8 text-center">
+               {t(language, "home.categories")}
             </h2>
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
