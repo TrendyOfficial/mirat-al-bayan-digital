@@ -1,10 +1,12 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage, AVAILABLE_LANGUAGES } from "@/contexts/LanguageContext";
+import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
 
 export default function Preferences() {
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const isArabic = language === 'ar';
 
   return (
@@ -20,15 +22,28 @@ export default function Preferences() {
           <div className="space-y-6 animate-scale-in">
             <Card>
               <CardHeader>
-                <CardTitle>{isArabic ? 'الإعدادات العامة' : 'General Settings'}</CardTitle>
+                <CardTitle>{isArabic ? 'اللغة' : 'Language'}</CardTitle>
                 <CardDescription>
-                  {isArabic ? 'قم بتخصيص تجربتك' : 'Customize your experience'}
+                  {isArabic ? 'اختر لغتك المفضلة' : 'Select your preferred language'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  {isArabic ? 'سيتم إضافة المزيد من الخيارات قريباً...' : 'More options coming soon...'}
-                </p>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {AVAILABLE_LANGUAGES.map((lang) => (
+                    <Button
+                      key={lang.code}
+                      variant={language === lang.code ? "default" : "outline"}
+                      className="justify-start h-auto py-3 px-4"
+                      onClick={() => setLanguage(lang.code)}
+                    >
+                      <div className="flex flex-col items-start flex-1">
+                        <span className="font-medium">{lang.nativeName}</span>
+                        <span className="text-xs text-muted-foreground">{lang.name}</span>
+                      </div>
+                      {language === lang.code && <Check className="h-4 w-4 ml-2" />}
+                    </Button>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </div>

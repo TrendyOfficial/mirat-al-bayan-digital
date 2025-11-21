@@ -1,0 +1,75 @@
+{
+  "nav": {
+    "home": "Главная",
+    "poetry": "Поэзия",
+    "studies": "Исследования",
+    "stories": "Истории",
+    "search": "Поиск"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "close": "Закрыть",
+    "back": "Назад",
+    "next": "Далее",
+    "previous": "Предыдущий",
+    "submit": "Отправить",
+    "confirm": "Подтвердить",
+    "yes": "Да",
+    "no": "Нет"
+  },
+  "auth": {
+    "signIn": "Войти",
+    "signUp": "Регистрация",
+    "signOut": "Выйти",
+    "email": "Электронная почта",
+    "password": "Пароль",
+    "fullName": "Полное имя",
+    "forgotPassword": "Забыли пароль?",
+    "noAccount": "Нет аккаунта?",
+    "hasAccount": "Уже есть аккаунт?",
+    "welcome": "Добро пожаловать",
+    "welcomeBack": "С возвращением"
+  },
+  "profile": {
+    "title": "Профиль",
+    "edit": "Редактировать профиль",
+    "settings": "Настройки",
+    "bookmarks": "Закладки",
+    "preferences": "Предпочтения"
+  },
+  "settings": {
+    "title": "Настройки",
+    "account": "Аккаунт",
+    "preferences": "Предпочтения",
+    "privacy": "Конфиденциальность",
+    "notifications": "Уведомления",
+    "language": "Язык",
+    "theme": "Тема",
+    "actions": "Действия"
+  },
+  "publication": {
+    "readMore": "Читать далее",
+    "comments": "Комментарии",
+    "like": "Нравится",
+    "share": "Поделиться",
+    "bookmark": "В закладки",
+    "views": "Просмотры",
+    "author": "Автор",
+    "category": "Категория",
+    "publishedAt": "Опубликовано"
+  },
+  "admin": {
+    "dashboard": "Панель управления",
+    "publications": "Публикации",
+    "authors": "Авторы",
+    "categories": "Категории",
+    "users": "Пользователи",
+    "settings": "Настройки",
+    "logs": "Журналы"
+  }
+}

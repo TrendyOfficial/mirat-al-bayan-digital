@@ -1,0 +1,75 @@
+{
+  "nav": {
+    "home": "홈",
+    "poetry": "시",
+    "studies": "연구",
+    "stories": "이야기",
+    "search": "검색"
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류",
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "close": "닫기",
+    "back": "뒤로",
+    "next": "다음",
+    "previous": "이전",
+    "submit": "제출",
+    "confirm": "확인",
+    "yes": "예",
+    "no": "아니오"
+  },
+  "auth": {
+    "signIn": "로그인",
+    "signUp": "회원가입",
+    "signOut": "로그아웃",
+    "email": "이메일",
+    "password": "비밀번호",
+    "fullName": "전체 이름",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "noAccount": "계정이 없으신가요?",
+    "hasAccount": "이미 계정이 있으신가요?",
+    "welcome": "환영합니다",
+    "welcomeBack": "다시 오신 것을 환영합니다"
+  },
+  "profile": {
+    "title": "프로필",
+    "edit": "프로필 편집",
+    "settings": "설정",
+    "bookmarks": "북마크",
+    "preferences": "환경설정"
+  },
+  "settings": {
+    "title": "설정",
+    "account": "계정",
+    "preferences": "환경설정",
+    "privacy": "개인정보",
+    "notifications": "알림",
+    "language": "언어",
+    "theme": "테마",
+    "actions": "작업"
+  },
+  "publication": {
+    "readMore": "더 읽기",
+    "comments": "댓글",
+    "like": "좋아요",
+    "share": "공유",
+    "bookmark": "북마크",
+    "views": "조회수",
+    "author": "작성자",
+    "category": "카테고리",
+    "publishedAt": "게시일"
+  },
+  "admin": {
+    "dashboard": "대시보드",
+    "publications": "출판물",
+    "authors": "작성자",
+    "categories": "카테고리",
+    "users": "사용자",
+    "settings": "설정",
+    "logs": "로그"
+  }
+}
