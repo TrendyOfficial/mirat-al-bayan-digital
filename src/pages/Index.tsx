@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PublicationCard } from "@/components/PublicationCard";
 import { CategoryCard } from "@/components/CategoryCard";
+import { BlackHole } from "@/components/BlackHole";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -119,14 +120,18 @@ export default function Index() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col page-enter">
       <Header />
       
       <main className="flex-1">
-        {/* Hero Section with animated gradient */}
-        <section className="relative bg-gradient-lovable text-white py-20 overflow-hidden">
+        {/* Hero Section with animated gradient and black hole */}
+        <section className="relative bg-gradient-lovable text-white py-32 overflow-hidden">
           <div className="absolute inset-0 hero-gradient-animated"></div>
-          <div className="container relative z-10">
+          
+          {/* Black Hole with floating icons */}
+          <BlackHole />
+          
+          <div className="container relative z-10 mt-24">
             <div className="max-w-3xl mx-auto text-center">
               <h1 className="font-arabic text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
                 {isArabic ? 'مرحباً بكم في مرآة البيان' : 'Welcome to Miratl Bayan'}
@@ -136,7 +141,7 @@ export default function Index() {
                   ? 'مجلة أدبية عربية حديثة تحتفي بالشعر والدراسات النقدية والقصص'
                   : 'A modern Arabic literature magazine celebrating poetry, critical studies, and stories'}
               </p>
-              <Button size="lg" className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:opacity-90 text-white border-0" asChild>
+              <Button size="lg" className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:opacity-90 text-white border-0 glow-primary" asChild>
                 <Link to="/search">
                   {isArabic ? 'استكشف المقالات' : 'Explore Articles'}
                   <ArrowRight className="mr-2 h-5 w-5" />

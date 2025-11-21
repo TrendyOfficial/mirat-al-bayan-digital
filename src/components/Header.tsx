@@ -93,63 +93,132 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4">
-        <Link 
-          to="/" 
-          className="cursor-pointer rounded-full flex gap-2 text-foreground items-center py-2 px-4 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
-        >
-          <h1 className="font-arabic text-lg md:text-xl font-bold">
-            {isArabic ? 'مرآة البيان' : 'Miratl Bayan'}
-          </h1>
-        </Link>
-
-        <nav className="hidden md:flex items-center gap-3">
+      <div className="container flex h-16 items-center px-4">
+        {/* Left side - Logo */}
+        <div className="flex-shrink-0">
           <Link 
             to="/" 
-            className="cursor-pointer rounded-full text-sm font-medium text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
+            className="cursor-pointer rounded-full flex gap-2 items-center py-2 px-4 backdrop-blur-lg transition-[transform,background-color] duration-100 hover:scale-105 active:scale-95"
+            style={{
+              color: 'var(--type-logo)',
+              backgroundColor: 'var(--pill-background)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-backgroundHover)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-background)';
+            }}
+          >
+            <h1 className="font-arabic text-lg md:text-xl font-bold whitespace-nowrap">
+              {isArabic ? 'مرآة البيان' : 'Miratl Bayan'}
+            </h1>
+          </Link>
+        </div>
+
+        {/* Center - Navigation */}
+        <nav className="hidden md:flex items-center gap-3 flex-1 justify-center">
+          <Link 
+            to="/" 
+            className="cursor-pointer rounded-full text-sm font-medium px-4 py-2 backdrop-blur-lg transition-[transform,background-color] duration-100 hover:scale-105 active:scale-95"
+            style={{
+              color: 'var(--type-logo)',
+              backgroundColor: 'var(--pill-background)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-backgroundHover)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-background)';
+            }}
           >
             {isArabic ? 'الرئيسية' : 'Home'}
           </Link>
           <Link 
             to="/category/poetry" 
-            className="cursor-pointer rounded-full text-sm font-medium text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
+            className="cursor-pointer rounded-full text-sm font-medium px-4 py-2 backdrop-blur-lg transition-[transform,background-color] duration-100 hover:scale-105 active:scale-95"
+            style={{
+              color: 'var(--type-logo)',
+              backgroundColor: 'var(--pill-background)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-backgroundHover)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-background)';
+            }}
           >
             {isArabic ? 'قصائد' : 'Poetry'}
           </Link>
           <Link 
             to="/category/critical-studies" 
-            className="cursor-pointer rounded-full text-sm font-medium text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
+            className="cursor-pointer rounded-full text-sm font-medium px-4 py-2 backdrop-blur-lg transition-[transform,background-color] duration-100 hover:scale-105 active:scale-95"
+            style={{
+              color: 'var(--type-logo)',
+              backgroundColor: 'var(--pill-background)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-backgroundHover)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-background)';
+            }}
           >
             {isArabic ? 'دراسات نقدية' : 'Studies'}
           </Link>
           <Link 
             to="/category/stories-novels" 
-            className="cursor-pointer rounded-full text-sm font-medium text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
+            className="cursor-pointer rounded-full text-sm font-medium px-4 py-2 backdrop-blur-lg transition-[transform,background-color] duration-100 hover:scale-105 active:scale-95"
+            style={{
+              color: 'var(--type-logo)',
+              backgroundColor: 'var(--pill-background)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-backgroundHover)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-background)';
+            }}
           >
             {isArabic ? 'قصص' : 'Stories'}
           </Link>
         </nav>
 
-        <div className="flex items-center gap-2">
+        {/* Right side - Actions */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           <LanguageSwitcher />
           <DarkModeToggle />
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="rounded-full border-2 border-transparent bg-pill-background bg-opacity-50 hover:bg-opacity-100 transition-all duration-75 hover:scale-110 hover:bg-pill-backgroundHover active:scale-125 h-10 w-10" 
-            asChild
+          <Link 
+            to="/search"
+            className="rounded-full flex items-center justify-center border-2 border-transparent transition-[background-color,transform,border-color] duration-75 hover:scale-110 active:scale-125 h-10 w-10"
+            style={{
+              backgroundColor: 'var(--pill-background)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-backgroundHover)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--pill-background)';
+            }}
           >
-            <Link to="/search">
-              <Search className="h-5 w-5" />
-            </Link>
-          </Button>
+            <Search className="h-5 w-5" style={{ color: 'var(--type-logo)' }} />
+          </Link>
           
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="cursor-pointer rounded-full flex gap-2 text-foreground items-center py-2 px-3 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
+                <button
+                  className="cursor-pointer rounded-full flex gap-2 items-center py-2 px-3 backdrop-blur-lg transition-[transform,background-color] duration-100 hover:scale-105 active:scale-95 border-0 outline-none group"
+                  style={{
+                    color: 'var(--type-logo)',
+                    backgroundColor: 'var(--pill-background)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--pill-backgroundHover)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--pill-background)';
+                  }}
                 >
                   <ProfileAvatar 
                     icon={profileIcon}
@@ -162,8 +231,8 @@ export const Header = () => {
                   <span className="hidden sm:inline text-sm font-medium max-w-[100px] truncate">
                     {displayName}
                   </span>
-                  <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180 flex-shrink-0" />
-                </Button>
+                  <ChevronDown className="h-4 w-4 transition-transform duration-500 group-data-[state=open]:rotate-180 flex-shrink-0" />
+                </button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
@@ -272,16 +341,22 @@ export const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button 
-              variant="default" 
-              size="sm" 
-              className="cursor-pointer rounded-full text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50" 
-              asChild
+            <Link 
+              to="/auth"
+              className="cursor-pointer rounded-full px-4 py-2 backdrop-blur-lg transition-[transform,background-color] duration-100 hover:scale-105 active:scale-95 text-sm font-medium"
+              style={{
+                color: 'var(--type-logo)',
+                backgroundColor: 'var(--pill-background)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--pill-backgroundHover)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--pill-background)';
+              }}
             >
-              <Link to="/auth">
-                {isArabic ? 'تسجيل الدخول' : 'Login'}
-              </Link>
-            </Button>
+              {isArabic ? 'تسجيل الدخول' : 'Login'}
+            </Link>
           )}
         </div>
       </div>
