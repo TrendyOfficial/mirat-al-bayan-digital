@@ -8,13 +8,19 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
-  const { user, isLoading, hasRole, hasAnyRole } = useAuth();
+  const { user, isLoading, hasRole, hasAnyRole, isOwner } = useAuth();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkPermission = async () => {
       if (!user) {
         setHasPermission(false);
+        return;
+      }
+
+      // Owner always has access to protected routes (like the dashboard)
+      if (isOwner()) {
+        setHasPermission(true);
         return;
       }
 
@@ -34,7 +40,7 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
     if (!isLoading) {
       checkPermission();
     }
-  }, [user, isLoading, requiredRole, hasRole, hasAnyRole]);
+  }, [user, isLoading, requiredRole, hasRole, hasAnyRole, isOwner]);
 
   if (isLoading || hasPermission === null) {
     return (
