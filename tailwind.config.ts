@@ -61,6 +61,8 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        "pill-background": "rgba(255, 255, 255, 0.1)",
+        "pill-backgroundHover": "rgba(255, 255, 255, 0.2)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -114,6 +116,54 @@ export default {
             transform: "scale(1)",
           },
         },
+        "spin-slow": {
+          "0%": {
+            transform: "rotate(0deg)",
+          },
+          "100%": {
+            transform: "rotate(360deg)",
+          },
+        },
+        "slide-in-from-right": {
+          "0%": {
+            transform: "translateX(100%)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateX(0)",
+            opacity: "1",
+          },
+        },
+        "slide-in-from-left": {
+          "0%": {
+            transform: "translateX(-100%)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateX(0)",
+            opacity: "1",
+          },
+        },
+        "slide-in-from-top": {
+          "0%": {
+            transform: "translateY(-100%)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateY(0)",
+            opacity: "1",
+          },
+        },
+        "dropdown-open": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(-10px) scale(0.95)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0) scale(1)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -121,6 +171,11 @@ export default {
         "fade-in": "fade-in 0.5s ease-out",
         "slide-up": "slide-up 0.5s ease-out",
         "scale-in": "scale-in 0.3s ease-out",
+        "spin-slow": "spin-slow 0.6s ease-in-out",
+        "slide-in-right": "slide-in-from-right 0.4s ease-out",
+        "slide-in-left": "slide-in-from-left 0.4s ease-out",
+        "slide-in-top": "slide-in-from-top 0.4s ease-out",
+        "dropdown-open": "dropdown-open 0.3s ease-out",
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',

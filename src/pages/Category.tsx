@@ -62,17 +62,17 @@ export default function Category() {
   const categoryDescription = isArabic ? category.description_ar : category.description_en;
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col animate-fade-in">
       <Header />
       
       <main className="flex-1">
-        <section className="bg-gradient-hero text-white py-16">
+        <section className="bg-gradient-hero text-white py-16 animate-slide-in-top">
           <div className="container">
-            <h1 className="font-arabic text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="font-arabic text-4xl md:text-5xl font-bold mb-4 animate-slide-up">
               {categoryName}
             </h1>
             {categoryDescription && (
-              <p className="text-lg text-white/90 max-w-2xl">
+              <p className="text-lg text-white/90 max-w-2xl animate-fade-in">
                 {categoryDescription}
               </p>
             )}

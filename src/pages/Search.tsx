@@ -48,24 +48,24 @@ export default function Search() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col animate-fade-in">
       <Header />
       
       <main className="flex-1">
         <section className="py-12">
           <div className="container max-w-4xl">
-            <h1 className="font-arabic text-4xl font-bold mb-8 text-center">
+            <h1 className="font-arabic text-4xl font-bold mb-8 text-center animate-slide-up">
               {isArabic ? 'بحث' : 'Search'}
             </h1>
 
-            <div className="relative mb-12">
+            <div className="relative mb-12 animate-scale-in">
               <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder={isArabic ? 'ابحث عن مقالات...' : 'Search for articles...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-12"
+                className="pl-10 h-12 transition-all duration-100 hover:scale-[1.02]"
               />
             </div>
 

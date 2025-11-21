@@ -92,51 +92,55 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 md:h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center space-x-2">
-          <h1 className="font-arabic text-xl md:text-2xl font-bold text-primary hover:text-primary/80 transition-colors">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between px-4">
+        <Link 
+          to="/" 
+          className="cursor-pointer rounded-full flex gap-2 text-foreground items-center py-2 px-4 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
+        >
+          <h1 className="font-arabic text-lg md:text-xl font-bold">
             {isArabic ? 'مرآة البيان' : 'Miratl Bayan'}
           </h1>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-3">
           <Link 
             to="/" 
-            className="relative text-sm font-medium transition-colors group"
+            className="cursor-pointer rounded-full text-sm font-medium text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
           >
-            <span className="relative z-10">{isArabic ? 'الرئيسية' : 'Home'}</span>
-            <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+            {isArabic ? 'الرئيسية' : 'Home'}
           </Link>
           <Link 
             to="/category/poetry" 
-            className="relative text-sm font-medium transition-colors group"
+            className="cursor-pointer rounded-full text-sm font-medium text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
           >
-            <span className="relative z-10">{isArabic ? 'قصائد' : 'Poetry'}</span>
-            <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+            {isArabic ? 'قصائد' : 'Poetry'}
           </Link>
           <Link 
             to="/category/critical-studies" 
-            className="relative text-sm font-medium transition-colors group"
+            className="cursor-pointer rounded-full text-sm font-medium text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
           >
-            <span className="relative z-10">{isArabic ? 'دراسات نقدية' : 'Studies'}</span>
-            <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+            {isArabic ? 'دراسات نقدية' : 'Studies'}
           </Link>
           <Link 
             to="/category/stories-novels" 
-            className="relative text-sm font-medium transition-colors group"
+            className="cursor-pointer rounded-full text-sm font-medium text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
           >
-            <span className="relative z-10">{isArabic ? 'قصص' : 'Stories'}</span>
-            <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+            {isArabic ? 'قصص' : 'Stories'}
           </Link>
         </nav>
 
-        <div className="flex items-center gap-1 md:gap-2">
+        <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <DarkModeToggle />
-          <Button variant="ghost" size="icon" className="h-9 w-9 md:h-10 md:w-10" asChild>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full border-2 border-transparent bg-pill-background bg-opacity-50 hover:bg-opacity-100 transition-all duration-75 hover:scale-110 hover:bg-pill-backgroundHover active:scale-125 h-10 w-10" 
+            asChild
+          >
             <Link to="/search">
-              <Search className="h-4 w-4 md:h-5 md:w-5" />
+              <Search className="h-5 w-5" />
             </Link>
           </Button>
           
@@ -145,7 +149,7 @@ export const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="group flex items-center gap-1.5 md:gap-2 rounded-full px-1.5 md:px-2 py-1 h-9 md:h-10 hover:bg-accent transition-colors"
+                  className="cursor-pointer rounded-full flex gap-2 text-foreground items-center py-2 px-3 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50"
                 >
                   <ProfileAvatar 
                     icon={profileIcon}
@@ -153,18 +157,18 @@ export const Header = () => {
                     colorTwo={colorTwo}
                     useGradient={useGradient}
                     size="sm"
-                    className="w-8 h-8 flex-shrink-0"
+                    className="w-7 h-7 flex-shrink-0"
                   />
-                  <span className="hidden sm:inline text-sm font-medium max-w-[80px] md:max-w-[120px] truncate">
-                    {displayName || user.email}
+                  <span className="hidden sm:inline text-sm font-medium max-w-[100px] truncate">
+                    {displayName}
                   </span>
-                  <ChevronDown className="h-3.5 w-3.5 md:h-4 md:w-4 transition-transform duration-300 group-data-[state=open]:rotate-180 flex-shrink-0" />
+                  <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180 flex-shrink-0" />
                 </Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
                 align="end"
-                className="w-64 rounded-xl border bg-popover shadow-lg p-2 animate-in slide-in-from-top-5 duration-300"
+                className="w-64 rounded-xl border bg-popover shadow-lg p-2 animate-dropdown-open"
                 sideOffset={8}
               >
                 {/* User Profile Header */}
@@ -188,14 +192,21 @@ export const Header = () => {
 
                 {/* Main Navigation */}
                 <DropdownMenuItem asChild>
-                  <Link to="/settings" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent">
+                  <Link to="/settings" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
                     <Settings className="h-4 w-4 mr-2" />
                     {isArabic ? 'الإعدادات' : 'Settings'}
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
-                  <Link to="/bookmarks" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent">
+                  <Link to="/settings/preferences" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
+                    <Settings className="h-4 w-4 mr-2" />
+                    {isArabic ? 'التفضيلات' : 'Preferences'}
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem asChild>
+                  <Link to="/bookmarks" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
                     <BookmarkIcon className="h-4 w-4 mr-2" />
                     {isArabic ? 'المفضلات' : 'Bookmarks'}
                   </Link>
@@ -203,14 +214,14 @@ export const Header = () => {
 
                 {isAdmin && (
                   <DropdownMenuItem asChild>
-                    <Link to="/admin" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent">
+                    <Link to="/admin" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
                       <LayoutDashboard className="h-4 w-4 mr-2" />
                       {isArabic ? 'لوحة التحكم' : 'Dashboard'}
                     </Link>
                   </DropdownMenuItem>
                 )}
 
-                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer rounded-lg px-3 py-2 text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive">
+                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer rounded-lg px-3 py-2 text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive transition-all duration-100 hover:scale-105">
                   <LogOut className="h-4 w-4 mr-2" />
                   {isArabic ? 'تسجيل الخروج' : 'Logout'}
                 </DropdownMenuItem>
@@ -261,7 +272,12 @@ export const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button variant="default" size="sm" className="h-9 text-xs md:text-sm md:h-10" asChild>
+            <Button 
+              variant="default" 
+              size="sm" 
+              className="cursor-pointer rounded-full text-foreground px-4 py-2 bg-pill-background hover:bg-pill-backgroundHover backdrop-blur-lg transition-all duration-100 hover:scale-105 bg-opacity-50" 
+              asChild
+            >
               <Link to="/auth">
                 {isArabic ? 'تسجيل الدخول' : 'Login'}
               </Link>

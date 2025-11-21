@@ -14,6 +14,7 @@ import Publication from "./pages/Publication";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import Bookmarks from "./pages/Bookmarks";
+import Preferences from "./pages/Preferences";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Publications from "./pages/admin/Publications";
@@ -64,6 +65,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Settings />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/settings/preferences" 
+                element={
+                  <ProtectedRoute>
+                    <Preferences />
                   </ProtectedRoute>
                 } 
               />
