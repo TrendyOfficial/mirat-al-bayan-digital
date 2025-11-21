@@ -20,21 +20,22 @@ const FullscreenReader = ({ isOpen, onClose, titleEn, titleAr, contentEn, conten
   const content = language === 'en' ? contentEn || contentAr : contentAr;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm overflow-hidden animate-fade-in">
       <button
         onClick={onClose}
-        className="fixed top-6 right-6 z-[60] p-2 rounded-full bg-background border border-border hover:bg-accent transition-colors shadow-lg"
+        className="fixed top-6 right-6 z-[60] p-2 rounded-full bg-background border border-border hover:bg-accent transition-all duration-100 hover:scale-110 shadow-lg"
         aria-label="Close fullscreen"
       >
         <X className="h-6 w-6" />
       </button>
       
-      <div className="w-full h-full flex items-center justify-center p-4 overflow-y-auto">
+      <div className="w-full h-full flex items-center justify-center p-4">
         <div 
-          className="bg-card border border-border shadow-2xl rounded-lg p-12 my-8 mx-auto max-h-[calc(100vh-4rem)] overflow-y-auto hover:cursor-auto"
+          className="bg-card border border-border shadow-2xl rounded-lg p-12 my-8 mx-auto overflow-y-auto animate-scale-in scrollbar-thin scrollbar-thumb-primary scrollbar-track-transparent"
           style={{
             width: '210mm',
             minHeight: '297mm',
+            maxHeight: 'calc(100vh - 4rem)',
           }}
         >
           <article className="prose prose-lg dark:prose-invert max-w-none">
