@@ -31,9 +31,8 @@ export function LanguageSwitcher() {
         e.currentTarget.style.backgroundColor = 'var(--pill-background)';
       }}
     >
-      <Globe className={`h-5 w-5 transition-transform duration-300 ${isAnimating ? 'rotate-180 scale-110' : ''}`} style={{ color: 'var(--type-logo)' }} />
-      <span className={`absolute -bottom-1 -right-1 text-[10px] font-bold px-1 rounded bg-primary text-primary-foreground transition-all duration-300 ${isAnimating ? 'scale-125' : ''}`}>
-        {otherLanguage.toUpperCase()}
+      <span className={`text-xs font-bold transition-all duration-300 ${isAnimating ? 'scale-110' : ''}`} style={{ color: 'var(--type-logo)' }}>
+        {language.toUpperCase()}
       </span>
     </button>
   );

@@ -322,16 +322,16 @@ export default function Settings() {
                   <span className="text-sm">{isArabic ? 'التفضيلات' : 'Preferences'}</span>
                 </button>
                 <button
-                  onClick={() => scrollToSection('delete')}
+                  onClick={() => scrollToSection('actions')}
                   className={cn(
                     "flex items-center gap-2 md:gap-3 px-3 py-2 rounded-lg transition-colors whitespace-nowrap md:w-full text-left",
-                    activeSection === 'delete' 
-                      ? "bg-destructive/10 text-destructive" 
-                      : "hover:bg-muted text-destructive"
+                    activeSection === 'actions' 
+                      ? "bg-primary/10 text-primary" 
+                      : "hover:bg-muted"
                   )}
                 >
-                  <Trash2 className="h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{isArabic ? 'حذف الحساب' : 'Delete Account'}</span>
+                  <SettingsIcon className="h-4 w-4 flex-shrink-0" />
+                  <span className="text-sm">{isArabic ? 'الإجراءات' : 'Actions'}</span>
                 </button>
               </div>
             </aside>
@@ -601,27 +601,77 @@ export default function Settings() {
           </Card>
               )}
 
-              {/* Delete Account */}
-              {(activeSection === 'all' || activeSection === 'delete') && (
-                <Card id="delete" className="border-destructive">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-destructive">
-                <Trash2 className="h-5 w-5" />
-                {isArabic ? 'حذف الحساب' : 'Delete Account'}
-              </CardTitle>
-              <CardDescription>
-                {isArabic ? 'حذف حسابك بشكل دائم' : 'Permanently delete your account'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                variant="destructive"
-                onClick={() => setShowDeleteDialog(true)}
-              >
-                {isArabic ? 'حذف الحساب' : 'Delete Account'}
-              </Button>
-            </CardContent>
-          </Card>
+              {/* Actions */}
+              {(activeSection === 'all' || activeSection === 'actions') && (
+                <Card id="actions">
+                  <CardHeader>
+                    <CardTitle>{isArabic ? 'الإجراءات' : 'Actions'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Account Migration */}
+                      <Card className="p-6 bg-muted/30 hover:bg-muted/50 transition-colors">
+                        <h3 className="font-semibold mb-2">
+                          {isArabic ? 'نقل الحساب' : 'Account migration'}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {isArabic 
+                            ? 'انقل حسابك إلى خادم جديد أو قم بتنزيل بياناتك.'
+                            : 'Migrate your account to a new server or download your data.'}
+                        </p>
+                        <Button 
+                          onClick={() => navigate('/migration')}
+                          className="w-full"
+                          variant="outline"
+                        >
+                          {isArabic ? 'نقل الحساب' : 'Migrate account'}
+                        </Button>
+                      </Card>
+
+                      {/* End All Sessions */}
+                      <Card className="p-6 bg-muted/30 hover:bg-muted/50 transition-colors">
+                        <h3 className="font-semibold mb-2">
+                          {isArabic ? 'إنهاء جميع الجلسات' : 'End All Sessions'}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {isArabic 
+                            ? 'سيؤدي هذا إلى تسجيل خروجك من جميع الأجهزة المرتبطة بحسابك.'
+                            : 'This will sign you out from all devices linked to your account.'}
+                        </p>
+                        <Button 
+                          onClick={async () => {
+                            await supabase.auth.signOut({ scope: 'global' });
+                            toast.success(isArabic ? 'تم إنهاء جميع الجلسات' : 'All sessions ended');
+                            navigate('/');
+                          }}
+                          className="w-full"
+                          variant="outline"
+                        >
+                          {isArabic ? 'إنهاء جميع الجلسات' : 'Log Out of All Devices'}
+                        </Button>
+                      </Card>
+
+                      {/* Delete Account */}
+                      <Card className="p-6 bg-destructive/10 hover:bg-destructive/20 transition-colors border-destructive/50">
+                        <h3 className="font-semibold mb-2 text-destructive">
+                          {isArabic ? 'حذف الحساب' : 'Delete account'}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {isArabic 
+                            ? 'هذا الإجراء لا رجعة فيه. سيتم حذف جميع البيانات ولا يمكن استردادها.'
+                            : 'This action is irreversible. All data will be deleted and nothing can be recovered.'}
+                        </p>
+                        <Button 
+                          onClick={() => setShowDeleteDialog(true)}
+                          className="w-full"
+                          variant="destructive"
+                        >
+                          {isArabic ? 'حذف الحساب' : 'Delete account'}
+                        </Button>
+                      </Card>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
           </div>
 

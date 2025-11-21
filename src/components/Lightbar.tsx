@@ -221,13 +221,6 @@ export function Lightbar(props: { className?: string; noParticles?: boolean }) {
           <div className="lightbar">
             {!props.noParticles && <ParticlesCanvas />}
             <div className="lightbar-visual" />
-            {/* Centered navigation text */}
-            <div className="absolute top-[180px] left-1/2 transform -translate-x-1/2 flex gap-6 text-white/80 text-sm font-medium pointer-events-none z-30">
-              <span>Home</span>
-              <span>Poetry</span>
-              <span>Studies</span>
-              <span>Stories</span>
-            </div>
           </div>
         </div>
       </div>

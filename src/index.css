@@ -120,6 +120,23 @@
   }
 }
 
+@keyframes hero-wave {
+  0%, 100% {
+    transform: translateY(100%) scale(1.2);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(0%) scale(1);
+    opacity: 0.2;
+  }
+  75% {
+    opacity: 0.15;
+  }
+}
+
 .hero-gradient-animated {
   background: linear-gradient(
     -45deg,
@@ -133,6 +150,16 @@
   );
   background-size: 400% 400%;
   animation: gradient-shift 15s ease infinite;
+}
+
+.hero-wave-animated {
+  background: radial-gradient(ellipse at center, 
+    rgba(88, 28, 135, 0.2) 0%, 
+    rgba(59, 130, 246, 0.15) 30%, 
+    rgba(17, 24, 39, 0.2) 60%,
+    transparent 100%);
+  animation: hero-wave 18s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 .bg-gradient-lovable {

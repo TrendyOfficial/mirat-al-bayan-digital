@@ -15,6 +15,7 @@ import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import Bookmarks from "./pages/Bookmarks";
 import Preferences from "./pages/Preferences";
+import Migration from "./pages/Migration";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Publications from "./pages/admin/Publications";
@@ -73,6 +74,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Preferences />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/migration" 
+                element={
+                  <ProtectedRoute>
+                    <Migration />
                   </ProtectedRoute>
                 } 
               />
