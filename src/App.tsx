@@ -100,10 +100,31 @@ const App = () => (
                 <Route path="publications/edit/:id" element={<PublicationEditor />} />
                 <Route path="authors" element={<Authors />} />
                 <Route path="categories" element={<Categories />} />
-                <Route path="logs" element={<ActivityLogs />} />
-                <Route path="users" element={<Users />} />
+                <Route
+                  path="logs"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <ActivityLogs />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="users"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <Users />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="deletion-reviews" element={<DeletionReviews />} />
-                <Route path="reports" element={<Reports />} />
+                <Route
+                  path="reports"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <Reports />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
 
               <Route path="*" element={<NotFound />} />
