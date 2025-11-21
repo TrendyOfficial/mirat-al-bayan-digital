@@ -7,6 +7,11 @@ import deTranslations from "@/assets/locales/de.json";
 import trTranslations from "@/assets/locales/tr.json";
 import nlTranslations from "@/assets/locales/nl.json";
 import ptTranslations from "@/assets/locales/pt.json";
+import itTranslations from "@/assets/locales/it.json";
+import ruTranslations from "@/assets/locales/ru.json";
+import jaTranslations from "@/assets/locales/ja.json";
+import zhTranslations from "@/assets/locales/zh.json";
+import koTranslations from "@/assets/locales/ko.json";
 
 const translations: Record<Language, any> = {
   ar: arTranslations,
@@ -17,6 +22,11 @@ const translations: Record<Language, any> = {
   tr: trTranslations,
   nl: nlTranslations,
   pt: ptTranslations,
+  it: itTranslations,
+  ru: ruTranslations,
+  ja: jaTranslations,
+  zh: zhTranslations,
+  ko: koTranslations,
   // Other languages default to English or Arabic for now
   bg: enTranslations,
   bn: enTranslations,
@@ -34,24 +44,19 @@ const translations: Record<Language, any> = {
   hu: enTranslations,
   id: enTranslations,
   is: enTranslations,
-  it: enTranslations,
-  ja: enTranslations,
   km: enTranslations,
-  ko: enTranslations,
   lv: enTranslations,
   ne: enTranslations,
   pa: enTranslations,
   pl: enTranslations,
   ro: enTranslations,
-  ru: enTranslations,
   si: enTranslations,
   sl: enTranslations,
   sv: enTranslations,
   ta: enTranslations,
   th: enTranslations,
-  uk: enTranslations,
+  uk: ruTranslations, // Ukrainian can use Russian translations
   vi: enTranslations,
-  zh: enTranslations,
 };
 
 export function t(language: Language, key: string): string {

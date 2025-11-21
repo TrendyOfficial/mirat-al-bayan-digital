@@ -50,30 +50,37 @@ export default function Users() {
   }, []);
 
   const fetchUsers = async () => {
-    // Get all user profiles
+    // First get all user_roles to find users with roles
+    const { data: userRoles } = await supabase
+      .from('user_roles')
+      .select('user_id, role');
+
+    if (!userRoles || userRoles.length === 0) {
+      setUsers([]);
+      return;
+    }
+
+    // Get unique user IDs who have roles
+    const userIdsWithRoles = [...new Set(userRoles.map(ur => ur.user_id))];
+
+    // Get profiles only for users with roles
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, full_name, created_at');
+      .select('id, full_name, created_at')
+      .in('id', userIdsWithRoles);
 
     if (!profiles || profiles.length === 0) {
       setUsers([]);
       return;
     }
 
-    // Get all roles once
-    const { data: userRoles } = await supabase
-      .from('user_roles')
-      .select('user_id, role');
-
     const rolesByUser = new Map<string, { role: 'admin' | 'editor' | 'author' }[]>();
 
-    if (userRoles) {
-      userRoles.forEach((ur: any) => {
-        const list = rolesByUser.get(ur.user_id) || [];
-        list.push({ role: ur.role });
-        rolesByUser.set(ur.user_id, list);
-      });
-    }
+    userRoles.forEach((ur: any) => {
+      const list = rolesByUser.get(ur.user_id) || [];
+      list.push({ role: ur.role });
+      rolesByUser.set(ur.user_id, list);
+    });
 
     const usersWithDetails = await Promise.all(
       profiles.map(async (profile) => {

@@ -1,0 +1,75 @@
+{
+  "nav": {
+    "home": "Home",
+    "poetry": "Poesia",
+    "studies": "Studi",
+    "stories": "Storie",
+    "search": "Cerca"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "close": "Chiudi",
+    "back": "Indietro",
+    "next": "Avanti",
+    "previous": "Precedente",
+    "submit": "Invia",
+    "confirm": "Conferma",
+    "yes": "Sì",
+    "no": "No"
+  },
+  "auth": {
+    "signIn": "Accedi",
+    "signUp": "Registrati",
+    "signOut": "Esci",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Nome completo",
+    "forgotPassword": "Password dimenticata?",
+    "noAccount": "Non hai un account?",
+    "hasAccount": "Hai già un account?",
+    "welcome": "Benvenuto",
+    "welcomeBack": "Bentornato"
+  },
+  "profile": {
+    "title": "Profilo",
+    "edit": "Modifica Profilo",
+    "settings": "Impostazioni",
+    "bookmarks": "Segnalibri",
+    "preferences": "Preferenze"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "account": "Account",
+    "preferences": "Preferenze",
+    "privacy": "Privacy",
+    "notifications": "Notifiche",
+    "language": "Lingua",
+    "theme": "Tema",
+    "actions": "Azioni"
+  },
+  "publication": {
+    "readMore": "Leggi di più",
+    "comments": "Commenti",
+    "like": "Mi piace",
+    "share": "Condividi",
+    "bookmark": "Aggiungi ai segnalibri",
+    "views": "Visualizzazioni",
+    "author": "Autore",
+    "category": "Categoria",
+    "publishedAt": "Pubblicato il"
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "publications": "Pubblicazioni",
+    "authors": "Autori",
+    "categories": "Categorie",
+    "users": "Utenti",
+    "settings": "Impostazioni",
+    "logs": "Registri"
+  }
+}
