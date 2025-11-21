@@ -100,24 +100,19 @@ export default function Publication() {
       .single();
 
     if (pub) {
-      // Generate a session ID from browser fingerprint
-      const sessionId = sessionStorage.getItem('view_session') || 
-        `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      // Generate a unique session ID per browser session
+      let sessionId = sessionStorage.getItem('view_session');
       
-      if (!sessionStorage.getItem('view_session')) {
+      if (!sessionId) {
+        sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         sessionStorage.setItem('view_session', sessionId);
       }
 
-      // Try to insert view, will fail silently if already viewed in this session
-      const { error } = await supabase.from('publication_views').insert({
+      // Try to insert view with unique constraint on publication_id + session_id
+      await supabase.from('publication_views').insert({
         publication_id: pub.id,
         session_id: sessionId,
       });
-      
-      // Refresh view count if insert was successful
-      if (!error) {
-        fetchPublication();
-      }
     }
   };
 

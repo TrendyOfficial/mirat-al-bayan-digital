@@ -20,7 +20,7 @@ export function LanguageSwitcher() {
     <button
       onClick={handleToggle}
       aria-label="Switch language"
-      className="rounded-full border-2 border-transparent transition-[background-color,transform,border-color] duration-75 hover:scale-110 active:scale-125 h-10 w-10 relative group flex items-center justify-center"
+      className="rounded-full border-2 border-transparent transition-[background-color,transform,border-color] duration-75 hover:scale-110 active:scale-125 h-10 w-10 relative group flex items-center justify-center gap-1 px-2"
       style={{
         backgroundColor: 'var(--pill-background)',
       }}
@@ -31,6 +31,7 @@ export function LanguageSwitcher() {
         e.currentTarget.style.backgroundColor = 'var(--pill-background)';
       }}
     >
+      <Globe className="h-4 w-4" style={{ color: 'var(--type-logo)' }} />
       <span className={`text-xs font-bold transition-all duration-300 ${isAnimating ? 'scale-110' : ''}`} style={{ color: 'var(--type-logo)' }}>
         {language.toUpperCase()}
       </span>
