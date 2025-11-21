@@ -274,14 +274,12 @@ export const Header = () => {
                   </Link>
                 </DropdownMenuItem>
 
-                {isAdmin && (
-                  <DropdownMenuItem asChild>
-                    <Link to="/admin" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
-                      <LayoutDashboard className="h-4 w-4 mr-2" />
-                      {isArabic ? 'لوحة التحكم' : 'Dashboard'}
-                    </Link>
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem asChild>
+                  <Link to="/admin" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
+                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                    {isArabic ? 'لوحة التحكم' : 'Dashboard'}
+                  </Link>
+                </DropdownMenuItem>
 
                 <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer rounded-lg px-3 py-2 text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive transition-all duration-100 hover:scale-105">
                   <LogOut className="h-4 w-4 mr-2" />

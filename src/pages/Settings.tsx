@@ -321,18 +321,6 @@ export default function Settings() {
                   <Palette className="h-4 w-4 flex-shrink-0" />
                   <span className="text-sm">{isArabic ? 'التفضيلات' : 'Preferences'}</span>
                 </button>
-                <button
-                  onClick={() => scrollToSection('actions')}
-                  className={cn(
-                    "flex items-center gap-2 md:gap-3 px-3 py-2 rounded-lg transition-colors whitespace-nowrap md:w-full text-left",
-                    activeSection === 'actions' 
-                      ? "bg-primary/10 text-primary" 
-                      : "hover:bg-muted"
-                  )}
-                >
-                  <SettingsIcon className="h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">{isArabic ? 'الإجراءات' : 'Actions'}</span>
-                </button>
               </div>
             </aside>
 
@@ -392,6 +380,62 @@ export default function Settings() {
                         disabled
                         className="bg-muted"
                       />
+                    </div>
+
+                    {/* Actions Section */}
+                    <div className="mt-6 pt-6 border-t space-y-4">
+                      <h3 className="text-lg font-semibold mb-4">{isArabic ? 'الإجراءات' : 'Actions'}</h3>
+                      
+                      {/* Account Migration */}
+                      <div className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h4 className="font-medium">{isArabic ? 'نقل الحساب' : 'Account migration'}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {isArabic ? 'قم بنقل حسابك إلى خادم جديد أو حمّل بياناتك' : 'Migrate your account to a new server or download your data'}
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={() => navigate('/migration')}
+                        >
+                          {isArabic ? 'نقل الحساب' : 'Migrate Account'}
+                        </Button>
+                      </div>
+
+                      {/* End All Sessions */}
+                      <div className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h4 className="font-medium">{isArabic ? 'إنهاء جميع الجلسات' : 'End all sessions'}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {isArabic ? 'سيؤدي هذا إلى تسجيل خروجك من جميع الأجهزة المرتبطة بحسابك' : 'This will log you out from all devices linked to your account'}
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={async () => {
+                            await signOut();
+                            navigate('/');
+                          }}
+                        >
+                          {isArabic ? 'تسجيل الخروج من جميع الأجهزة' : 'Log out from all devices'}
+                        </Button>
+                      </div>
+
+                      {/* Delete Account */}
+                      <div className="flex items-center justify-between p-4 border border-destructive/50 rounded-lg bg-destructive/5">
+                        <div>
+                          <h4 className="font-medium text-destructive">{isArabic ? 'حذف الحساب' : 'Delete Account'}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {isArabic ? 'هذا الإجراء لا يمكن التراجع عنه. سيتم حذف جميع البيانات ولا يمكن استعادتها' : 'This action cannot be undone. All data will be deleted and cannot be recovered'}
+                          </p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          onClick={() => setShowDeleteDialog(true)}
+                        >
+                          {isArabic ? 'حذف الحساب' : 'Delete Account'}
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -601,78 +645,6 @@ export default function Settings() {
           </Card>
               )}
 
-              {/* Actions */}
-              {(activeSection === 'all' || activeSection === 'actions') && (
-                <Card id="actions">
-                  <CardHeader>
-                    <CardTitle>{isArabic ? 'الإجراءات' : 'Actions'}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {/* Account Migration */}
-                      <Card className="p-6 bg-muted/30 hover:bg-muted/50 transition-colors">
-                        <h3 className="font-semibold mb-2">
-                          {isArabic ? 'نقل الحساب' : 'Account migration'}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {isArabic 
-                            ? 'انقل حسابك إلى خادم جديد أو قم بتنزيل بياناتك.'
-                            : 'Migrate your account to a new server or download your data.'}
-                        </p>
-                        <Button 
-                          onClick={() => navigate('/migration')}
-                          className="w-full"
-                          variant="outline"
-                        >
-                          {isArabic ? 'نقل الحساب' : 'Migrate account'}
-                        </Button>
-                      </Card>
-
-                      {/* End All Sessions */}
-                      <Card className="p-6 bg-muted/30 hover:bg-muted/50 transition-colors">
-                        <h3 className="font-semibold mb-2">
-                          {isArabic ? 'إنهاء جميع الجلسات' : 'End All Sessions'}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {isArabic 
-                            ? 'سيؤدي هذا إلى تسجيل خروجك من جميع الأجهزة المرتبطة بحسابك.'
-                            : 'This will sign you out from all devices linked to your account.'}
-                        </p>
-                        <Button 
-                          onClick={async () => {
-                            await supabase.auth.signOut({ scope: 'global' });
-                            toast.success(isArabic ? 'تم إنهاء جميع الجلسات' : 'All sessions ended');
-                            navigate('/');
-                          }}
-                          className="w-full"
-                          variant="outline"
-                        >
-                          {isArabic ? 'إنهاء جميع الجلسات' : 'Log Out of All Devices'}
-                        </Button>
-                      </Card>
-
-                      {/* Delete Account */}
-                      <Card className="p-6 bg-destructive/10 hover:bg-destructive/20 transition-colors border-destructive/50">
-                        <h3 className="font-semibold mb-2 text-destructive">
-                          {isArabic ? 'حذف الحساب' : 'Delete account'}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {isArabic 
-                            ? 'هذا الإجراء لا رجعة فيه. سيتم حذف جميع البيانات ولا يمكن استردادها.'
-                            : 'This action is irreversible. All data will be deleted and nothing can be recovered.'}
-                        </p>
-                        <Button 
-                          onClick={() => setShowDeleteDialog(true)}
-                          className="w-full"
-                          variant="destructive"
-                        >
-                          {isArabic ? 'حذف الحساب' : 'Delete account'}
-                        </Button>
-                      </Card>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
           </div>
 
           <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

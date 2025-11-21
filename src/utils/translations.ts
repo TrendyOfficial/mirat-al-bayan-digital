@@ -1,23 +1,26 @@
 import { type Language } from "@/contexts/LanguageContext";
 import arTranslations from "@/assets/locales/ar.json";
 import enTranslations from "@/assets/locales/en.json";
+import esTranslations from "@/assets/locales/es.json";
+import frTranslations from "@/assets/locales/fr.json";
+import deTranslations from "@/assets/locales/de.json";
 
 const translations: Record<Language, any> = {
   ar: arTranslations,
   en: enTranslations,
+  es: esTranslations,
+  fr: frTranslations,
+  de: deTranslations,
   // Other languages default to English for now
   bg: enTranslations,
   bn: enTranslations,
   ca: enTranslations,
   cs: enTranslations,
   da: enTranslations,
-  de: enTranslations,
   el: enTranslations,
-  es: enTranslations,
   et: enTranslations,
   fa: arTranslations, // Persian uses RTL like Arabic
   fi: enTranslations,
-  fr: enTranslations,
   gl: enTranslations,
   gu: enTranslations,
   he: arTranslations, // Hebrew uses RTL like Arabic
