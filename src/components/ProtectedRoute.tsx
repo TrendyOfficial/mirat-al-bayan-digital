@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'admin' | 'editor' | 'author';
+  requiredRole?: 'admin' | 'editor' | 'author' | 'any';
 }
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
-  const { user, isLoading, hasRole } = useAuth();
+  const { user, isLoading, hasRole, hasAnyRole } = useAuth();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -19,8 +19,13 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
       }
 
       if (requiredRole) {
-        const roleCheck = await hasRole(requiredRole);
-        setHasPermission(roleCheck);
+        if (requiredRole === 'any') {
+          const anyRole = await hasAnyRole();
+          setHasPermission(anyRole);
+        } else {
+          const roleCheck = await hasRole(requiredRole);
+          setHasPermission(roleCheck);
+        }
       } else {
         setHasPermission(true);
       }
@@ -29,7 +34,7 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
     if (!isLoading) {
       checkPermission();
     }
-  }, [user, isLoading, requiredRole, hasRole]);
+  }, [user, isLoading, requiredRole, hasRole, hasAnyRole]);
 
   if (isLoading || hasPermission === null) {
     return (

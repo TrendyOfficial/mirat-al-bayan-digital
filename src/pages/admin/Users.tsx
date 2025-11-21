@@ -50,25 +50,35 @@ export default function Users() {
   }, []);
 
   const fetchUsers = async () => {
-    // Get all users who have at least one role (admin/editor/author)
-    const { data: userRoles } = await supabase
-      .from('user_roles')
-      .select('user_id, role');
+    // Get all user profiles
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, created_at');
 
-    if (!userRoles || userRoles.length === 0) {
+    if (!profiles || profiles.length === 0) {
       setUsers([]);
       return;
     }
 
-    // Get unique user IDs
-    const uniqueUserIds = [...new Set(userRoles.map(ur => ur.user_id))];
+    // Get all roles once
+    const { data: userRoles } = await supabase
+      .from('user_roles')
+      .select('user_id, role');
 
-    // For each user with roles, get their profile and email
+    const rolesByUser = new Map<string, { role: 'admin' | 'editor' | 'author' }[]>();
+
+    if (userRoles) {
+      userRoles.forEach((ur: any) => {
+        const list = rolesByUser.get(ur.user_id) || [];
+        list.push({ role: ur.role });
+        rolesByUser.set(ur.user_id, list);
+      });
+    }
+
     const usersWithDetails = await Promise.all(
-      uniqueUserIds.map(async (userId) => {
-        // Get email using database function
+      profiles.map(async (profile) => {
         const { data: emailData } = await supabase.rpc('get_user_email_by_id', {
-          user_id_param: userId
+          user_id_param: profile.id,
         });
 
         // Skip owner
@@ -76,29 +86,21 @@ export default function Users() {
           return null;
         }
 
-        // Get profile
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('id, full_name, created_at')
-          .eq('id', userId)
-          .single();
-
-        if (!profile) return null;
-
-        // Get all roles for this user
-        const roles = userRoles.filter(ur => ur.user_id === userId);
-
         return {
-          ...profile,
+          id: profile.id,
+          full_name: profile.full_name,
           email: emailData || null,
-          user_roles: roles as { role: 'admin' | 'editor' | 'author' }[],
+          created_at: profile.created_at,
+          user_roles: (rolesByUser.get(profile.id) || []) as {
+            role: 'admin' | 'editor' | 'author';
+          }[],
         };
       })
     );
 
-    // Filter out nulls (owner) and users without emails or roles
-    const filtered = usersWithDetails.filter((u): u is UserWithRoles => 
-      u !== null && u.email !== null && u.user_roles.length > 0
+    // Filter out nulls (owner) and users without email
+    const filtered = usersWithDetails.filter(
+      (u): u is UserWithRoles => u !== null && u.email !== null
     );
     setUsers(filtered);
   };
