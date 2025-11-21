@@ -31,7 +31,7 @@ export function LanguageSwitcher() {
         e.currentTarget.style.backgroundColor = 'var(--pill-background)';
       }}
     >
-      <Globe className="h-5 w-5" style={{ color: 'var(--type-logo)', fill: 'white' }} />
+      <Globe className="h-5 w-5" style={{ color: 'var(--type-logo)' }} />
       <span 
         className={`absolute bottom-0 right-0 text-[10px] font-bold transition-all duration-300 ${isAnimating ? 'scale-110' : ''}`} 
         style={{ color: 'white' }}
