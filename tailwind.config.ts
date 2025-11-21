@@ -202,7 +202,7 @@ export default {
         "slide-in-right": "slide-in-from-right 0.4s ease-out",
         "slide-in-left": "slide-in-from-left 0.4s ease-out",
         "slide-in-top": "slide-in-from-top 0.4s ease-out",
-        "dropdown-open": "dropdown-open 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+        "dropdown-open": "dropdown-open 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
         "float-down": "float-down linear forwards",
         "black-hole-pulse": "black-hole-pulse 3s ease-in-out infinite",
       },

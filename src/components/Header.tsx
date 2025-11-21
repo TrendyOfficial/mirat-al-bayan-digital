@@ -92,7 +92,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full">
       <div className="container flex h-16 items-center px-4">
         {/* Left side - Logo */}
         <div className="flex-shrink-0">
@@ -231,7 +231,7 @@ export const Header = () => {
                   <span className="hidden sm:inline text-sm font-medium max-w-[100px] truncate">
                     {displayName}
                   </span>
-                  <ChevronDown className="h-4 w-4 transition-transform duration-500 group-data-[state=open]:rotate-180 flex-shrink-0" />
+                  <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180 flex-shrink-0" />
                 </button>
               </DropdownMenuTrigger>
 
@@ -264,13 +264,6 @@ export const Header = () => {
                   <Link to="/settings" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
                     <Settings className="h-4 w-4 mr-2" />
                     {isArabic ? 'الإعدادات' : 'Settings'}
-                  </Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem asChild>
-                  <Link to="/settings/preferences" className="cursor-pointer flex items-center rounded-lg px-3 py-2 hover:bg-accent transition-all duration-100 hover:scale-105">
-                    <Settings className="h-4 w-4 mr-2" />
-                    {isArabic ? 'التفضيلات' : 'Preferences'}
                   </Link>
                 </DropdownMenuItem>
 
