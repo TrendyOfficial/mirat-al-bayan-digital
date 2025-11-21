@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage, AVAILABLE_LANGUAGES, type Language } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -33,6 +33,7 @@ import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const passwordStrengthLabelEn = ["Too short", "Weak", "Medium", "Strong"] as const;
 const passwordStrengthLabelAr = ["قصيرة جداً", "ضعيفة", "متوسطة", "قوية"] as const;
@@ -48,11 +49,6 @@ const getPasswordStrength = (password: string): number => {
   if (score === 1) return 1;
   return 0;
 };
-
-const AVAILABLE_LANGUAGES = [
-  { code: 'ar' as const, name: 'العربية', nativeName: 'العربية', flag: '🇸🇦' },
-  { code: 'en' as const, name: 'English', nativeName: 'English', flag: '🇺🇸' },
-];
 
 export default function Settings() {
   const { language, setLanguage, quickSwitchLanguages, setQuickSwitchLanguages } = useLanguage();
@@ -424,19 +420,23 @@ export default function Settings() {
                             ? 'اللغة المطبقة على التطبيق بالكامل' 
                             : 'Language applied to the entire application'}
                         </p>
-                        <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'ar')}>
+                        <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
                           <SelectTrigger className="w-full">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent>
-                            {AVAILABLE_LANGUAGES.map((lang) => (
-                              <SelectItem key={lang.code} value={lang.code}>
-                                <div className="flex items-center gap-2">
-                                  <span>{lang.flag}</span>
-                                  <span>{lang.name} — {lang.nativeName}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
+                          <SelectContent className="max-h-[300px]">
+                            <ScrollArea className="h-[280px]">
+                              {AVAILABLE_LANGUAGES.map((lang) => (
+                                <SelectItem key={lang.code} value={lang.code}>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-lg">
+                                      {String.fromCodePoint(...lang.countryCode.split('').map(c => 127397 + c.charCodeAt(0)))}
+                                    </span>
+                                    <span>{lang.name} — {lang.nativeName}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </ScrollArea>
                           </SelectContent>
                         </Select>
                       </div>
@@ -445,59 +445,67 @@ export default function Settings() {
 
                       <div className="space-y-2">
                         <label className="text-sm font-medium">
-                          {isArabic ? 'تبديل سريع بين اللغات' : 'Quick Switch Languages'}
+                          {isArabic ? 'التبديل السريع للغة' : 'Quick Switch Languages'}
                         </label>
-                        <p className="text-sm text-muted-foreground mb-3">
+                        <p className="text-sm text-muted-foreground mb-2">
                           {isArabic 
-                            ? 'اختر لغتين للتبديل السريع بينهما باستخدام زر تبديل اللغة' 
-                            : 'Select two languages to quickly toggle between using the language switcher button'}
+                            ? 'اختر لغتين للتبديل السريع بينهما' 
+                            : 'Choose two languages to quickly switch between'}
                         </p>
                         
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-xs text-muted-foreground">
-                              {isArabic ? 'اللغة الأساسية' : 'Primary Language'}
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-xs text-muted-foreground mb-2 block">
+                              {isArabic ? 'اللغة الأولى' : 'First Language'}
                             </label>
                             <Select 
                               value={quickSwitchLanguages[0]} 
-                              onValueChange={(value) => setQuickSwitchLanguages([value as 'en' | 'ar', quickSwitchLanguages[1]])}
+                              onValueChange={(value) => setQuickSwitchLanguages([value as Language, quickSwitchLanguages[1]])}
                             >
-                              <SelectTrigger>
+                              <SelectTrigger className="w-full">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent>
-                                {AVAILABLE_LANGUAGES.map((lang) => (
-                                  <SelectItem key={lang.code} value={lang.code}>
-                                    <div className="flex items-center gap-2">
-                                      <span>{lang.flag}</span>
-                                      <span>{lang.nativeName}</span>
-                                    </div>
-                                  </SelectItem>
-                                ))}
+                              <SelectContent className="max-h-[300px]">
+                                <ScrollArea className="h-[280px]">
+                                  {AVAILABLE_LANGUAGES.map((lang) => (
+                                    <SelectItem key={lang.code} value={lang.code}>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-lg">
+                                          {String.fromCodePoint(...lang.countryCode.split('').map(c => 127397 + c.charCodeAt(0)))}
+                                        </span>
+                                        <span>{lang.name} — {lang.nativeName}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </ScrollArea>
                               </SelectContent>
                             </Select>
                           </div>
 
-                          <div className="space-y-2">
-                            <label className="text-xs text-muted-foreground">
-                              {isArabic ? 'اللغة الثانوية' : 'Secondary Language'}
+                          <div>
+                            <label className="text-xs text-muted-foreground mb-2 block">
+                              {isArabic ? 'اللغة الثانية' : 'Second Language'}
                             </label>
                             <Select 
                               value={quickSwitchLanguages[1]} 
-                              onValueChange={(value) => setQuickSwitchLanguages([quickSwitchLanguages[0], value as 'en' | 'ar'])}
+                              onValueChange={(value) => setQuickSwitchLanguages([quickSwitchLanguages[0], value as Language])}
                             >
-                              <SelectTrigger>
+                              <SelectTrigger className="w-full">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent>
-                                {AVAILABLE_LANGUAGES.map((lang) => (
-                                  <SelectItem key={lang.code} value={lang.code}>
-                                    <div className="flex items-center gap-2">
-                                      <span>{lang.flag}</span>
-                                      <span>{lang.nativeName}</span>
-                                    </div>
-                                  </SelectItem>
-                                ))}
+                              <SelectContent className="max-h-[300px]">
+                                <ScrollArea className="h-[280px]">
+                                  {AVAILABLE_LANGUAGES.map((lang) => (
+                                    <SelectItem key={lang.code} value={lang.code}>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-lg">
+                                          {String.fromCodePoint(...lang.countryCode.split('').map(c => 127397 + c.charCodeAt(0)))}
+                                        </span>
+                                        <span>{lang.name} — {lang.nativeName}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </ScrollArea>
                               </SelectContent>
                             </Select>
                           </div>

@@ -92,7 +92,15 @@ class Particle {
 
     const x = this.ran / this.lifetime;
     const o = (x - x * x) * 4;
-    ctx.globalAlpha = Math.max(0, o * 0.8);
+    
+    // Add fade-out effect when particles reach bottom 30% of canvas
+    const fadeStart = canvas.height * 0.7;
+    const fadeEnd = canvas.height;
+    const fadeAmount = this.y > fadeStart 
+      ? 1 - (this.y - fadeStart) / (fadeEnd - fadeStart)
+      : 1;
+    
+    ctx.globalAlpha = Math.max(0, o * 0.8 * fadeAmount);
 
     if (this.image) {
       ctx.translate(this.x, this.y);
@@ -207,12 +215,19 @@ function ParticlesCanvas() {
 
 export function Lightbar(props: { className?: string; noParticles?: boolean }) {
   return (
-    <div className="absolute inset-0 w-full h-[680px] overflow-hidden pointer-events-none -mt-64">
+    <div className="absolute inset-0 w-full h-[680px] overflow-hidden pointer-events-none -mt-64 z-20">
       <div className="max-w-screen w-full h-[680px] relative pt-64">
         <div className={props.className}>
           <div className="lightbar">
             {!props.noParticles && <ParticlesCanvas />}
             <div className="lightbar-visual" />
+            {/* Centered navigation text */}
+            <div className="absolute top-[180px] left-1/2 transform -translate-x-1/2 flex gap-6 text-white/80 text-sm font-medium pointer-events-none z-30">
+              <span>Home</span>
+              <span>Poetry</span>
+              <span>Studies</span>
+              <span>Stories</span>
+            </div>
           </div>
         </div>
       </div>
