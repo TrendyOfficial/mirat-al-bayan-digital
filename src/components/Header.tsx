@@ -237,7 +237,7 @@ export const Header = () => {
 
               <DropdownMenuContent
                 align="end"
-                className="w-64 rounded-xl border bg-popover shadow-lg p-2 animate-dropdown-open"
+                className="w-64 rounded-xl border bg-popover shadow-lg p-2"
                 sideOffset={8}
               >
                 {/* User Profile Header */}

@@ -124,9 +124,11 @@ export default function Index() {
       <Header />
       
       <main className="flex-1">
-        {/* Hero Section with animated gradient and lightbar */}
+        {/* Hero Section with lightbar */}
         <section className="relative bg-gradient-lovable text-white py-32 overflow-hidden">
+          {/* STORED HERO ANIMATION - Uncomment to restore:
           <div className="absolute inset-0 hero-gradient-animated"></div>
+          */}
           
           {/* Lightbar with floating particles at the top */}
           <Lightbar className="animate-fade-in" noParticles={false} />
